@@ -3,8 +3,10 @@
 source $SRC/common_inc.sh
 
 if [[ ! -d "$3" ]]; then
-    echo "Please provice a directory file that exists"
-    exit 1
+        if [[ ! -f "$3" ]]; then
+                echo "Please provice a file or directory that exists"
+                exit 1
+        fi 
 fi
 
 if [[ "$1" = "" ]]; then

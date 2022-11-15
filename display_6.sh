@@ -3,8 +3,10 @@
 source $SRC/common_inc.sh
 
 if [[ ! -d "$3" ]]; then
-    echo "Please provice a directory file that exists"
-    exit 1
+        if [[ ! -f "$3" ]]; then
+                echo "Please provice a file or directory that exists"
+                exit 1
+        fi 
 fi
 
 if [[ "$1" = "" ]]; then
@@ -25,17 +27,15 @@ else
     DISPLAY_TIME=$4
 fi
 
-if [[ ! -f "$5" ]]; then
+if [[ "$5" = "edl" ]]; then
         VIDEO1="$(find /mnt/d/edlv2/ -iname '*shaken*.edl' | grep unix | shuf -n 1)"
-else
-        VIDEO1="$5"
-fi
-
-if [[ ! -f "$6" ]]; then
         VIDEO2="$(find /mnt/d/edlv2/ -iname '*shaken*.edl' | grep unix | shuf -n 1)"
 else
-        VIDEO2="$6"
+        VIDEO1="$(find /mnt/d/grls/ -iname '*.mp4' |  shuf -n 1)"
+        VIDEO2="$(find /mnt/d/grls/ -iname '*.mp4' |  shuf -n 1)"
 fi
+echo "Playing $VIDEO1 and $VIDEO2"
+#sleep 10
 
 nohup mpv --image-display-duration=$DISPLAY_TIME --volume=$VOLUME --screen=$SCREEN --fs-screen=$SCREEN  "$VIDEO1"   --profile=topmid  --no-border --ontop-level=system --ontop &
 sleep 1
