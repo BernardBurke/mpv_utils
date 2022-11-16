@@ -39,6 +39,18 @@ if [[ "$5" = "edl" ]]; then
         shuffle_edl "$SUBJ" 50
         cat $TMPFILE1 > $TMPFILE3
         VIDEO2="$TMPFILE3"
+elif [[ "$5" = "m3u" ]]; then
+        VIDEO1="$(get_file_by_type "m3u")"
+        echo "$VIDEO1"
+        VIDEO1="--playlist=$VIDEO1 --shuffle"
+        VIDEO2="$(get_file_by_type "m3u")"
+        VIDEO2="--playlist=$VIDEO2 --shuffle"
+elif [[ "$5" = "m3uSearch" ]]; then
+        echo "Finding some $2"
+        VIDEO1="$(get_file_by_type "m3uSearch" "$6")"
+        VIDEO1="--playlist=$VIDEO1 --shuffle"
+        VIDEO2="$(get_file_by_type "m3uSearch" "$6")"
+        VIDEO2="--playlist=$VIDEO2 --shuffle"        
 else
         VIDEO1="$(get_file_by_type "video")"
         VIDEO2="$(get_file_by_type "video")"
@@ -50,9 +62,9 @@ fi
 echo "Playing $VIDEO1 and $VIDEO2"
 #sleep 10
 
-nohup mpv --image-display-duration=$DISPLAY_TIME --volume=$VOLUME --screen=$SCREEN --fs-screen=$SCREEN  "$VIDEO1"   --profile=topmid  --no-border --ontop-level=system --ontop &
+nohup mpv --image-display-duration=$DISPLAY_TIME --volume=$VOLUME --screen=$SCREEN --fs-screen=$SCREEN  $VIDEO1 --profile=topmid  --no-border --ontop-level=system --ontop &
 sleep 1
-nohup mpv --image-display-duration=$DISPLAY_TIME --volume=$VOLUME --screen=$SCREEN --fs-screen=$SCREEN  "$VIDEO2"  --profile=botmid --no-border --ontop-level=system --ontop &
+nohup mpv --image-display-duration=$DISPLAY_TIME --volume=$VOLUME --screen=$SCREEN --fs-screen=$SCREEN  $VIDEO2  --profile=botmid --no-border --ontop-level=system --ontop &
 sleep 2
 
 
