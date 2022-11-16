@@ -26,8 +26,16 @@ get_file_by_type() {
         "edlm3u")
         find $EDLSRC/ -iname '*.edl' | grep unix | grep -i "$2" | shuf -n $3 > $TMPFILE3
         ;;
-        
-        *) echo "Invalid filetype $1";;
+        "edlblend")
+        echo "edlblend"
+        find $EDLSRC/ -iname '*.edl' | grep unix | grep -i "$2" > $TMPFILE1
+        while read -r edlname; do
+            cat "$edlname" | grep -v "#" >> $TMPFILE2
+        done < $TMPFILE1
+        shuffle_edl $TMPFILE2 $3
+        ;;
+        *) echo "Invalid filetype $1"
+        exit 1;;
     esac
 
     echo "$RETFilename"

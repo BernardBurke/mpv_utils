@@ -82,6 +82,23 @@ elif [[ "$3" = "edlm3u" ]]; then
         get_file_by_type "edlm3u" "$4" "$HOW_MANY"
         cp $TMPFILE3 $TMPFILE7
         VIDEO4="--playlist=$TMPFILE7 --shuffle"   
+elif [[ "$3" = "edlblend" ]]; then
+        TMPFILE4=$(mktemp)
+        TMPFILE5=$(mktemp)
+        TMPFILE6=$(mktemp)
+        TMPFILE7=$(mktemp)
+        get_file_by_type "edlblend" "$4" "$HOW_MANY"
+        cp -v $TMPFILE1 $TMPFILE4
+        VIDEO1="--playlist=$TMPFILE4 --shuffle"
+        get_file_by_type "edlblend" "$4" "$HOW_MANY"
+        cp $TMPFILE1 $TMPFILE5
+        VIDEO2="--playlist=$TMPFILE5 --shuffle"        
+        get_file_by_type "edlblend" "$4" "$HOW_MANY"
+        cp $TMPFILE1 $TMPFILE6
+        VIDEO3="--playlist=$TMPFILE6 --shuffle"
+        get_file_by_type "edlblend" "$4" "$HOW_MANY"
+        cp $TMPFILE1 $TMPFILE7
+        VIDEO4="--playlist=$TMPFILE7 --shuffle"   
         
 else
         VIDEO1="$(get_file_by_type "video")"
@@ -93,8 +110,8 @@ fi
 
 
 
+read -p "Press enter to continue with $VIDEO1 $VIDEO2 $VIDEO3 $VIDEO4"
 
-echo "Playing $VIDEO1 and $VIDEO2"
 #sleep 10
 
 nohup mpv  --volume=$VOLUME --screen=$SCREEN --fs-screen=$SCREEN  $VIDEO1 \
