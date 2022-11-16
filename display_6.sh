@@ -1,6 +1,7 @@
 #!/bin/bash
 # use nohup mpv --image-display-duration=$DISPLAY_TIME config profiles to cycle imaages
-source $SRC/common_inc.sh
+#source $SRC/common_inc.sh
+source $MPVU/get_media.sh
 
 if [[ ! -d "$3" ]]; then
         if [[ ! -f "$3" ]]; then
@@ -27,13 +28,25 @@ else
     DISPLAY_TIME=$4
 fi
 
+
+
 if [[ "$5" = "edl" ]]; then
-        VIDEO1="$(find /mnt/d/edlv2/ -iname '*shaken*.edl' | grep unix | shuf -n 1)"
-        VIDEO2="$(find /mnt/d/edlv2/ -iname '*shaken*.edl' | grep unix | shuf -n 1)"
+        SUBJ="$(get_file_by_type "edl")"
+        shuffle_edl "$SUBJ" 50
+        cat $TMPFILE1 > $TMPFILE2
+        VIDEO1="$TMPFILE2"
+        SUBJ="$(get_file_by_type "edl")"
+        shuffle_edl "$SUBJ" 50
+        cat $TMPFILE1 > $TMPFILE3
+        VIDEO2="$TMPFILE3"
 else
-        VIDEO1="$(find /mnt/d/grls/ -iname '*.mp4' |  shuf -n 1)"
-        VIDEO2="$(find /mnt/d/grls/ -iname '*.mp4' |  shuf -n 1)"
+        VIDEO1="$(get_file_by_type "video")"
+        VIDEO2="$(get_file_by_type "video")"
 fi
+
+
+
+
 echo "Playing $VIDEO1 and $VIDEO2"
 #sleep 10
 
