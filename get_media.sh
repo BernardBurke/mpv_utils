@@ -8,6 +8,13 @@ get_file_by_type() {
         RETFilename="$(find $EDLSRC/ -iname '*.edl' | grep unix | shuf -n 1)";;
         "video")
         RETFilename="$(find $GRLSRC/ -iname '*.mp4' -o -iname '*.avi' -o -iname '*.mkv' -o -iname '*.webm' | shuf -n 1)";;
+        "recent")
+        if [[ $2 = "" ]]; then
+            AGE=7
+        else
+            AGE=$2
+        fi
+        RETFilename="$(find $GRLSRC/ \( -iname '*.mp4' -o -iname '*.avi' -o -iname '*.mkv' -o -iname '*.webm' \) -mtime -$AGE | shuf -n 1)";;
         "audio")
         RETFilename="$(find $GRLSRC/audio -iname '*.mp3' -o -iname '*.m4a' -o -iname '*.wav' |  shuf -n 1)";;
         "srt")
@@ -27,7 +34,7 @@ get_file_by_type() {
         find $EDLSRC/ -iname '*.edl' | grep unix | grep -i "$2" | shuf -n $3 > $TMPFILE3
         ;;
         "edlblend")
-        echo "edlblend"
+        echo "edlblend searching for $2 and shuffling for $3..."
         find $EDLSRC/ -iname '*.edl' | grep unix | grep -i "$2" > $TMPFILE1
         while read -r edlname; do
             cat "$edlname" | grep -v "#" >> $TMPFILE2

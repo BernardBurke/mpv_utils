@@ -89,42 +89,94 @@ elif [[ "$3" = "edlblend" ]]; then
         TMPFILE7=$(mktemp)
         get_file_by_type "edlblend" "$4" "$HOW_MANY"
         cp -v $TMPFILE1 $TMPFILE4
-        VIDEO1="--playlist=$TMPFILE4 --shuffle"
+        VIDEO1="$TMPFILE4"
         get_file_by_type "edlblend" "$4" "$HOW_MANY"
-        cp $TMPFILE1 $TMPFILE5
-        VIDEO2="--playlist=$TMPFILE5 --shuffle"        
+        cp -v $TMPFILE1 $TMPFILE5
+        VIDEO2="$TMPFILE5"        
         get_file_by_type "edlblend" "$4" "$HOW_MANY"
-        cp $TMPFILE1 $TMPFILE6
-        VIDEO3="--playlist=$TMPFILE6 --shuffle"
+        cp -v $TMPFILE1 $TMPFILE6
+        VIDEO3="$TMPFILE6"
         get_file_by_type "edlblend" "$4" "$HOW_MANY"
-        cp $TMPFILE1 $TMPFILE7
-        VIDEO4="--playlist=$TMPFILE7 --shuffle"   
-        
+        cp -v $TMPFILE1 $TMPFILE7
+        VIDEO4="$TMPFILE7"   
+elif [[ "$3" = "vtt" ]]; then
+        VIDEO1="$(get_file_by_type "vtt")"
+        DIRNAME="$(dirname $VIDEO1)"
+        VIDEO1="$DIRNAME/$(basename $VIDEO1 vtt)mp4"
+        VIDEO2="$(get_file_by_type "vtt")"
+        DIRNAME="$(dirname $VIDEO2)"
+        VIDEO2="$DIRNAME/$(basename $VIDEO2 vtt)mp4"
+        VIDEO3="$(get_file_by_type "vtt")"
+        DIRNAME="$(dirname $VIDEO3)"
+        VIDEO3="$DIRNAME/$(basename $VIDEO3 vtt)mp4"
+        VIDEO4="$(get_file_by_type "vtt")"
+        DIRNAME="$(dirname $VIDEO4)"
+        VIDEO4="$DIRNAME/$(basename $VIDEO4 vtt)mp4"
+
+elif [[ "$3" = "recent" ]]; then
+
+        VIDEO1="$(get_file_by_type "recent" $4)"
+        echo "Playing $VIDEO1"
+        VIDEO2="$(get_file_by_type "recent" $4)"
+        echo "Playing $VIDEO2"
+        VIDEO3="$(get_file_by_type "recent" $4)"
+        echo "Playing $VIDEO3"
+        VIDEO4="$(get_file_by_type "recent" $4)"
+        echo "Playing $VIDEO4"
+
+
 else
         VIDEO1="$(get_file_by_type "video")"
+        echo "Playing $VIDEO1"
         VIDEO2="$(get_file_by_type "video")"
+        echo "Playing $VIDEO2"
         VIDEO3="$(get_file_by_type "video")"
+        echo "Playing $VIDEO3"
         VIDEO4="$(get_file_by_type "video")"
+        echo "Playing $VIDEO4"
 
 fi
 
 
 
-read -p "Press enter to continue with $VIDEO1 $VIDEO2 $VIDEO3 $VIDEO4"
+# read -p "Press enter to continue with $VIDEO1 $VIDEO2 $VIDEO3 $VIDEO4"
+if [[ ! -f $VIDEO1 ]]; then 
+        echo "$VIDEO1 does not exist"
+        exit 1
+fi
 
+if [[ ! -f $VIDEO2 ]]; then 
+        echo "$VIDEO2 does not exist"
+        exit 1
+fi
+
+if [[ ! -f $VIDEO3 ]]; then 
+        echo "$VIDEO3 does not exist"
+        exit 1
+fi
+
+if [[ ! -f $VIDEO4 ]]; then 
+        echo "$VIDEO4 does not exist"
+        exit 1
+fi
+
+
+# cat $VIDEO2
+# cat $VIDEO3
+# cat $VIDEO4
 #sleep 10
 
-nohup mpv  --volume=$VOLUME --screen=$SCREEN --fs-screen=$SCREEN  $VIDEO1 \
+nohup mpv  --volume=$VOLUME --screen=$SCREEN --fs-screen=$SCREEN  "$VIDEO1" \
         --profile=topleft  --no-border --ontop-level=system --ontop &
 sleep 1
-nohup mpv  --volume=$VOLUME --screen=$SCREEN --fs-screen=$SCREEN  $VIDEO2  \
+nohup mpv  --volume=$VOLUME --screen=$SCREEN --fs-screen=$SCREEN  "$VIDEO2"  \
         --profile=botleft --no-border --ontop-level=system --ontop &
 sleep 2
 
-nohup mpv  --volume=$VOLUME --screen=$SCREEN --fs-screen=$SCREEN  $VIDEO3 \
+nohup mpv  --volume=$VOLUME --screen=$SCREEN --fs-screen=$SCREEN  "$VIDEO3" \
         --profile=topright  --no-border --ontop-level=system --ontop &
 sleep 1
-nohup mpv  --volume=$VOLUME --screen=$SCREEN --fs-screen=$SCREEN  $VIDEO4  \
+nohup mpv  --volume=$VOLUME --screen=$SCREEN --fs-screen=$SCREEN  "$VIDEO4"  \
         --profile=botright --no-border --ontop-level=system --ontop &
 sleep 2
 

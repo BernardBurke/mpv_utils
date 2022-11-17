@@ -4,10 +4,10 @@
 source $MPVU/get_media.sh
 
 echo "In test_get_media"
-get_file_by_type "edlblend" "mom" 20
-cat $TMPFILE1
+# get_file_by_type "edl" "mom" 20
+# cat $TMPFILE1
 
-#SUBJ=$(get_file_by_type "edlblen" "mom" 20)
+SUBJ=$(get_file_by_type "edlblend" "mom" 20)
 
 cat $TMPFILE3
 
