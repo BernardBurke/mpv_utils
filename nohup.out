@@ -1,12 +1,0 @@
-Playing: /mnt/d/grls/pure/MenageATroisPart1BritneysGift_s01_BritneyAmber_CassieLaine_1080p.mp4
- (+) Video --vid=1 (*) (h264 1920x1080 29.970fps)
- (+) Audio --aid=1 --alang=eng (*) (aac 2ch 44100Hz)
-[ffmpeg] AVHWDeviceContext: Failed to query surface attributes: 20 (the requested function is not implemented).
-[vo/gpu/vaapi-egl] failed to retrieve libavutil frame constraints
-Using hardware decoding (vaapi).
-AO: [pulse] 44100Hz stereo 2ch float
-VO: [gpu] 1920x1080 vaapi[nv12]
-[KAV: 00:00:00 / 00:40:38 (0%) A-V:  0.000[KAV: 00:00:01 / 00:40:38 (0%) A-V:  0.000
-
-
-Exiting... (Quit)
