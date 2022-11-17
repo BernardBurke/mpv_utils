@@ -30,6 +30,32 @@ play_4() {
     nohup mpv  --volume=$2 --screen=$3 --fs-screen=$3  "$VIDEO4" \
         --profile=botright --no-border --ontop-level=system --ontop &
 }
+
+play_4_m3u() {
+    if [[ ! -f "$1" ]]; then 
+        echo "$1 does not exist"
+        exit 1
+    fi
+    nohup mpv  --volume=$2 --screen=$3 --fs-screen=$3 --playlist="$VIDEO1" --shuffle \
+        --profile=topleft  --no-border --ontop-level=system --ontop &
+    nohup mpv  --volume=$2 --screen=$3 --fs-screen=$3 --playlist="$VIDEO2" --shuffle \
+        --profile=botleft  --no-border --ontop-level=system --ontop &
+    nohup mpv  --volume=$2 --screen=$3 --fs-screen=$3 --playlist="$VIDEO3" --shuffle \
+        --profile=topright --no-border --ontop-level=system --ontop &
+    nohup mpv  --volume=$2 --screen=$3 --fs-screen=$3 --playlist="$VIDEO4" --shuffle \
+        --profile=botright --no-border --ontop-level=system --ontop &
+}
+
+play_1_m3u() {
+    if [[ ! -f "$1" ]]; then 
+        echo "$1 does not exist"
+        exit 1
+    fi
+    nohup  mpv  --volume=$2 --screen=$3 --fs-screen=$3 --playlist="$VIDEO1" --shuffle \
+        --fullscreen --no-border --ontop-level=system --ontop &
+}
+
+
 # read -p "Press enter to continue with $VIDEO1 $VIDEO2 $VIDEO3 $VIDEO4"
 
 # if [[ ! -f $VIDEO2 ]]; then 

@@ -1,28 +1,99 @@
 #!/bin/bash
 # use nohup mpv  config profiles to cycle imaages
 #source $SRC/common_inc.sh
-source $MPVU/get_media.sh
+source $SRC/common_inc.sh
+
+get_file_by_type() {
+    case "$1" in
+        "edl")
+        RETFilename="$(find $EDLSRC/ -iname '*.edl' | grep unix | shuf -n 1)";;
+        "video")
+        RETFilename="$(find $GRLSRC/ -iname '*.mp4' -o -iname '*.avi' -o -iname '*.mkv' -o -iname '*.webm' | shuf -n 1)";;
+        "recent")
+        if [[ $2 = "" ]]; then
+            AGE=7
+        else
+            AGE=$2
+        fi
+        RETFilename="$(find $GRLSRC/ \( -iname '*.mp4' -o -iname '*.avi' -o -iname '*.mkv' -o -iname '*.webm' \) -mtime -$AGE | shuf -n 1)";;
+        "audio")
+        RETFilename="$(find $GRLSRC/audio -iname '*.mp3' -o -iname '*.m4a' -o -iname '*.wav' |  shuf -n 1)";;
+        "srt")
+        RETFilename="$(find $GRLSRC/ -iname '*.srt' | shuf -n 1)";;
+        "vtt")
+        RETFilename="$(find $GRLSRC/ -iname '*.vtt' | shuf -n 1)";;
+        "subtitle")
+        RETFilename="$(find $GRLSRC/ -iname '*.vtt' -o -iname '*.srt' |  shuf -n 1)";;
+        "m3u")
+        find $GRLSRC/ -iname '*.mp4' -o -iname '*.avi' -o -iname '*.mkv' -o -iname '*.webm' | shuf -n 10 > $TMPFILE3
+        RETFilename=$TMPFILE3;;
+        "m3uSearch")
+        find $GRLSRC/ -iname '*.mp4' -o -iname '*.avi' -o -iname '*.mkv' -o -iname '*.webm' > $TMPFILE1
+        cat $TMPFILE1 | grep -i "$2" | shuf -n $3 > $TMPFILE3
+        RETFilename=$TMPFILE3;;
+        "edlm3u")
+        find $EDLSRC/ -iname '*.edl' | grep unix | grep -i "$2" | shuf -n $3 > $TMPFILE3
+        ;;
+        "edlblend")
+        echo "edlblend searching for $2 and shuffling for $3..."
+        find $EDLSRC/ -iname '*.edl' | grep unix | grep -i "$2" > $TMPFILE1
+        while read -r edlname; do
+            cat "$edlname" | grep -v "#" >> $TMPFILE2
+        done < $TMPFILE1
+        shuffle_edl $TMPFILE2 $3
+        ;;
+        *) echo "Invalid filetype $1"
+        exit 1;;
+    esac
+
+    echo "$RETFilename"
+
+}
+
+shuffle_edl() {
+
+    if [[ $2 = "" ]]; then
+        SHUFN=100
+    else
+        SHUFN="$2"
+    fi
+    echo "# mpv EDL v0" > $TMPFILE1
+    if [[ -f $1 ]]; then
+        cat "$1" | grep -v "#" | shuf -n $SHUFN >> $TMPFILE1
+    else
+        return 1
+    fi 
+    
+}
+
 source $MPVU/play_media.sh
 
 
-
-if [[ "$1" = "" ]]; then
-        VOLUME=0
+# change to default order - play mode comes first! everything else shuffles down
+if [[ $1 = "" ]]; then
+    PLAY_MODE=1
 else
-        VOLUME=$1
+    PLAY_MODE=$1
 fi
 
 if [[ "$2" = "" ]]; then
-        SCREEN=0
+        VOLUME=0
 else
-        SCREEN=$2
+        VOLUME=$2
 fi
 
-if [[ $4 = "" ]]; then
-    SEARCH_STRING=a
+if [[ "$3" = "" ]]; then
+        SCREEN=0
 else
-    SEARCH_STRING=$$4
+        SCREEN=$3
 fi
+
+if [[ "$4" = "" ]]; then
+        SELECT_MODE=edl 
+else
+        SELECT_MODE=$4
+fi
+
 
 if [[ $5 = "" ]]; then
     HOW_MANY=5
@@ -31,141 +102,194 @@ else
 fi
 
 if [[ $6 = "" ]]; then
-    PLAY_MODE=1
+    SEARCH_STRING=a
 else
-    PLAY_MODE=$6
-fi
-
-echo "Playing on $SCREEN at $VOLUME with mode $3 and searching for $4 executing $HOW_MANY times in play mode $PLAY_MODE "
-
-if [[ "$3" = "edl" ]]; then
-        TMPFILE4=$(mktemp)
-        TMPFILE5=$(mktemp)
-        SUBJ="$(get_file_by_type "edl")"
-        shuffle_edl "$SUBJ" $HOW_MANY
-        cat $TMPFILE1 > $TMPFILE2
-        VIDEO1="$TMPFILE2"
-        SUBJ="$(get_file_by_type "edl")"
-        shuffle_edl "$SUBJ" $HOW_MANY
-        cat $TMPFILE1 > $TMPFILE3
-        VIDEO2="$TMPFILE3"
-        SUBJ="$(get_file_by_type "edl")"
-        shuffle_edl "$SUBJ" $HOW_MANY
-        cat $TMPFILE1 > $TMPFILE4
-        VIDEO3="$TMPFILE4"
-        SUBJ="$(get_file_by_type "edl")"
-        shuffle_edl "$SUBJ" $HOW_MANY
-        cat $TMPFILE1 > $TMPFILE5
-        VIDEO4="$TMPFILE5"
-
-elif [[ "$3" = "m3u" ]]; then
-        VIDEO1="$(get_file_by_type "m3u")"
-        VIDEO1="--playlist=$VIDEO1 --shuffle"
-        VIDEO2="$(get_file_by_type "m3u")"
-        VIDEO2="--playlist=$VIDEO2 --shuffle"
-        VIDEO3="$(get_file_by_type "m3u")"
-        VIDEO3="--playlist=$VIDEO3 --shuffle"
-        VIDEO4="$(get_file_by_type "m3u")"
-        VIDEO4="--playlist=$VIDEO4 --shuffle"
-        
-elif [[ "$3" = "m3uSearch" ]]; then
-        echo "Finding some $4"
-        VIDEO1="$(get_file_by_type "m3uSearch" "$SEARCH_STRING" "$HOW_MANY")"
-        VIDEO1="--playlist=$VIDEO1 --shuffle"
-        VIDEO2="$(get_file_by_type "m3uSearch" "$SEARCH_STRING" "$HOW_MANY")"
-        VIDEO2="--playlist=$VIDEO2 --shuffle"        
-        VIDEO3="$(get_file_by_type "m3uSearch" "$SEARCH_STRING" "$HOW_MANY")"
-        VIDEO3="--playlist=$VIDEO3 --shuffle"
-        VIDEO4="$(get_file_by_type "m3uSearch" "$SEARCH_STRING" "$HOW_MANY")"
-        VIDEO4="--playlist=$VIDEO4 --shuffle"   
-elif [[ "$3" = "edlm3u" ]]; then
-        TMPFILE4=$(mktemp)
-        TMPFILE5=$(mktemp)
-        TMPFILE6=$(mktemp)
-        TMPFILE7=$(mktemp)
-        get_file_by_type "edlm3u" "$SEARCH_STRING" "$HOW_MANY"
-        cp $TMPFILE3 $TMPFILE4
-        VIDEO1="--playlist=$TMPFILE4 --shuffle"
-        get_file_by_type "edlm3u" "$SEARCH_STRING" "$HOW_MANY"
-        cp $TMPFILE3 $TMPFILE5
-        VIDEO2="--playlist=$TMPFILE5 --shuffle"        
-        get_file_by_type "edlm3u" "$SEARCH_STRING" "$HOW_MANY"
-        cp $TMPFILE3 $TMPFILE6
-        VIDEO3="--playlist=$TMPFILE6 --shuffle"
-        get_file_by_type "edlm3u" "$SEARCH_STRING" "$HOW_MANY"
-        cp $TMPFILE3 $TMPFILE7
-        VIDEO4="--playlist=$TMPFILE7 --shuffle"   
-elif [[ "$3" = "edlblend" ]]; then
-        TMPFILE4=$(mktemp)
-        TMPFILE5=$(mktemp)
-        TMPFILE6=$(mktemp)
-        TMPFILE7=$(mktemp)
-        get_file_by_type "edlblend" "$SEARCH_STRING" "$HOW_MANY"
-        cp -v $TMPFILE1 $TMPFILE4
-        VIDEO1="$TMPFILE4"
-        get_file_by_type "edlblend" "$SEARCH_STRING" "$HOW_MANY"
-        cp -v $TMPFILE1 $TMPFILE5
-        VIDEO2="$TMPFILE5"        
-        get_file_by_type "edlblend" "$SEARCH_STRING" "$HOW_MANY"
-        cp -v $TMPFILE1 $TMPFILE6
-        VIDEO3="$TMPFILE6"
-        get_file_by_type "edlblend" "$SEARCH_STRING" "$HOW_MANY"
-        cp -v $TMPFILE1 $TMPFILE7
-        VIDEO4="$TMPFILE7"   
-elif [[ "$3" = "vtt" ]]; then
-        VIDEO1="$(get_file_by_type "vtt")"
-        DIRNAME="$(dirname $VIDEO1)"
-        VIDEO1="$DIRNAME/$(basename $VIDEO1 vtt)mp4"
-        VIDEO2="$(get_file_by_type "vtt")"
-        DIRNAME="$(dirname $VIDEO2)"
-        VIDEO2="$DIRNAME/$(basename $VIDEO2 vtt)mp4"
-        VIDEO3="$(get_file_by_type "vtt")"
-        DIRNAME="$(dirname $VIDEO3)"
-        VIDEO3="$DIRNAME/$(basename $VIDEO3 vtt)mp4"
-        VIDEO4="$(get_file_by_type "vtt")"
-        DIRNAME="$(dirname $VIDEO4)"
-        VIDEO4="$DIRNAME/$(basename $VIDEO4 vtt)mp4"
-
-elif [[ "$3" = "recent" ]]; then
-
-        VIDEO1="$(get_file_by_type "recent" $FILE_AGE)"
-        echo "Playing $VIDEO1"
-        VIDEO2="$(get_file_by_type "recent" $FILE_AGE)"
-        echo "Playing $VIDEO2"
-        VIDEO3="$(get_file_by_type "recent" $FILE_AGE)"
-        echo "Playing $VIDEO3"
-        VIDEO4="$(get_file_by_type "recent" $FILE_AGE)"
-        echo "Playing $VIDEO4"
-
-
-else
-        echo "Defaulting to video only"
-        VIDEO1="$(get_file_by_type "video")"
-        echo "Playing $VIDEO1"
-        VIDEO2="$(get_file_by_type "video")"
-        echo "Playing $VIDEO2"
-        VIDEO3="$(get_file_by_type "video")"
-        echo "Playing $VIDEO3"
-        VIDEO4="$(get_file_by_type "video")"
-        echo "Playing $VIDEO4"
-
+    SEARCH_STRING=$6
 fi
 
 
- case "$PLAY_MODE" in
+
+echo "Playing on $SCREEN at $VOLUME with mode $SELECT_MODE and searching for $SEARCH_STRING executing $HOW_MANY times in play mode $PLAY_MODE "
+
+   
+
+
+videoOnly() {
+    echo "Defaulting to video only"
+    VIDEO1="$(get_file_by_type "video")"
+    echo "Playing $VIDEO1"
+    VIDEO2="$(get_file_by_type "video")"
+    echo "Playing $VIDEO2"
+    VIDEO3="$(get_file_by_type "video")"
+    echo "Playing $VIDEO3"
+    VIDEO4="$(get_file_by_type "video")"
+    echo "Playing $VIDEO4"
+}
+
+
+recent() {
+    VIDEO1="$(get_file_by_type "recent" $FILE_AGE)"
+    echo "Playing $VIDEO1"
+    VIDEO2="$(get_file_by_type "recent" $FILE_AGE)"
+    echo "Playing $VIDEO2"
+    VIDEO3="$(get_file_by_type "recent" $FILE_AGE)"
+    echo "Playing $VIDEO3"
+    VIDEO4="$(get_file_by_type "recent" $FILE_AGE)"
+    echo "Playing $VIDEO4"
+}
+
+vtt() {
+    VIDEO1="$(get_file_by_type "vtt")"
+    DIRNAME="$(dirname $VIDEO1)"
+    VIDEO1="$DIRNAME/$(basename $VIDEO1 vtt)mp4"
+    VIDEO2="$(get_file_by_type "vtt")"
+    DIRNAME="$(dirname $VIDEO2)"
+    VIDEO2="$DIRNAME/$(basename $VIDEO2 vtt)mp4"
+    VIDEO3="$(get_file_by_type "vtt")"
+    DIRNAME="$(dirname $VIDEO3)"
+    VIDEO3="$DIRNAME/$(basename $VIDEO3 vtt)mp4"
+    VIDEO4="$(get_file_by_type "vtt")"
+    DIRNAME="$(dirname $VIDEO4)"
+    VIDEO4="$DIRNAME/$(basename $VIDEO4 vtt)mp4"
+}
+
+edlblend() {
+    TMPFILE4=$(mktemp)
+    TMPFILE5=$(mktemp)
+    TMPFILE6=$(mktemp)
+    TMPFILE7=$(mktemp)
+    get_file_by_type "edlblend" "$SEARCH_STRING" "$HOW_MANY"
+    cp -v $TMPFILE1 $TMPFILE4
+    VIDEO1="$TMPFILE4"
+    get_file_by_type "edlblend" "$SEARCH_STRING" "$HOW_MANY"
+    cp -v $TMPFILE1 $TMPFILE5
+    VIDEO2="$TMPFILE5"        
+    get_file_by_type "edlblend" "$SEARCH_STRING" "$HOW_MANY"
+    cp -v $TMPFILE1 $TMPFILE6
+    VIDEO3="$TMPFILE6"
+    get_file_by_type "edlblend" "$SEARCH_STRING" "$HOW_MANY"
+    cp -v $TMPFILE1 $TMPFILE7
+    VIDEO4="$TMPFILE7"   
+}
+
+edlm3u() {
+    TMPFILE4=$(mktemp)
+    TMPFILE5=$(mktemp)
+    TMPFILE6=$(mktemp)
+    TMPFILE7=$(mktemp)
+    get_file_by_type "edlm3u" "$SEARCH_STRING" "$HOW_MANY"
+    cp $TMPFILE3 $TMPFILE4
+    VIDEO1="--playlist=$TMPFILE4 --shuffle"
+    get_file_by_type "edlm3u" "$SEARCH_STRING" "$HOW_MANY"
+    cp $TMPFILE3 $TMPFILE5
+    VIDEO2="--playlist=$TMPFILE5 --shuffle"        
+    get_file_by_type "edlm3u" "$SEARCH_STRING" "$HOW_MANY"
+    cp $TMPFILE3 $TMPFILE6
+    VIDEO3="--playlist=$TMPFILE6 --shuffle"
+    get_file_by_type "edlm3u" "$SEARCH_STRING" "$HOW_MANY"
+    cp $TMPFILE3 $TMPFILE7
+    VIDEO4="--playlist=$TMPFILE7 --shuffle"  
+}
+
+m3uSearch() {
+    echo "Finding some $SEARCH_STRING"
+    VIDEO1="$(get_file_by_type "m3uSearch" "$SEARCH_STRING" "$HOW_MANY")"
+    VIDEO2="$(get_file_by_type "m3uSearch" "$SEARCH_STRING" "$HOW_MANY")"
+    VIDEO3="$(get_file_by_type "m3uSearch" "$SEARCH_STRING" "$HOW_MANY")"
+    VIDEO4="$(get_file_by_type "m3uSearch" "$SEARCH_STRING" "$HOW_MANY")"
+    echo $VIDEO1
+}
+
+m3u() {
+    VIDEO1="$(get_file_by_type "m3u")"
+    VIDEO2="$(get_file_by_type "m3u")"
+    VIDEO3="$(get_file_by_type "m3u")"
+    VIDEO4="$(get_file_by_type "m3u")"
+}
+
+edl() {
+    TMPFILE4=$(mktemp)
+    TMPFILE5=$(mktemp)
+    SUBJ="$(get_file_by_type "edl")"
+    shuffle_edl "$SUBJ" $HOW_MANY
+    cat $TMPFILE1 > $TMPFILE2
+    VIDEO1="$TMPFILE2"
+    SUBJ="$(get_file_by_type "edl")"
+    shuffle_edl "$SUBJ" $HOW_MANY
+    cat $TMPFILE1 > $TMPFILE3
+    VIDEO2="$TMPFILE3"
+    SUBJ="$(get_file_by_type "edl")"
+    shuffle_edl "$SUBJ" $HOW_MANY
+    cat $TMPFILE1 > $TMPFILE4
+    VIDEO3="$TMPFILE4"
+    SUBJ="$(get_file_by_type "edl")"
+    shuffle_edl "$SUBJ" $HOW_MANY
+    cat $TMPFILE1 > $TMPFILE5
+    VIDEO4="$TMPFILE5"
+}
+
+
+
+case "$SELECT_MODE" in
+    videoOnly)
+        echo "executing video only"
+        videoOnly
+    ;;
+    recent)
+        echo "executing recent only"
+        recent
+    ;;
+    vtt)
+        echo "executing vtt"
+        vtt
+    ;;
+    edlblend)
+        echo "executing edl blend"
+        edlblend
+    ;;
+    edlm3u)
+        echo "executing edl m3u"
+        PLAY_MODE="${PLAY_MODE}_m3u"
+        edlm3u
+    ;;
+    m3uSearch)
+        echo "executing m3uSearch"
+        PLAY_MODE="${PLAY_MODE}_m3u"
+        m3uSearch
+    ;;
+    m3u)
+        echo "executing m3u"
+        PLAY_MODE="${PLAY_MODE}_m3u"
+        m3u
+    ;;
+    edl)
+        echo "executing edl classic"
+        edl
+    ;;
+    *)
+    echo "invalid SELECT_MODE - exiting"
+    exit 1
+    ;;
+esac
+
+
+
+echo "Playing mode $PLAY_MODE"
+
+
+case "$PLAY_MODE" in
         "1")
-        echo "Playing 1"
         play_1 "$VIDEO1" $VOLUME $SCREEN;;
+        "1_m3u")
+        play_1_m3u "$VIDEO1" $VOLUME $SCREEN;;
         "4")
-        echo "Playing 1"
         play_4 "$VIDEO1" $VOLUME $SCREEN;;
+        "4_m3u")
+        play_4_m3u "$VIDEO1" $VOLUME $SCREEN;;
         "6")
-        echo "Playing 1"
         play_4 "$VIDEO1" $VOLUME $SCREEN;;
         "8")
-        echo "Playing 1"
-        play_4 "$VIDEO1" $VOLUME $SCREEN;;
-
+        play_8 "$VIDEO1" $VOLUME $SCREEN;;
         *)
         echo "Invalid play_media code $PLAY_MODE";;
 esac
