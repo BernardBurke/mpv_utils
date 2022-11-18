@@ -107,6 +107,13 @@ else
     SEARCH_STRING=$6
 fi
 
+if [[ $7 = "" ]]; then
+    ADD_SUBS=false
+else
+    ADD_SUBS=true
+    SUBS_SEARCH_STRING="$7"
+fi
+
 IS_PLAYLIST=false
 
 echo "Playing on $SCREEN at $VOLUME with mode $SELECT_MODE and searching for $SEARCH_STRING executing $HOW_MANY times in play mode $PLAY_MODE "
@@ -179,16 +186,16 @@ edlm3u() {
     TMPFILE7=$(mktemp)
     get_file_by_type "edlm3u" "$SEARCH_STRING" "$HOW_MANY"
     cp $TMPFILE3 $TMPFILE4
-    VIDEO1="--playlist=$TMPFILE4 --shuffle"
+    VIDEO1="$TMPFILE4"
     get_file_by_type "edlm3u" "$SEARCH_STRING" "$HOW_MANY"
     cp $TMPFILE3 $TMPFILE5
-    VIDEO2="--playlist=$TMPFILE5 --shuffle"        
+    VIDEO2="$TMPFILE5"        
     get_file_by_type "edlm3u" "$SEARCH_STRING" "$HOW_MANY"
     cp $TMPFILE3 $TMPFILE6
-    VIDEO3="--playlist=$TMPFILE6 --shuffle"
+    VIDEO3="$TMPFILE6"
     get_file_by_type "edlm3u" "$SEARCH_STRING" "$HOW_MANY"
     cp $TMPFILE3 $TMPFILE7
-    VIDEO4="--playlist=$TMPFILE7 --shuffle"
+    VIDEO4="$TMPFILE7"
     IS_PLAYLIST=true  
 }
 
@@ -238,6 +245,9 @@ imago() {
     IS_PLAYLIST=true
 }
 
+rx_processing() {
+        SRT_FILE="$(find $GRLSRC/audio/ -iname '*.srt' | grep -i "$1" | shuf -n 1)"
+}
 
 case "$SELECT_MODE" in
     videoOnly)
@@ -279,6 +289,17 @@ case "$SELECT_MODE" in
         echo "executing imago"
         imago
     ;;
+    rx)
+        echo "executing rx calling m3uSearch  for now"
+        #m3uSearch
+        edlm3u
+        rx_processing "$SUBS_SEARCH_STRING"
+        if [[ ! -f "$SRT_FILE" ]]; then
+            "Cannot file SRT_FILE  from $SEARCH_STRING"
+            exit 1
+        fi
+        PLAY_MODE=${PLAY_MODE}_subs
+        ;;
     *)
     echo "invalid SELECT_MODE - exiting"
     exit 1
@@ -302,6 +323,10 @@ case "$PLAY_MODE" in
         play_1 "$VIDEO1" $VOLUME $SCREEN;;
         "1_m3u")
         play_1_m3u "$VIDEO1" $VOLUME $SCREEN;;
+        "1_subs")
+        echo "in play_1_subs call"
+        play_1_subs "$VIDEO1" "$SRT_FILE" $VOLUME $SCREEN
+        ;;
         "4")
         play_4 "$VIDEO1" $VOLUME $SCREEN;;
         "4_m3u")

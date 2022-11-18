@@ -45,7 +45,7 @@ sed -i 's/\r$//' "$1" # get rid of those pesky carriage returns
 
 while IFS= read -r fname; do
     #nixname=$(wslpath -u "$fname" | tr -d '\r' )
-    nixname=$(wslpath -u "$fname")
+    nixname=$"$fname"
     #echo $nixname
     j=0
     leng=$(ffprobe -v quiet  -of csv=p=0 -show_entries format=duration "$nixname")
@@ -74,14 +74,14 @@ while IFS= read -r fname; do
 done < "$1"
 
 cat $TMPFILE2 | shuf -n $k  >> $TMPFILE1
-echo "# mpv EDL v0" > $WSCR/m3u_chopped1.edl
-cat $TMPFILE1 | shuf -n $k >> $WSCR/m3u_chopped1.edl
-echo "# mpv EDL v0" > $WSCR/m3u_chopped2.edl
-cat $TMPFILE1 | shuf -n $k >> $WSCR/m3u_chopped2.edl
-echo "# mpv EDL v0" > $WSCR/m3u_chopped3.edl
-cat $TMPFILE1 | shuf -n $k >> $WSCR/m3u_chopped3.edl
+echo "# mpv EDL v0" > $USCR/m3u_chopped1.edl
+cat $TMPFILE1 | shuf -n $k >> $USCR/m3u_chopped1.edl
+echo "# mpv EDL v0" > $USCR/m3u_chopped2.edl
+cat $TMPFILE1 | shuf -n $k >> $USCR/m3u_chopped2.edl
+echo "# mpv EDL v0" > $USCR/m3u_chopped3.edl
+cat $TMPFILE1 | shuf -n $k >> $USCR/m3u_chopped3.edl
 
-ls $WSCR/m3u_chopped?.edl -al
+ls $USCR/m3u_chopped?.edl -al
 
 
-echo $(wslpath -w "$TMPFILE1")
+#echo $(wslpath -w "$TMPFILE1")

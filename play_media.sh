@@ -16,6 +16,42 @@ play_1() {
     
 }
 
+play_1_subs() {
+#   pass in just the subtitle filename and derive the audio from it
+
+    if [[ ! -f "$1" ]]; then 
+        echo "$1 does not exist"
+        exit 1
+    fi
+    
+    DIRECTORY=$(dirname "$2")
+
+    tmpfilename1="$DIRECTORY/$(basename "$2" srt)mp3"
+    tmpfilename2="$DIRECTORY/$(basename "$2" srt)m4a"
+    tmpfilename3="$DIRECTORY/$(basename "$2" srt)wav"
+
+    
+    if [[ -f "$tmpfilename1" ]]; then
+        AUDIO_FILENAME="$tmpfilename1"
+    elif [[ -f "$tmpfilename2" ]]; then
+        AUDIO_FILENAME="$tmpfilename2"
+    elif [[ -f "$tmpfilename3" ]]; then
+        AUDIO_FILENAME="$tmpfilename3"
+    else
+        echo "No audio file found for $2"
+        exit 1
+    fi
+
+    echo "using $AUDIO_FILENAME"
+
+
+    nohup mpv  --volume=$3 --screen=$4 --fs-screen=$4  --playlist="$1" --shuffle \
+        --fullscreen --no-border --ontop-level=system --ontop \
+        --sub-files-add="$2" --audio-files-add="$AUDIO_FILENAME"  &
+    
+}
+
+
 play_4() {
     if [[ ! -f "$1" ]]; then 
         echo "$1 does not exist"
@@ -107,7 +143,7 @@ play_6() {
     do
         #nohup 
         sleep $(shuf -i 1-7 -n 1)
-        nohup mpv --image-display-duration=$DISPLAY_TIME --volume=$4 --screen=$5 --playlist="$3" --shuffle --no-border --ontop-level=system --ontop --profile=$geo &
+        nohup mpv --image-display-duration=$DISPLAY_TIME --volume=10 --screen=$5 --playlist="$3" --shuffle --no-border --ontop-level=system --ontop --profile=$geo &
     done
 
 }
