@@ -63,6 +63,7 @@ play_8() {
     DISPLAY_TIME=15
 
     POSITION_ARRAY="topll toplr toprl toprr botll botlr botrl botrr"
+    echo "Don't worry - we're randomising the start times"
     for geo in $POSITION_ARRAY
     do
         #nohup 
@@ -90,9 +91,16 @@ play_6() {
 
     DISPLAY_TIME=15
 
-    nohup mpv --volume=$4 --screen=$5 "$1" --shuffle --no-border --ontop-level=system --ontop --profile=topmid &
-    nohup mpv --volume=$4 --screen=$5 "$2" --shuffle --no-border --ontop-level=system --ontop --profile=botmid &
-
+    if $IS_PLAYLIST
+        then
+            nohup mpv --volume=$4 --screen=$5 --playlist="$1" --shuffle --no-border --ontop-level=system --ontop --profile=topmid &
+            sleep $(shuf -i 1-3 -n 1)
+            nohup mpv --volume=$4 --screen=$5 --playlist="$2" --shuffle --no-border --ontop-level=system --ontop --profile=botmid &
+        else
+            nohup mpv --volume=$4 --screen=$5 "$1" --shuffle --no-border --ontop-level=system --ontop --profile=topmid &
+            sleep $(shuf -i 1-3 -n 1)
+            nohup mpv --volume=$4 --screen=$5 "$2" --shuffle --no-border --ontop-level=system --ontop --profile=botmid &
+    fi
 
     POSITION_ARRAY="topll toprr botll botrr"
     for geo in $POSITION_ARRAY

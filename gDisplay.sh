@@ -107,7 +107,7 @@ else
     SEARCH_STRING=$6
 fi
 
-
+IS_PLAYLIST=false
 
 echo "Playing on $SCREEN at $VOLUME with mode $SELECT_MODE and searching for $SEARCH_STRING executing $HOW_MANY times in play mode $PLAY_MODE "
 
@@ -188,7 +188,8 @@ edlm3u() {
     VIDEO3="--playlist=$TMPFILE6 --shuffle"
     get_file_by_type "edlm3u" "$SEARCH_STRING" "$HOW_MANY"
     cp $TMPFILE3 $TMPFILE7
-    VIDEO4="--playlist=$TMPFILE7 --shuffle"  
+    VIDEO4="--playlist=$TMPFILE7 --shuffle"
+    IS_PLAYLIST=true  
 }
 
 m3uSearch() {
@@ -198,6 +199,7 @@ m3uSearch() {
     VIDEO3="$(get_file_by_type "m3uSearch" "$SEARCH_STRING" "$HOW_MANY")"
     VIDEO4="$(get_file_by_type "m3uSearch" "$SEARCH_STRING" "$HOW_MANY")"
     echo $VIDEO1
+    IS_PLAYLIST=true 
 }
 
 m3u() {
@@ -205,6 +207,7 @@ m3u() {
     VIDEO2="$(get_file_by_type "m3u")"
     VIDEO3="$(get_file_by_type "m3u")"
     VIDEO4="$(get_file_by_type "m3u")"
+    IS_PLAYLIST=true
 }
 
 edl() {
@@ -232,6 +235,7 @@ imago() {
     find /mnt/d/grls/images2/ -iname '*.jpg' -o -iname '*.mp4' -o -iname '*.png' -o -iname '*.gif' | shuf -n 1000 > $TMPFILE1
     VIDEO1=$TMPFILE1
     PLAY_MODE=8
+    IS_PLAYLIST=true
 }
 
 
@@ -282,8 +286,15 @@ case "$SELECT_MODE" in
 esac
 
 
+play_6_stub() {
+        # I might make imago smarter, but for now, just a find in this case
+        find /mnt/d/grls/images2/ -iname '*.jpg' -o -iname '*.mp4' -o -iname '*.png' -o -iname '*.gif' | shuf -n 1000 > $TMPFILE1
+        play_6 "$VIDEO1" "$VIDEO2" $TMPFILE1 $VOLUME $SCREEN
+
+}
 
 echo "Playing mode $PLAY_MODE"
+
 
 
 case "$PLAY_MODE" in
@@ -296,9 +307,9 @@ case "$PLAY_MODE" in
         "4_m3u")
         play_4_m3u "$VIDEO1" $VOLUME $SCREEN;;
         "6")
-        # I might make imago smarter, but for now, just a find in this case
-        find /mnt/d/grls/images2/ -iname '*.jpg' -o -iname '*.mp4' -o -iname '*.png' -o -iname '*.gif' | shuf -n 1000 > $TMPFILE1
-        play_6 "$VIDEO1" "$VIDEO2" $TMPFILE1 $VOLUME $SCREEN;;
+        play_6_stub;;
+        "6_m3u")
+        play_6_stub;;
         "8")
         play_8 "$VIDEO1" $VOLUME $SCREEN;;
         *)
