@@ -296,7 +296,9 @@ case "$PLAY_MODE" in
         "4_m3u")
         play_4_m3u "$VIDEO1" $VOLUME $SCREEN;;
         "6")
-        play_4 "$VIDEO1" $VOLUME $SCREEN;;
+        # I might make imago smarter, but for now, just a find in this case
+        find /mnt/d/grls/images2/ -iname '*.jpg' -o -iname '*.mp4' -o -iname '*.png' -o -iname '*.gif' | shuf -n 1000 > $TMPFILE1
+        play_6 "$VIDEO1" "$VIDEO2" $TMPFILE1 $VOLUME $SCREEN;;
         "8")
         play_8 "$VIDEO1" $VOLUME $SCREEN;;
         *)

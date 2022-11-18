@@ -72,6 +72,38 @@ play_8() {
 
 }
 
+play_6() {
+    if [[ ! -f "$1" ]]; then
+        echo "$1 does not exist"
+        exit 1
+    fi
+    if [[ ! -f "$2" ]]; then
+        echo "$2 does not exist"
+        exit 1
+    fi
+
+    if [[ ! -f "$3" ]]; then
+        echo "$3 does not exist"
+        exit 1
+    fi
+
+
+    DISPLAY_TIME=15
+
+    nohup mpv --volume=$4 --screen=$5 "$1" --shuffle --no-border --ontop-level=system --ontop --profile=topmid &
+    nohup mpv --volume=$4 --screen=$5 "$2" --shuffle --no-border --ontop-level=system --ontop --profile=botmid &
+
+
+    POSITION_ARRAY="topll toprr botll botrr"
+    for geo in $POSITION_ARRAY
+    do
+        #nohup 
+        sleep $(shuf -i 1-7 -n 1)
+        nohup mpv --image-display-duration=$DISPLAY_TIME --volume=$4 --screen=$5 --playlist="$3" --shuffle --no-border --ontop-level=system --ontop --profile=$geo &
+    done
+
+}
+
 # read -p "Press enter to continue with $VIDEO1 $VIDEO2 $VIDEO3 $VIDEO4"
 
 # if [[ ! -f $VIDEO2 ]]; then 
