@@ -120,7 +120,6 @@ echo "Playing on $SCREEN at $VOLUME with mode $SELECT_MODE and searching for $SE
 
    
 
-
 videoOnly() {
     echo "Defaulting to video only"
     VIDEO1="$(get_file_by_type "video")"
@@ -292,7 +291,9 @@ case "$SELECT_MODE" in
     rx)
         echo "executing rx calling m3uSearch  for now"
         #m3uSearch
-        edlm3u
+        #edlm3u
+        edlblend
+        IS_PLAYLIST=false
         rx_processing "$SUBS_SEARCH_STRING"
         if [[ ! -f "$SRT_FILE" ]]; then
             "Cannot file SRT_FILE  from $SEARCH_STRING"
@@ -340,3 +341,6 @@ case "$PLAY_MODE" in
         *)
         echo "Invalid play_media code $PLAY_MODE";;
 esac
+
+echo "storing runtime parameters $(basename "$0" .sh)_$SCREEN.sh"
+echo "$MPVU/$(basename $0)" "$1" "$2" "$3" "$4" "$5" "$6" "$7" >> /mnt/d/batch/$(basename "$0" .sh)_$SCREEN.sh

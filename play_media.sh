@@ -44,11 +44,16 @@ play_1_subs() {
 
     echo "using $AUDIO_FILENAME"
 
-
+if $IS_PLAYLIST; then
     nohup mpv  --volume=$3 --screen=$4 --fs-screen=$4  --playlist="$1" --shuffle \
         --fullscreen --no-border --ontop-level=system --ontop \
         --sub-files-add="$2" --audio-files-add="$AUDIO_FILENAME"  &
-    
+else
+    nohup mpv  --volume=$3 --screen=$4 --fs-screen=$4  "$1" --shuffle \
+        --fullscreen --no-border --ontop-level=system --ontop \
+        --sub-files-add="$2" --audio-files-add="$AUDIO_FILENAME"  &
+
+fi  
 }
 
 
