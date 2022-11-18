@@ -55,6 +55,22 @@ play_1_m3u() {
         --fullscreen --no-border --ontop-level=system --ontop &
 }
 
+play_8() {
+    if [[ ! -f "$1" ]]; then
+        echo "$1 does not exist"
+        exit 1
+    fi
+    DISPLAY_TIME=15
+
+    POSITION_ARRAY="topll toplr toprl toprr botll botlr botrl botrr"
+    for geo in $POSITION_ARRAY
+    do
+        #nohup 
+        sleep $(shuf -i 1-7 -n 1)
+        nohup mpv --image-display-duration=$DISPLAY_TIME --volume=$2 --screen=$3 --playlist="$1" --shuffle --no-border --ontop-level=system --ontop --profile=$geo &
+    done
+
+}
 
 # read -p "Press enter to continue with $VIDEO1 $VIDEO2 $VIDEO3 $VIDEO4"
 

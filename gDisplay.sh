@@ -228,6 +228,11 @@ edl() {
     VIDEO4="$TMPFILE5"
 }
 
+imago() {
+    find /mnt/d/grls/images2/ -iname '*.jpg' -o -iname '*.mp4' -o -iname '*.png' -o -iname '*.gif' | shuf -n 1000 > $TMPFILE1
+    VIDEO1=$TMPFILE1
+    PLAY_MODE=8
+}
 
 
 case "$SELECT_MODE" in
@@ -265,6 +270,10 @@ case "$SELECT_MODE" in
     edl)
         echo "executing edl classic"
         edl
+    ;;
+    imago)
+        echo "executing imago"
+        imago
     ;;
     *)
     echo "invalid SELECT_MODE - exiting"
