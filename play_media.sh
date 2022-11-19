@@ -78,13 +78,13 @@ play_4_m3u() {
         exit 1
     fi
     nohup mpv  --volume=$2 --screen=$3 --fs-screen=$3 --playlist="$VIDEO1" --shuffle \
-        --profile=topleft  --no-border --ontop-level=system --ontop &
+       --script=$MPVU/dbx.lua --profile=topleft  --no-border --ontop-level=system --ontop &
     nohup mpv  --volume=$2 --screen=$3 --fs-screen=$3 --playlist="$VIDEO2" --shuffle \
-        --profile=botleft  --no-border --ontop-level=system --ontop &
+       --script=$MPVU/dbx.lua --profile=botleft  --no-border --ontop-level=system --ontop &
     nohup mpv  --volume=$2 --screen=$3 --fs-screen=$3 --playlist="$VIDEO3" --shuffle \
-        --profile=topright --no-border --ontop-level=system --ontop &
+       --script=$MPVU/dbx.lua --profile=topright --no-border --ontop-level=system --ontop &
     nohup mpv  --volume=$2 --screen=$3 --fs-screen=$3 --playlist="$VIDEO4" --shuffle \
-        --profile=botright --no-border --ontop-level=system --ontop &
+       --script=$MPVU/dbx.lua --profile=botright --no-border --ontop-level=system --ontop &
 }
 
 play_1_m3u() {
@@ -93,7 +93,7 @@ play_1_m3u() {
         exit 1
     fi
     nohup  mpv  --volume=$2 --screen=$3 --fs-screen=$3 --playlist="$VIDEO1" --shuffle \
-        --fullscreen --no-border --ontop-level=system --ontop &
+       --script=$MPVU/dbx.lua --fullscreen --no-border --ontop-level=system --ontop &
 }
 
 play_8() {
