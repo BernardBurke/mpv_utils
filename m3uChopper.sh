@@ -7,6 +7,10 @@ if [[ ! -f "$1" ]]; then
     exit 1
 fi
 
+FSTUB="$(basename "$1" .m3u)"
+
+echo $FSTUB
+
 if [[ "$2" = "" ]]; then
         SLICE=10
 else
@@ -73,15 +77,19 @@ while IFS= read -r fname; do
 
 done < "$1"
 
-cat $TMPFILE2 | shuf -n $k  >> $TMPFILE1
-echo "# mpv EDL v0" > $USCR/m3u_chopped1.edl
-cat $TMPFILE1 | shuf -n $k >> $USCR/m3u_chopped1.edl
-echo "# mpv EDL v0" > $USCR/m3u_chopped2.edl
-cat $TMPFILE1 | shuf -n $k >> $USCR/m3u_chopped2.edl
-echo "# mpv EDL v0" > $USCR/m3u_chopped3.edl
-cat $TMPFILE1 | shuf -n $k >> $USCR/m3u_chopped3.edl
+OUT1="${HANDUNI}/${FSTUB}_chopped1.edl"
+OUT2="${HANDUNI}/${FSTUB}_chopped2.edl"
+OUT3="${HANDUNI}/${FSTUB}_chopped3.edl"
 
-ls $USCR/m3u_chopped?.edl -al
+cat $TMPFILE2 | shuf -n $k  >> $TMPFILE1
+echo "# mpv EDL v0" > "$OUT1"
+cat $TMPFILE1 | shuf -n $k >> "$OUT1"
+echo "# mpv EDL v0" > "$OUT2"
+cat $TMPFILE1 | shuf -n $k >> "$OUT2"
+echo "# mpv EDL v0" > "$OUT3"
+cat $TMPFILE1 | shuf -n $k >> "$OUT3"
+
+ls "$OUT1"
 
 
 #echo $(wslpath -w "$TMPFILE1")
