@@ -8,7 +8,7 @@ get_file_by_type() {
         "edl")
         RETFilename="$(find $EDLSRC/ -iname '*.edl' | grep unix | shuf -n 1)";;
         "video")
-        RETFilename="$(find $GRLSRC/ -iname '*.mp4' -o -iname '*.avi' -o -iname '*.mkv' -o -iname '*.webm' | shuf -n 1)";;
+        RETFilename="$(find $GRLSRC/ -iname '*.mp4' -o -iname '*.avi' -o -iname '*.mkv' -o -iname '*.webm' | grep -i "$2"| shuf -n 1)";;
         "recent")
         if [[ $2 = "" ]]; then
             AGE=7
@@ -122,13 +122,13 @@ echo "Playing on $SCREEN at $VOLUME with mode $SELECT_MODE and searching for $SE
 
 videoOnly() {
     echo "Defaulting to video only"
-    VIDEO1="$(get_file_by_type "video")"
+    VIDEO1="$(get_file_by_type "video" "$SEARCH_STRING")"
     echo "Playing $VIDEO1"
-    VIDEO2="$(get_file_by_type "video")"
+    VIDEO2="$(get_file_by_type "video" "$SEARCH_STRING")"
     echo "Playing $VIDEO2"
-    VIDEO3="$(get_file_by_type "video")"
+    VIDEO3="$(get_file_by_type "video" "$SEARCH_STRING")"
     echo "Playing $VIDEO3"
-    VIDEO4="$(get_file_by_type "video")"
+    VIDEO4="$(get_file_by_type "video" "$SEARCH_STRING")"
     echo "Playing $VIDEO4"
 }
 
