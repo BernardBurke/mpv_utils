@@ -98,10 +98,13 @@ mp.set_property("image-display-duration",message_display_time)
 --mp.set_property("fs-screen",0)
 
 print("Good morning")
+
  
 function file_type(fname)
     --print("In file_type "..mp.get_property(""))
+    --local fpath=mp.get_property("path")
     return fname:match "[^.]+$"
+
 end
 
 function Split(s, delimiter)
@@ -110,6 +113,42 @@ function Split(s, delimiter)
         table.insert(result, match);
     end
     return result;
+end
+
+function isTemp()
+    local pathstr=mp.get_property_native("path")
+    if string.find(pathstr,"/tmp/tmp.") then
+        return true
+    else
+        return false
+    end
+end
+
+function isEDL()
+    local pathstr=mp.get_property_native("path")
+    local fhandle = io.open(pathstr,"r")
+    local firstLine = fhandle:read()
+    fhandle:close()
+    if string.find("# mpv EDL v0",firstLine) then
+        return true
+    else
+        return false
+    end
+end
+
+function file_type(fname)
+    --print("In file_type "..mp.get_property(""))
+    if isTemp() then
+        if isEDL(fname) then
+            return "edl"
+        else
+            return "m3u"
+        end
+        --print("I am a temporary file")
+
+    end
+    return fname:match "[^.]+$"
+
 end
 
 function get_file_class(filename)

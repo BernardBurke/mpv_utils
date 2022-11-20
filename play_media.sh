@@ -4,7 +4,13 @@
 #source $SRC/common_inc.sh
 #source $MPVU/get_media.sh
 
-
+random_subtitles() {
+    if $RANDOM_SUBTITLES; then
+        echo "$(find /mnt/d/grls/audio/ -iname '*.txt' | shuf -n 1)"
+    else
+        echo ""
+    fi
+}
 
 play_1() {
     if [[ ! -f "$1" ]]; then 
@@ -62,14 +68,18 @@ play_4() {
         echo "$1 does not exist"
         exit 1
     fi
+    IMGSUBTITLES="$(random_subtitles)"
     nohup mpv  --volume=$2 --screen=$3 --fs-screen=$3  "$VIDEO1" \
-       --script=$MPVU/dbx.lua --profile=topleft  --no-border --ontop-level=system --ontop &
+       --profile=topleft  --no-border --ontop-level=system --ontop &
+    IMGSUBTITLES="$(random_subtitles)"
     nohup mpv  --volume=$2 --screen=$3 --fs-screen=$3  "$VIDEO2" \
-       --script=$MPVU/dbx.lua --profile=botleft  --no-border --ontop-level=system --ontop &
+       --profile=botleft  --no-border --ontop-level=system --ontop &
+    IMGSUBTITLES="$(random_subtitles)"
     nohup mpv  --volume=$2 --screen=$3 --fs-screen=$3  "$VIDEO3" \
-       --script=$MPVU/dbx.lua  --profile=topright --no-border --ontop-level=system --ontop &
+       --profile=topright --no-border --ontop-level=system --ontop &
+    IMGSUBTITLES="$(random_subtitles)"
     nohup mpv  --volume=$2 --screen=$3 --fs-screen=$3  "$VIDEO4" \
-       --script=$MPVU/dbx.lua  --profile=botright --no-border --ontop-level=system --ontop &
+       --profile=botright --no-border --ontop-level=system --ontop &
 }
 
 play_4_m3u() {
@@ -77,14 +87,18 @@ play_4_m3u() {
         echo "$1 does not exist"
         exit 1
     fi
+    IMGSUBTITLES="$(random_subtitles)"
     nohup mpv  --volume=$2 --screen=$3 --fs-screen=$3 --playlist="$VIDEO1" --shuffle \
-       --script=$MPVU/dbx.lua --profile=topleft  --no-border --ontop-level=system --ontop &
+       --profile=topleft  --no-border --ontop-level=system --ontop &
+    IMGSUBTITLES="$(random_subtitles)"
     nohup mpv  --volume=$2 --screen=$3 --fs-screen=$3 --playlist="$VIDEO2" --shuffle \
-       --script=$MPVU/dbx.lua --profile=botleft  --no-border --ontop-level=system --ontop &
+       --profile=botleft  --no-border --ontop-level=system --ontop &
+    IMGSUBTITLES="$(random_subtitles)"
     nohup mpv  --volume=$2 --screen=$3 --fs-screen=$3 --playlist="$VIDEO3" --shuffle \
-       --script=$MPVU/dbx.lua --profile=topright --no-border --ontop-level=system --ontop &
+       --profile=topright --no-border --ontop-level=system --ontop &
+    IMGSUBTITLES="$(random_subtitles)"
     nohup mpv  --volume=$2 --screen=$3 --fs-screen=$3 --playlist="$VIDEO4" --shuffle \
-       --script=$MPVU/dbx.lua --profile=botright --no-border --ontop-level=system --ontop &
+       --profile=botright --no-border --ontop-level=system --ontop &
 }
 
 play_1_m3u() {

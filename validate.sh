@@ -32,8 +32,16 @@ validate_edl() {
                 ANY_PROBLEMS=true
                 message "$line does not exist"
                 echo "# $line" >> "$TMP_EDL_FILE"
+            elif [[ "$start" =="" ]]; then
+                ANY_PROBLEMS=true
+                message "invalid start time"
+                echo "# $line" >> "$TMP_EDL_FILE"
+            elif [[ "$end" =="" ]]; then
+                ANY_PROBLEMS=true
+                message "invalid start time"
+                echo "# $line" >> "$TMP_EDL_FILE"
             else
-                echo "$line" >> "$TMP_EDL_FILE"
+                echo "$line,$start,$end" >> "$TMP_EDL_FILE"
             fi 
         else
             echo "$line" >> "$TMP_EDL_FILE"

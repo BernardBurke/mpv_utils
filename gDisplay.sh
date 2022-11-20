@@ -3,6 +3,8 @@
 #source $SRC/common_inc.sh
 source $SRC/common_inc.sh
 
+SCRATCH_DIR="$(mktemp -d)"
+
 get_file_by_type() {
     case "$1" in
         "edl")
