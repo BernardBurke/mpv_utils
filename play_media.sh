@@ -63,13 +63,13 @@ play_4() {
         exit 1
     fi
     nohup mpv  --volume=$2 --screen=$3 --fs-screen=$3  "$VIDEO1" \
-        --profile=topleft  --no-border --ontop-level=system --ontop &
+       --script=$MPVU/dbx.lua --profile=topleft  --no-border --ontop-level=system --ontop &
     nohup mpv  --volume=$2 --screen=$3 --fs-screen=$3  "$VIDEO2" \
-        --profile=botleft  --no-border --ontop-level=system --ontop &
+       --script=$MPVU/dbx.lua --profile=botleft  --no-border --ontop-level=system --ontop &
     nohup mpv  --volume=$2 --screen=$3 --fs-screen=$3  "$VIDEO3" \
-        --profile=topright --no-border --ontop-level=system --ontop &
+       --script=$MPVU/dbx.lua  --profile=topright --no-border --ontop-level=system --ontop &
     nohup mpv  --volume=$2 --screen=$3 --fs-screen=$3  "$VIDEO4" \
-        --profile=botright --no-border --ontop-level=system --ontop &
+       --script=$MPVU/dbx.lua  --profile=botright --no-border --ontop-level=system --ontop &
 }
 
 play_4_m3u() {
