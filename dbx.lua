@@ -501,9 +501,9 @@ local function snap_SNITCH()
         local CALL_OS = "mpv --screen=2 --fs-screen=2 --volume=10 --start="..start..' "'..file_name_only..'"'
         print(CALL_OS)
         print(start_second)
-        strCmd = 'start "" '..CALL_OS
+        --strCmd = 'start "" '..CALL_OS
         mp.command("keypress SPACE")
-        os.execute(strCmd)
+        os.execute(CALL_OS)
             -- snap_handle.close()
     end
 
