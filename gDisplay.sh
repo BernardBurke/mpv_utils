@@ -2,6 +2,7 @@
 # use nohup mpv  config profiles to cycle imaages
 #source $SRC/common_inc.sh
 source $SRC/common_inc.sh
+source $MPVU/util_inc.sh 
 
 SCRATCH_DIR="$(mktemp -d)"
 
@@ -29,21 +30,6 @@ get_file_by_type() {
         "m3u")
         find $GRLSRC/ -iname '*.mp4' -o -iname '*.avi' -o -iname '*.mkv' -o -iname '*.webm' | shuf -n 10 > $TMPFILE3
         RETFilename=$TMPFILE3;;
-        "m3uSearch")
-        find $GRLSRC/ -iname '*.mp4' -o -iname '*.avi' -o -iname '*.mkv' -o -iname '*.webm' > $TMPFILE1
-        cat $TMPFILE1 | grep -i "$2" | shuf -n $3 > $TMPFILE3
-        RETFilename=$TMPFILE3;;
-        "edlm3u")
-        find $EDLSRC/ -iname '*.edl' | grep unix | grep -i "$2" | shuf -n $3 > $TMPFILE3
-        ;;
-        "edlblend")
-        echo "edlblend searching for $2 and shuffling for $3..."
-        find $EDLSRC/ -iname '*.edl' | grep unix | grep -i "$2" > $TMPFILE1
-        while read -r edlname; do
-            cat "$edlname" | grep -v "#" >> $TMPFILE2
-        done < $TMPFILE1
-        shuffle_edl $TMPFILE2 $3
-        ;;
         *) echo "Invalid filetype $1"
         exit 1;;
     esac
@@ -65,7 +51,7 @@ shuffle_edl() {
     else
         return 1
     fi 
-    
+    message "shuffle_edl wrote $TMPFILE1"
 }
 
 source $MPVU/play_media.sh
@@ -161,52 +147,74 @@ vtt() {
     VIDEO4="$DIRNAME/$(basename $VIDEO4 vtt)mp4"
 }
 
+blank4_videos() {
+    VIDEO1=$(mktemp)
+    VIDEO2=$(mktemp)
+    VIDEO3=$(mktemp)
+    VIDEO4=$(mktemp)
+}
+
+
+make4_videos() {
+    message "Creating 4 VIDEO files"
+    blank4_videos
+    message "shuffling $HOW_MANY records for VIDEO1"
+    shuffle_edl $1 $HOW_MANY
+    cp -v $TMPFILE1 $VIDEO1
+    message "shuffling $HOW_MANY records for VIDEO2"
+    shuffle_edl $1 $HOW_MANY
+    cp -v $TMPFILE1 $VIDEO2
+    message "shuffling $HOW_MANY records for VIDEO3"
+    shuffle_edl $1 $HOW_MANY
+    cp -v $TMPFILE1 $VIDEO3
+    message "shuffling $HOW_MANY records for VIDEO4"
+    shuffle_edl $1 $HOW_MANY
+    cp -v $TMPFILE1 $VIDEO4
+
+}
+
 edlblend() {
-    TMPFILE4=$(mktemp)
-    TMPFILE5=$(mktemp)
-    TMPFILE6=$(mktemp)
-    TMPFILE7=$(mktemp)
-    get_file_by_type "edlblend" "$SEARCH_STRING" "$HOW_MANY"
-    cp -v $TMPFILE1 $TMPFILE4
-    VIDEO1="$TMPFILE4"
-    get_file_by_type "edlblend" "$SEARCH_STRING" "$HOW_MANY"
-    cp -v $TMPFILE1 $TMPFILE5
-    VIDEO2="$TMPFILE5"        
-    get_file_by_type "edlblend" "$SEARCH_STRING" "$HOW_MANY"
-    cp -v $TMPFILE1 $TMPFILE6
-    VIDEO3="$TMPFILE6"
-    get_file_by_type "edlblend" "$SEARCH_STRING" "$HOW_MANY"
-    cp -v $TMPFILE1 $TMPFILE7
-    VIDEO4="$TMPFILE7"   
+    message "edlblend searching for $SEARCH_STRING and shuffling for $HOW_MANY..."
+    find $EDLSRC/ -iname '*.edl' | grep unix | grep -i "$2" > $TMPFILE1
+    message "edlblend wrote to $TMPFILE1"
+    message "edlblend reading $(wc -l $TMPFILE1) records from $TMPFILE1"
+    while read -r edlname; do
+        cat "$edlname" | grep -v "#" >> $TMPFILE2
+    done < $TMPFILE1
+    make4_videos $TMPFILE2
 }
 
 edlm3u() {
-    TMPFILE4=$(mktemp)
-    TMPFILE5=$(mktemp)
-    TMPFILE6=$(mktemp)
-    TMPFILE7=$(mktemp)
-    get_file_by_type "edlm3u" "$SEARCH_STRING" "$HOW_MANY"
-    cp $TMPFILE3 $TMPFILE4
-    VIDEO1="$TMPFILE4"
-    get_file_by_type "edlm3u" "$SEARCH_STRING" "$HOW_MANY"
-    cp $TMPFILE3 $TMPFILE5
-    VIDEO2="$TMPFILE5"        
-    get_file_by_type "edlm3u" "$SEARCH_STRING" "$HOW_MANY"
-    cp $TMPFILE3 $TMPFILE6
-    VIDEO3="$TMPFILE6"
-    get_file_by_type "edlm3u" "$SEARCH_STRING" "$HOW_MANY"
-    cp $TMPFILE3 $TMPFILE7
-    VIDEO4="$TMPFILE7"
+    message "edlm3u is probably defunct - exiting..."
+    exit 1
+    message  " edlm3u searching for $SEARCH_STRING and shuffling for $HOW_MANY..."
+    find $EDLSRC/ -iname '*.edl' | grep unix | grep -i "$2" | shuf -n $3 > $TMPFILE3
+    make4_videos $TMPFILE3
     IS_PLAYLIST=true  
 }
 
 m3uSearch() {
-    echo "Finding some $SEARCH_STRING"
-    VIDEO1="$(get_file_by_type "m3uSearch" "$SEARCH_STRING" "$HOW_MANY")"
-    VIDEO2="$(get_file_by_type "m3uSearch" "$SEARCH_STRING" "$HOW_MANY")"
-    VIDEO3="$(get_file_by_type "m3uSearch" "$SEARCH_STRING" "$HOW_MANY")"
-    VIDEO4="$(get_file_by_type "m3uSearch" "$SEARCH_STRING" "$HOW_MANY")"
-    echo $VIDEO1
+    message "m3uSearch is looking for $SEARCH_STRING and shuffling for $HOW_MANY"
+    find $GRLSRC/ -iname '*.mp4' -o -iname '*.avi' -o -iname '*.mkv' -o -iname '*.webm' > $TMPFILE1
+    records=$(wc -l $TMPFILE1)
+    message "records found = $records"
+    blank4_videos
+    cat $TMPFILE1 | grep -i "$SEARCH_STRING" | shuf -n $HOW_MANY > $VIDEO1
+    cat $TMPFILE1 | grep -i "$SEARCH_STRING" | shuf -n $HOW_MANY > $VIDEO2
+    cat $TMPFILE1 | grep -i "$SEARCH_STRING" | shuf -n $HOW_MANY > $VIDEO3
+    cat $TMPFILE1 | grep -i "$SEARCH_STRING" | shuf -n $HOW_MANY > $VIDEO4
+    records=$(wc -l $VIDEO1)
+    message "records found = $records"
+    # todo - integer comparison
+    # if [[ $records -eq 0 ]]; then
+    #     message "No video filenames found with $SEARCH_STRING"
+    #     exit 1
+    # fi 
+    # VIDEO1="$(get_file_by_type "m3uSearch" "$SEARCH_STRING" "$HOW_MANY")"
+    # VIDEO2="$(get_file_by_type "m3uSearch" "$SEARCH_STRING" "$HOW_MANY")"
+    # VIDEO3="$(get_file_by_type "m3uSearch" "$SEARCH_STRING" "$HOW_MANY")"
+    # VIDEO4="$(get_file_by_type "m3uSearch" "$SEARCH_STRING" "$HOW_MANY")"
+    # echo $VIDEO1
     IS_PLAYLIST=true 
 }
 
