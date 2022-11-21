@@ -240,7 +240,7 @@ edl() {
 }
 
 imago() {
-    find /mnt/d/grls/images2/ -iname '*.jpg' -o -iname '*.mp4' -o -iname '*.png' -o -iname '*.gif' | shuf -n 1000 > $TMPFILE1
+    find /mnt/d/grls/images2/newmaisey -iname '*.jpg' -o -iname '*.mp4' -o -iname '*.png' -o -iname '*.gif' | shuf -n 1000 > $TMPFILE1
     VIDEO1=$TMPFILE1
     PLAY_MODE=8
     IS_PLAYLIST=true
@@ -312,7 +312,9 @@ esac
 
 play_6_stub() {
         # I might make imago smarter, but for now, just a find in this case
-        find /mnt/d/grls/images2/ -iname '*.jpg' -o -iname '*.mp4' -o -iname '*.png' -o -iname '*.gif' | shuf -n 1000 > $TMPFILE1
+        #find /mnt/d/grls/images2/ -iname '*.jpg' -o -iname '*.mp4' -o -iname '*.png' -o -iname '*.gif' | shuf -n 1000 > $TMPFILE1
+        find /mnt/d/grls/images2/newmaisey -iname '*.jpg' -o -iname '*.mp4' -o -iname '*.png' -o -iname '*.gif' | shuf -n 1000 > $TMPFILE1
+        #imago
         play_6 "$VIDEO1" "$VIDEO2" $TMPFILE1 $VOLUME $SCREEN
 
 }
