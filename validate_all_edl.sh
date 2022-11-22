@@ -1,15 +1,26 @@
-# # export TMP_EDL_DIR=$(mktemp -d)
-# # for i in $USCR/*.edl; do /home/ben/mpv_utils/validate.sh "$i"; done
+#!/bin/bash
+# wrapper for validating all EDLs
+source $MPVU/util_inc.sh
+
+ls /tmp/*.edl
+# read -p "the above EDL files where found in /tmp/*.edl"
+# echo "Validating $USCR"
+# export TMP_EDL_DIR=$(mktemp -d)
+# for i in $USCR/*.edl; do validate_edl "$i"; done
+# echo "These edl files were found after $USCR"
+# ls /tmp/*.edl
 # read -p "Press Return to continue with $HANDUNI"
 # export TMP_EDL_DIR=$(mktemp -d)
-# for i in $HANDUNI/*.edl; do /home/ben/mpv_utils/validate.sh "$i"; done
+# for i in $HANDUNI/*.edl; do validate_edl "$i"; done
+# ls /tmp/*.edl
 # read -p "Press Return to continue with $KEYCUTUNI"
 # export TMP_EDL_DIR=$(mktemp -d)
-# for i in $KEYCUTUNI/*.edl; do /home/ben/mpv_utils/validate.sh "$i"; done
-read -p "Press Return to continue with $RIFU"
-export TMP_EDL_DIR=$(mktemp -d)
-for i in $RIFU/*.edl; do /home/ben/mpv_utils/validate.sh "$i"; done
-# read -p "Press Return to continue with $UNIMOVIE"
+# for i in $KEYCUTUNI/*.edl; do validate_edl "$i"; done
+# ls /tmp/*.edl
+# read -p "Press Return to continue with $RIFU"
 # export TMP_EDL_DIR=$(mktemp -d)
-# for i in $UNIMOVIE/*.edl; do /home/ben/mpv_utils/validate.sh "$i"; done
+# for i in $RIFU/*.edl; do validate_edl "$i"; done
+read -p "Press Return to continue with $UNIMOVIE"
+export TMP_EDL_DIR=$(mktemp -d)
+for i in $UNIMOVIE/*.edl; do validate_edl "$i"; done
 
