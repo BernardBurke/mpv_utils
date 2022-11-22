@@ -12,19 +12,10 @@ get_file_by_type() {
         RETFilename="$(find $EDLSRC/ -iname '*.edl' | grep unix | shuf -n 1)";;
         "video")
         RETFilename="$(find $GRLSRC/ -iname '*.mp4' -o -iname '*.avi' -o -iname '*.mkv' -o -iname '*.webm' | grep -i "$2"| shuf -n 1)";;
-        "recent")
-        if [[ $2 = "" ]]; then
-            AGE=7
-        else
-            AGE=$2
-        fi
-        RETFilename="$(find $GRLSRC/ \( -iname '*.mp4' -o -iname '*.avi' -o -iname '*.mkv' -o -iname '*.webm' \) -mtime -$AGE | shuf -n 1)";;
         "audio")
         RETFilename="$(find $GRLSRC/audio -iname '*.mp3' -o -iname '*.m4a' -o -iname '*.wav' |  shuf -n 1)";;
         "srt")
         RETFilename="$(find $GRLSRC/ -iname '*.srt' | shuf -n 1)";;
-        "vtt")
-        RETFilename="$(find $GRLSRC/ -iname '*.vtt' | shuf -n 1)";;
         "subtitle")
         RETFilename="$(find $GRLSRC/ -iname '*.vtt' -o -iname '*.srt' |  shuf -n 1)";;
         "m3u")
@@ -106,6 +97,12 @@ IS_PLAYLIST=false
 
 echo "Playing on $SCREEN at $VOLUME with mode $SELECT_MODE and searching for $SEARCH_STRING executing $HOW_MANY times in play mode $PLAY_MODE "
 
+blank4_videos() {
+    VIDEO1=$(mktemp)
+    VIDEO2=$(mktemp)
+    VIDEO3=$(mktemp)
+    VIDEO4=$(mktemp)
+}
    
 
 videoOnly() {
@@ -122,37 +119,53 @@ videoOnly() {
 
 
 recent() {
-    VIDEO1="$(get_file_by_type "recent" $FILE_AGE)"
-    echo "Playing $VIDEO1"
-    VIDEO2="$(get_file_by_type "recent" $FILE_AGE)"
-    echo "Playing $VIDEO2"
-    VIDEO3="$(get_file_by_type "recent" $FILE_AGE)"
-    echo "Playing $VIDEO3"
-    VIDEO4="$(get_file_by_type "recent" $FILE_AGE)"
-    echo "Playing $VIDEO4"
+    if [[ $1 = "" ]]; then
+        AGE=7
+    else
+        AGE=$HOW_MANY
+    fi
+    message "Creating playlists for $AGE day old files" 
+    blank4_videos
+
+    find $GRLSRC/ \( -iname '*.mp4' -o -iname '*.avi' -o -iname '*.mkv' -o -iname '*.webm' \) -mtime -$AGE | shuf -n 100 > $VIDEO1
+    find $GRLSRC/ \( -iname '*.mp4' -o -iname '*.avi' -o -iname '*.mkv' -o -iname '*.webm' \) -mtime -$AGE | shuf -n 100 > $VIDEO2
+    find $GRLSRC/ \( -iname '*.mp4' -o -iname '*.avi' -o -iname '*.mkv' -o -iname '*.webm' \) -mtime -$AGE | shuf -n 100 > $VIDEO3
+    find $GRLSRC/ \( -iname '*.mp4' -o -iname '*.avi' -o -iname '*.mkv' -o -iname '*.webm' \) -mtime -$AGE | shuf -n 100 > $VIDEO4
+
+    message "Going to play $VIDEO1...$VIDEO2...$VIDEO3...$VIDEO4"
+
+    IS_PLAYLIST=true 
 }
 
 vtt() {
-    VIDEO1="$(get_file_by_type "vtt")"
-    DIRNAME="$(dirname $VIDEO1)"
-    VIDEO1="$DIRNAME/$(basename $VIDEO1 vtt)mp4"
-    VIDEO2="$(get_file_by_type "vtt")"
-    DIRNAME="$(dirname $VIDEO2)"
-    VIDEO2="$DIRNAME/$(basename $VIDEO2 vtt)mp4"
-    VIDEO3="$(get_file_by_type "vtt")"
-    DIRNAME="$(dirname $VIDEO3)"
-    VIDEO3="$DIRNAME/$(basename $VIDEO3 vtt)mp4"
-    VIDEO4="$(get_file_by_type "vtt")"
-    DIRNAME="$(dirname $VIDEO4)"
-    VIDEO4="$DIRNAME/$(basename $VIDEO4 vtt)mp4"
+    blank4_videos
+    
+    find $GRLSRC/ -iname '*.vtt' | shuf -n $HOW_MANY > $VIDEO1
+    find $GRLSRC/ -iname '*.vtt' | shuf -n $HOW_MANY > $VIDEO2
+    find $GRLSRC/ -iname '*.vtt' | shuf -n $HOW_MANY > $VIDEO3
+    find $GRLSRC/ -iname '*.vtt' | shuf -n $HOW_MANY > $VIDEO4
+
+    sed -i "s/.vtt/.mp4/g" $VIDEO1 
+    sed -i "s/.vtt/.mp4/g" $VIDEO2
+    sed -i "s/.vtt/.mp4/g" $VIDEO3 
+    sed -i "s/.vtt/.mp4/g" $VIDEO4
+
+    RANDOM_SUBTITLES=false 
+
+    # VIDEO1="$DIRNAME/$(basename $VIDEO1 vtt)mp4"
+    # DIRNAME="$(dirname $VIDEO2)"
+    # VIDEO2="$DIRNAME/$(basename $VIDEO2 vtt)mp4"
+    # VIDEO3="$(get_file_by_type "vtt")"
+    # DIRNAME="$(dirname $VIDEO3)"
+    # VIDEO3="$DIRNAME/$(basename $VIDEO3 vtt)mp4"
+    # VIDEO4="$(get_file_by_type "vtt")"
+    # DIRNAME="$(dirname $VIDEO4)"
+    # VIDEO4="$DIRNAME/$(basename $VIDEO4 vtt)mp4"
+
+    IS_PLAYLIST=true
+
 }
 
-blank4_videos() {
-    VIDEO1=$(mktemp)
-    VIDEO2=$(mktemp)
-    VIDEO3=$(mktemp)
-    VIDEO4=$(mktemp)
-}
 
 
 make4_videos() {
@@ -219,6 +232,8 @@ m3uSearch() {
 }
 
 m3u() {
+    message "m3u is probably defunct - exiting..."
+    exit 1
     VIDEO1="$(get_file_by_type "m3u")"
     VIDEO2="$(get_file_by_type "m3u")"
     VIDEO3="$(get_file_by_type "m3u")"
@@ -227,6 +242,8 @@ m3u() {
 }
 
 edl() {
+    message "edlm3u is probably defunct - exiting..."
+    exit 1
     TMPFILE4=$(mktemp)
     TMPFILE5=$(mktemp)
     SUBJ="$(get_file_by_type "edl")"
@@ -267,10 +284,12 @@ case "$SELECT_MODE" in
     ;;
     recent)
         echo "executing recent only"
+        PLAY_MODE="${PLAY_MODE}_m3u"
         recent
     ;;
     vtt)
         echo "executing vtt"
+        PLAY_MODE="${PLAY_MODE}_m3u"
         vtt
     ;;
     edlblend)
@@ -324,6 +343,8 @@ play_6_stub() {
         # I might make imago smarter, but for now, just a find in this case
         #find /mnt/d/grls/images2/ -iname '*.jpg' -o -iname '*.mp4' -o -iname '*.png' -o -iname '*.gif' | shuf -n 1000 > $TMPFILE1
         find /mnt/d/grls/images2/newmaisey -iname '*.jpg' -o -iname '*.mp4' -o -iname '*.png' -o -iname '*.gif' | shuf -n 1000 > $TMPFILE1
+        find /mnt/d/grls/images2/slices -iname '*.jpg' -o -iname '*.mp4' -o -iname '*.png' -o -iname '*.gif' | shuf -n 1000 >> $TMPFILE1
+        find /mnt/d/grls/images2/ten9a -iname '*.jpg' -o -iname '*.mp4' -o -iname '*.png' -o -iname '*.gif' | shuf -n 1000 >> $TMPFILE1
         #imago
         play_6 "$VIDEO1" "$VIDEO2" $TMPFILE1 $VOLUME $SCREEN
 
