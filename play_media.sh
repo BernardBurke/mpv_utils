@@ -115,7 +115,7 @@ play_8() {
         echo "$1 does not exist"
         exit 1
     fi
-    DISPLAY_TIME=15
+    DISPLAY_TIME=5
 
     POSITION_ARRAY="topll toplr toprl toprr botll botlr botrl botrr"
     echo "Don't worry - we're randomising the start times"

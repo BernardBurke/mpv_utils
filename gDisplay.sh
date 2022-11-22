@@ -206,7 +206,7 @@ m3uSearch() {
     records=$(wc -l $VIDEO1)
     message "records found = $records"
     # todo - integer comparison
-    # if [[ $records -eq 0 ]]; then
+    # if [[ $records -lt 1 ]]; then
     #     message "No video filenames found with $SEARCH_STRING"
     #     exit 1
     # fi 
@@ -249,6 +249,8 @@ edl() {
 
 imago() {
     find /mnt/d/grls/images2/newmaisey -iname '*.jpg' -o -iname '*.mp4' -o -iname '*.png' -o -iname '*.gif' | shuf -n 1000 > $TMPFILE1
+    find /mnt/d/grls/images2/slices -iname '*.jpg' -o -iname '*.mp4' -o -iname '*.png' -o -iname '*.gif' | shuf -n 1000 >> $TMPFILE1
+    find /mnt/d/grls/images2/ten9a -iname '*.jpg' -o -iname '*.mp4' -o -iname '*.png' -o -iname '*.gif' | shuf -n 1000 >> $TMPFILE1
     VIDEO1=$TMPFILE1
     PLAY_MODE=8
     IS_PLAYLIST=true
