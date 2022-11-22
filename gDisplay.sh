@@ -188,7 +188,7 @@ make4_videos() {
 
 edlblend() {
     message "edlblend searching for $SEARCH_STRING and shuffling for $HOW_MANY..."
-    find $EDLSRC/ -iname '*.edl' | grep unix | grep -i "$2" > $TMPFILE1
+    find $EDLSRC/ -iname '*.edl' | grep unix | grep -v movies| grep -i "$2" > $TMPFILE1
     message "edlblend wrote to $TMPFILE1"
     message "edlblend reading $(wc -l $TMPFILE1) records from $TMPFILE1"
     while read -r edlname; do

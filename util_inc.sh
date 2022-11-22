@@ -16,6 +16,8 @@ validate_edl() {
     EDL_FILE="$1"
     ANY_PROBLEMS=false
     EDL_FILE_ONLY="$(basename "$EDL_FILE")"
+    TMP_EDL_DIR=$(mktemp -d)
+    message "$TMP_EDL_DIR is the correction directory"
     TMP_EDL_FILE="$TMP_EDL_DIR/$EDL_FILE_ONLY"
     #read -p "Press Return to continue with $EDL_FILE"
     if [[ ! -f "$EDL_FILE" ]]; then
@@ -54,7 +56,7 @@ validate_edl() {
         return 1
     else
         rm -v "$TMP_EDL_FILE"
-        #echo "no problems in $TMP_EDL_FILE"
+        echo "no problems in $TMP_EDL_FILE"
     fi 
 
 }

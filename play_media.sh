@@ -3,6 +3,7 @@
 # toDo Add subtitle and audio ala play_rx
 #source $SRC/common_inc.sh
 #source $MPVU/get_media.sh
+source $MPVU/util_inc.sh
 
 random_subtitles() {
     if $RANDOM_SUBTITLES; then
@@ -62,24 +63,34 @@ else
 fi  
 }
 
+play_4_validate() {
+
+    if ! validate_edl $VIDEO1; then exit 1 ; fi
+    if ! validate_edl $VIDEO2; then exit 1 ; fi
+    if ! validate_edl $VIDEO3; then exit 1 ; fi
+    if ! validate_edl $VIDEO4; then exit 1 ; fi
+
+}
 
 play_4() {
     if [[ ! -f "$1" ]]; then 
         echo "$1 does not exist"
         exit 1
     fi
+    play_4_validate
+    message "in play_4"
     export IMGSUBTITLES="$(random_subtitles)"
     nohup mpv  --volume=$2 --screen=$3 --fs-screen=$3  "$VIDEO1" \
-       --profile=topleft  --no-border --ontop-level=system --ontop &
+       --profile=topleft  --no-border --ontop-level=system --ontop --log-file=/tmp/VIDEO1.log &
     export IMGSUBTITLES="$(random_subtitles)"
     nohup mpv  --volume=$2 --screen=$3 --fs-screen=$3  "$VIDEO2" \
-       --profile=botleft  --no-border --ontop-level=system --ontop &
+       --profile=botleft  --no-border --ontop-level=system --ontop --log-file=/tmp/VIDEO2.log &
     export IMGSUBTITLES="$(random_subtitles)"
     nohup mpv  --volume=$2 --screen=$3 --fs-screen=$3  "$VIDEO3" \
-       --profile=topright --no-border --ontop-level=system --ontop &
+       --profile=topright --no-border --ontop-level=system --ontop --log-file=/tmp/VIDEO3.log &
     export IMGSUBTITLES="$(random_subtitles)"
     nohup mpv  --volume=$2 --screen=$3 --fs-screen=$3  "$VIDEO4" \
-       --profile=botright --no-border --ontop-level=system --ontop &
+       --profile=botright --no-border --ontop-level=system --ontop --log-file=/tmp/VIDEO4.log &
 }
 
 play_4_m3u() {
@@ -87,17 +98,18 @@ play_4_m3u() {
         echo "$1 does not exist"
         exit 1
     fi
+    play_4_validate
     export IMGSUBTITLES="$(random_subtitles)"
-    nohup mpv  --volume=$2 --screen=$3 --fs-screen=$3 --playlist="$VIDEO1" --shuffle \
+    nohup mpv  --volume=$2 --screen=$3 --fs-screen=$3 --playlist="$VIDEO1" --shuffle --log-file=/tmp/VIDEO1.log \
        --profile=topleft  --no-border --ontop-level=system --ontop &
     export IMGSUBTITLES="$(random_subtitles)"
-    nohup mpv  --volume=$2 --screen=$3 --fs-screen=$3 --playlist="$VIDEO2" --shuffle \
+    nohup mpv  --volume=$2 --screen=$3 --fs-screen=$3 --playlist="$VIDEO2" --shuffle --log-file=/tmp/VIDEO2.log \
        --profile=botleft  --no-border --ontop-level=system --ontop &
     export IMGSUBTITLES="$(random_subtitles)"
-    nohup mpv  --volume=$2 --screen=$3 --fs-screen=$3 --playlist="$VIDEO3" --shuffle \
+    nohup mpv  --volume=$2 --screen=$3 --fs-screen=$3 --playlist="$VIDEO3" --shuffle --log-file=/tmp/VIDEO3.log \
        --profile=topright --no-border --ontop-level=system --ontop &
     export IMGSUBTITLES="$(random_subtitles)"
-    nohup mpv  --volume=$2 --screen=$3 --fs-screen=$3 --playlist="$VIDEO4" --shuffle \
+    nohup mpv  --volume=$2 --screen=$3 --fs-screen=$3 --playlist="$VIDEO4" --shuffle --log-file=/tmp/VIDEO4.log \
        --profile=botright --no-border --ontop-level=system --ontop &
 }
 
