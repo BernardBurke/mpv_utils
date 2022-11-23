@@ -188,7 +188,7 @@ make4_videos() {
 
 edlblend() {
     message "edlblend searching for $SEARCH_STRING and shuffling for $HOW_MANY..."
-    find $EDLSRC/ -iname '*.edl' | grep unix | grep -v movies| grep -i "$2" > $TMPFILE1
+    find $EDLSRC/ -iname '*.edl' | grep unix | grep -v movies | grep -i "$SEARCH_STRING" > $TMPFILE1
     message "edlblend wrote to $TMPFILE1"
     message "edlblend reading $(wc -l $TMPFILE1) records from $TMPFILE1"
     while read -r edlname; do
@@ -264,10 +264,18 @@ edl() {
     VIDEO4="$TMPFILE5"
 }
 
+collect_images() {
+    # find /mnt/d/grls/images2/newmaisey -iname '*.jpg' -o -iname '*.mp4' -o -iname '*.png' -o -iname '*.gif' | shuf -n 1000 > $TMPFILE1
+    # find /mnt/d/grls/images2/slices -iname '*.jpg' -o -iname '*.mp4' -o -iname '*.png' -o -iname '*.gif' | shuf -n 1000 >> $TMPFILE1
+    # find /mnt/d/grls/images2/ten9a -iname '*.jpg' -o -iname '*.mp4' -o -iname '*.png' -o -iname '*.gif' | shuf -n 1000 >> $TMPFILE1
+    find /mnt/d/grls/images2/FTVGirls -iname '*.jpg' -o -iname '*.mp4' -o -iname '*.png' -o -iname '*.gif' | shuf -n 10 > $TMPFILE1
+    find /mnt/d/grls/images2/zippy -iname '*.jpg' -o -iname '*.mp4' -o -iname '*.png' -o -iname '*.gif' | shuf -n 10 >> $TMPFILE1
+    find /mnt/d/grls/images2/ -iname '*.jpg' -o -iname '*.mp4' -o -iname '*.png' -o -iname '*.gif' | shuf -n 1000 >> $TMPFILE1
+
+}
+
 imago() {
-    find /mnt/d/grls/images2/newmaisey -iname '*.jpg' -o -iname '*.mp4' -o -iname '*.png' -o -iname '*.gif' | shuf -n 1000 > $TMPFILE1
-    find /mnt/d/grls/images2/slices -iname '*.jpg' -o -iname '*.mp4' -o -iname '*.png' -o -iname '*.gif' | shuf -n 1000 >> $TMPFILE1
-    find /mnt/d/grls/images2/ten9a -iname '*.jpg' -o -iname '*.mp4' -o -iname '*.png' -o -iname '*.gif' | shuf -n 1000 >> $TMPFILE1
+    collect_images
     VIDEO1=$TMPFILE1
     PLAY_MODE=8
     IS_PLAYLIST=true
@@ -342,9 +350,10 @@ esac
 play_6_stub() {
         # I might make imago smarter, but for now, just a find in this case
         #find /mnt/d/grls/images2/ -iname '*.jpg' -o -iname '*.mp4' -o -iname '*.png' -o -iname '*.gif' | shuf -n 1000 > $TMPFILE1
-        find /mnt/d/grls/images2/newmaisey -iname '*.jpg' -o -iname '*.mp4' -o -iname '*.png' -o -iname '*.gif' | shuf -n 1000 > $TMPFILE1
-        find /mnt/d/grls/images2/slices -iname '*.jpg' -o -iname '*.mp4' -o -iname '*.png' -o -iname '*.gif' | shuf -n 1000 >> $TMPFILE1
-        find /mnt/d/grls/images2/ten9a -iname '*.jpg' -o -iname '*.mp4' -o -iname '*.png' -o -iname '*.gif' | shuf -n 1000 >> $TMPFILE1
+        # find /mnt/d/grls/images2/newmaisey -iname '*.jpg' -o -iname '*.mp4' -o -iname '*.png' -o -iname '*.gif' | shuf -n 1000 > $TMPFILE1
+        # find /mnt/d/grls/images2/slices -iname '*.jpg' -o -iname '*.mp4' -o -iname '*.png' -o -iname '*.gif' | shuf -n 1000 >> $TMPFILE1
+        # find /mnt/d/grls/images2/ten9a -iname '*.jpg' -o -iname '*.mp4' -o -iname '*.png' -o -iname '*.gif' | shuf -n 1000 >> $TMPFILE1
+        collect_images
         #imago
         play_6 "$VIDEO1" "$VIDEO2" $TMPFILE1 $VOLUME $SCREEN
 
