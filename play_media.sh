@@ -77,7 +77,9 @@ play_4() {
         echo "$1 does not exist"
         exit 1
     fi
-    play_4_validate
+    if [[ PLAY_MODE == "edlblend" ]]; then
+        play_4_validate
+    fi
     message "in play_4"
     export IMGSUBTITLES="$(random_subtitles)"
     nohup mpv  --volume=$2 --screen=$3 --fs-screen=$3  "$VIDEO1" \
@@ -98,7 +100,7 @@ play_4_m3u() {
         echo "$1 does not exist"
         exit 1
     fi
-    play_4_validate
+    #play_4_validate
     export IMGSUBTITLES="$(random_subtitles)"
     nohup mpv  --volume=$2 --screen=$3 --fs-screen=$3 --playlist="$VIDEO1" --shuffle --log-file=/tmp/VIDEO1.log \
        --profile=topleft  --no-border --ontop-level=system --ontop &

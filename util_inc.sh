@@ -63,3 +63,30 @@ validate_edl() {
 }
 
 
+
+convert_edl_file(){
+    if [[ ! -f "$1" ]]; then
+    message "$1 does not exist"
+    exit 1
+else
+    message "Processing  $1"
+    if [[ "$2" == "" ]];then
+        PLAYER_FILE=$(mktemp)
+    else
+        PLAYER_FILE="$2"
+    fi
+    EDL_FILE=$(mktemp)
+    cat "$1" | grep -v "#" > $EDL_FILE
+fi 
+
+echo "mpv --screen=0 \\" > $PLAYER_FILE
+# toDo - validate
+# validate edl "$EDL_FILE"
+
+while IFS=, read -r file start length; do
+    echo "--\{ \"$file\" --start=$start --length=$length --\} \\" >> $PLAYER_FILE
+done < "$EDL_FILE"
+
+}
+
+
