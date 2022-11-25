@@ -54,7 +54,7 @@ validate_edl() {
 
     if $ANY_PROBLEMS; then
         message "$EDL_FILE had problems. A corrected version written as $TMP_EDL_FILE"
-        return 1
+        exit 1
     else
         rm -v "$TMP_EDL_FILE"
         echo "no problems in $TMP_EDL_FILE"

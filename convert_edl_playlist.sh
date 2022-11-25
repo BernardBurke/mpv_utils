@@ -34,6 +34,54 @@ get_subject(){
         fi
 }
 
+edl_playlist_6(){
+    pfiles=(
+        PLAYER_FILE1 
+        PLAYER_FILE2 
+    )
+    geos=(
+        topmid
+        botmid 
+    )
+    for  indx in ${!pfiles[*]}; do
+        echo $indx
+        echo "${pfiles[$indx]} and ${geos[$indx]} "
+        get_subject
+        # ${pfiles[$indx]}=$(mktemp)
+        # ls $PLAYER_FILE1
+        convert_edl_file "$FILE" "${pfiles[$indx]}" $SCREEN "${geos[$indx]}"
+        cat ${pfiles[$indx]} > /tmp/command_list_edl_playlist.log
+
+    done
+
+    # read -p "Press Return to continue"
+
+    for indx in ${!pfiles[*]} ; do
+            cp "${pfiles[$indx]}" /tmp/$indx.sh
+            bash -x "${pfiles[$indx]}" &
+    done
+
+    DISPLAY_TIME=15
+    TMPFILE1=$(mktemp)
+    
+    find /mnt/d/grls/images2/newmaisey -iname '*.jpg' -o -iname '*.mp4' -o -iname '*.png' -o -iname '*.gif' | shuf -n 1000 > $TMPFILE1
+    find /mnt/d/grls/images2/slices -iname '*.jpg' -o -iname '*.mp4' -o -iname '*.png' -o -iname '*.gif' | shuf -n 1000 >> $TMPFILE1
+    find /mnt/d/grls/images2/ten9a -iname '*.jpg' -o -iname '*.mp4' -o -iname '*.png' -o -iname '*.gif' | shuf -n 1000 >> $TMPFILE1
+
+    POSITION_ARRAY="topll toprr botll botrr"
+    for geo in $POSITION_ARRAY
+    do
+        #nohup 
+        sleep $(shuf -i 1-7 -n 1)
+        command="nohup mpv --image-display-duration=$DISPLAY_TIME --volume=10 --screen=$SCREEN --playlist=$TMPFILE1 --shuffle  --no-border --ontop-level=system --ontop --profile=$geo"
+        echo $command
+        $command &
+         
+    done
+
+}
+
+
 edl_playlist_4(){
     pfiles=(
         PLAYER_FILE1 
@@ -61,11 +109,12 @@ edl_playlist_4(){
     read -p "Press Return to continue"
 
     for indx in ${!pfiles[*]} ; do
-                bash -x "${pfiles[$indx]}" &
+            cp "${pfiles[$indx]}" /tmp/$indx.sh
+            bash -x "${pfiles[$indx]}" &
     done
 }
 
-edl_playlist_4
+edl_playlist_6
 echo "running..."
 echo ""
 
