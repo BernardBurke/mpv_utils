@@ -4,7 +4,70 @@
 # source $SRC/common_inc.sh
 source $MPVU/util_inc.sh 
 
-PLAYER_FILE=$(mktemp)
+#PLAYER_FILE=$(mktemp)
+
+if [[ $1 == "" ]]; then
+    SCREEN=0
+else
+    SCREEN=$1
+fi 
+
+if [[ $2 == "" ]]; then
+    DIRECTORY_NAME="$HANDUNI"
+else
+    if [[ -d "$2" ]]; then
+        DIRECTORY_NAME="$2"
+    else
+        "$2 provided directory does not exist"
+        exit 1
+    fi
+fi
+
+get_subject(){
+
+        FILE="$(find $DIRECTORY_NAME/ -iname '*.edl' | grep -vi movie | grep -vi tv | shuf -n 1)"
+        if validate_edl "$FILE"; then
+            message "Valid EDL file $FILE"
+        else
+            message "invalid file $FILE"
+            exit 1
+        fi
+}
+
+edl_playlist_4(){
+    pfiles=(
+        PLAYER_FILE1 
+        PLAYER_FILE2 
+        PLAYER_FILE3 
+        PLAYER_FILE4
+    )
+    geos=(
+        topleft 
+        topright 
+        botleft 
+        botright
+    )
+    for  indx in ${!pfiles[*]}; do
+        echo $indx
+        echo "${pfiles[$indx]} and ${geos[$indx]} "
+        get_subject
+        # ${pfiles[$indx]}=$(mktemp)
+        # ls $PLAYER_FILE1
+        convert_edl_file "$FILE" "${pfiles[$indx]}" $SCREEN "${geos[$indx]}"
+        cat ${pfiles[$indx]} > /tmp/command_list_edl_playlist.log
+
+    done
+
+    read -p "Press Return to continue"
+
+    for indx in ${!pfiles[*]} ; do
+                bash -x "${pfiles[$indx]}" &
+    done
+}
+
+edl_playlist_4
+echo "running..."
+echo ""
 
 # convert_edl_file(){
 #     if [[ ! -f "$1" ]]; then
@@ -30,30 +93,11 @@ PLAYER_FILE=$(mktemp)
 # convert_seconds(){
 #     message "Converting seconds"
 # }
-FILE="$(find $HANDUNI/ -iname '*.edl' | shuf -n 1)"
-convert_edl_file "$FILE"
-message "Player File is $PLAYER_FILE"
-bash -x $PLAYER_FILE &
+# FILE="$(find $HANDUNI/ -iname '*.edl' | shuf -n 1)"
+# convert_edl_file "$FILE" "" $SCREEN "topleft"
+# message "Player File is $PLAYER_FILE"
+# bash -x $PLAYER_FILE &
 
-# working sample
-# mpv --\{ "/mnt/d/grls/phprem/2 wow girls shaving.mp4" --start=412 --length=49 --\}
-# mpv --fullscreen --screen=0 --fs-screen=0 --volume=10  ^
-# --^{ d:\grls\pure\MakeEveryMomentCount_s01_RyanMclane_LuluChu_720p.mp4 --start=3419.08 --length=2.27 --^}  ^
-# --^{ d:\grls\pure\MakeEveryMomentCount_s01_RyanMclane_LuluChu_720p.mp4 --start=3423.675 --length=5.29 --^}  ^
-# --^{ d:\grls\pure\MakeEveryMomentCount_s01_RyanMclane_LuluChu_720p.mp4 --start=3431.53 --length=2.43 --^}  ^
-# --^{ d:\grls\pure\MakeEveryMomentCount_s01_RyanMclane_LuluChu_720p.mp4 --start=3436.18 --length=1.59 --^}  ^
-# --^{ d:\grls\pure\MakeEveryMomentCount_s01_RyanMclane_LuluChu_720p.mp4 --start=3438.532 --length=0.73 --^}  ^
-# --^{ d:\grls\pure\MakeEveryMomentCount_s01_RyanMclane_LuluChu_720p.mp4 --start=3439.74 --length=4.55 --^}  ^
-# --^{ d:\grls\pure\MakeEveryMomentCount_s01_RyanMclane_LuluChu_720p.mp4 --start=3445.83 --length=2.75 --^}  ^
-# --^{ d:\grls\pure\MakeEveryMomentCount_s01_RyanMclane_LuluChu_720p.mp4 --start=3449.745 --length=2.66 --^}  ^
-# --^{ d:\grls\pure\MakeEveryMomentCount_s01_RyanMclane_LuluChu_720p.mp4 --start=3453.826 --length=2.09 --^}  ^
-# --^{ d:\grls\pure\MakeEveryMomentCount_s01_RyanMclane_LuluChu_720p.mp4 --start=3456.311 --length=1 --^}  ^
-# --^{ d:\grls\pure\MakeEveryMomentCount_s01_RyanMclane_LuluChu_720p.mp4 --start=3458.43 --length=4.55 --^}  ^
-# --^{ d:\grls\pure\MakeEveryMomentCount_s01_RyanMclane_LuluChu_720p.mp4 --start=3466.435 --length=1.43 --^}  ^
-# --^{ d:\grls\pure\MakeEveryMomentCount_s01_RyanMclane_LuluChu_720p.mp4 --start=3469.23 --length=0.95 --^}  ^
-# --^{ d:\grls\pure\MakeEveryMomentCount_s01_RyanMclane_LuluChu_720p.mp4 --start=3474.409 --length=1.25 --^}  ^
-# --^{ d:\grls\pure\MakeEveryMomentCount_s01_RyanMclane_LuluChu_720p.mp4 --start=3477.63 --length=2.81 --^}  ^
-# --^{ d:\grls\pure\MakeEveryMomentCount_s01_RyanMclane_LuluChu_720p.mp4 --start=3480.53 --length=3.93 --^}  ^
-# --^{ d:\grls\pure\MakeEveryMomentCount_s01_RyanMclane_LuluChu_720p.mp4 --start=3485.73 --length=0.8 --^}  ^
-# --^{ d:\grls\pure\MakeEveryMomentCount_s01_RyanMclane_LuluChu_720p.mp4 --start=3488.33 --length=0.88 --^}  ^
-# rem
+
+
+

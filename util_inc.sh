@@ -62,31 +62,78 @@ validate_edl() {
 
 }
 
+convert_edl_file_content() {
+    MAX_SIZE=$(getconf ARG_MAX)
+    NOMINAL_MAX=$((MAX_SIZE-100))
+    ISIZE=0
+
+    if [[ ! -f "$1" ]]; then
+            message "EDL_FILE provided does not exist - $1"    
+            exit 1
+    else
+            message "Processing $EDL_FILE"
+    fi 
+
+    if [[ ! -f "$2" ]]; then
+            message "PLAYER_FILE provided does not exist - $2"    
+            exit 1
+    else
+            message "Processing $PLAYER_FILE"
+    fi 
+
+
+    while IFS=, read -r file start length; do
+        LION="--\{ \"$file\" --start=$start --length=$length --\} \\"    
+        strlen=$(echo $LION | wc -c)
+        ISIZE=$((ISIZE+strlen))
+        if [[ $ISIZE -gt $MAX_SIZE ]]; then
+            message "command became too long $ISIZE"
+            exit 1
+        fi
+        echo "$LION" >> $PLAYER_FILE
+    done < "$EDL_FILE"
+  
+    message "$1 became $ISIZE in length vs $MAX_SIZE"
+}
 
 
 convert_edl_file(){
     if [[ ! -f "$1" ]]; then
-    message "$1 does not exist"
-    exit 1
-else
-    message "Processing  $1"
-    if [[ "$2" == "" ]];then
-        PLAYER_FILE=$(mktemp)
+        message "$1 does not exist"
+        exit 1
     else
-        PLAYER_FILE="$2"
+        message "Processing  $1"
+        if [[ "$2" == "" ]];then
+            PLAYER_FILE=$(mktemp)
+        else
+            PLAYER_FILE="$2"
+        fi
+        EDL_FILE=$(mktemp)
+        cat "$1" | grep -v "#" > $EDL_FILE
+    fi 
+
+    if [[ $3 == "" ]];then
+        SCREEN=0
+    else
+        SCREEN=$3
     fi
-    EDL_FILE=$(mktemp)
-    cat "$1" | grep -v "#" > $EDL_FILE
-fi 
 
-echo "mpv --screen=0 \\" > $PLAYER_FILE
-# toDo - validate
-# validate edl "$EDL_FILE"
+    if [[ $4 == "" ]];then
+        echo "nohup mpv --screen=$SCREEN \\" > $PLAYER_FILE
+    else
+        echo "nohup mpv --screen=$SCREEN --profile=$4 \\" > $PLAYER_FILE
+    fi 
 
-while IFS=, read -r file start length; do
-    echo "--\{ \"$file\" --start=$start --length=$length --\} \\" >> $PLAYER_FILE
-done < "$EDL_FILE"
+
+    # toDo - validate
+    # validate edl "$EDL_FILE"
+    convert_edl_file_content "$1" $PLAYER_FILE
+    # while IFS=, read -r file start length; do
+    #     echo "--\{ \"$file\" --start=$start --length=$length --\} \\" >> $PLAYER_FILE
+    # done < "$EDL_FILE"
 
 }
+
+
 
 
