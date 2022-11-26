@@ -36,7 +36,8 @@ play_1_subs() {
     tmpfilename1="$DIRECTORY/$(basename "$2" srt)mp3"
     tmpfilename2="$DIRECTORY/$(basename "$2" srt)m4a"
     tmpfilename3="$DIRECTORY/$(basename "$2" srt)wav"
-
+    tmpfilename4="$DIRECTORY/$(basename "$2" srt)mpga"
+    #toDo- include mpga
     
     if [[ -f "$tmpfilename1" ]]; then
         AUDIO_FILENAME="$tmpfilename1"
@@ -44,6 +45,8 @@ play_1_subs() {
         AUDIO_FILENAME="$tmpfilename2"
     elif [[ -f "$tmpfilename3" ]]; then
         AUDIO_FILENAME="$tmpfilename3"
+    elif [[ -f "$tmpfilename4" ]]; then
+        AUDIO_FILENAME="$tmpfilename4"
     else
         echo "No audio file found for $2"
         exit 1

@@ -1,0 +1,1 @@
+find /mnt/d/ \( -iname '*.m4a' -o -iname '*.mp3' -o -iname '*.wav' -o -iname '*.mpga' \) -type f -ctime -12 -exec echo $SRC/vosk_me.sh "'{}'" \; 
