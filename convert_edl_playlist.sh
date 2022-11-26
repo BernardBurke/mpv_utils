@@ -13,25 +13,56 @@ else
 fi 
 
 if [[ $2 == "" ]]; then
+    SEARCH_EDLS=false
+else
+    SEARCH_EDLS=true
+    EDL_SEARCH_STRING="$2"
+fi
+
+if [[ $3 == "" ]]; then
     DIRECTORY_NAME="$HANDUNI"
 else
-    if [[ -d "$2" ]]; then
-        DIRECTORY_NAME="$2"
+    if [[ -d "$3" ]]; then
+        DIRECTORY_NAME="$3"
     else
-        "$2 provided directory does not exist"
+        "$3 provided directory does not exist"
         exit 1
     fi
 fi
 
 get_subject(){
 
-        FILE="$(find $DIRECTORY_NAME/ -iname '*.edl' | grep -vi movie | grep -vi tv | shuf -n 1)"
+        if $SEARCH_EDLS ; then
+            FILE="$(find $DIRECTORY_NAME/ -iname '*.edl' | grep -i "$EDL_SEARCH_STRING" | shuf -n 1)"
+            if [[ ! -f $FILE ]]; then
+                message "get_subject Searching for an EDL didn't return any results with $EDL_SEARCH_STRING"
+                exit 1
+            else
+                message "SEARCH_EDLS found $FILE using $EDL_SEARCH_STRING"
+            fi
+        else
+            FILE="$(find $DIRECTORY_NAME/ -iname '*.edl' | grep -iv movie | grep -iv tv | shuf -n 1)"
+        fi
+
+        if $DEBUG_PAUSE ; then
+            message "Pre validate_edl"
+            cat "$FILE"
+            read -p "Press Return to continue"
+        fi
+
+
         if validate_edl "$FILE"; then
             message "Valid EDL file $FILE"
         else
             message "invalid file $FILE"
             exit 1
         fi
+        if $DEBUG_PAUSE ; then
+            message "Post validate_edl"
+            cat "$FILE"
+            read -p "Press Return to continue"
+        fi
+
 }
 
 edl_playlist_6(){
@@ -114,7 +145,24 @@ edl_playlist_4(){
     done
 }
 
-edl_playlist_6
+
+edl_playlist_1(){
+
+    PLAYER_FILE1=$(mktemp)
+    get_subject
+    convert_edl_file "$FILE" "$PLAYER_FILE1" $SCREEN "override"
+    cat "$PLAYER_FILE1" > /tmp/command_list_edl_playlist.log
+
+
+    read -p "Press Return to continue"
+
+    cp $PLAYER_FILE1 /tmp/1.sh
+    bash -x "$PLAYER_FILE1" &
+
+}
+
+
+edl_playlist_1
 echo "running..."
 echo ""
 
