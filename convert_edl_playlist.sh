@@ -7,25 +7,33 @@ source $MPVU/util_inc.sh
 #PLAYER_FILE=$(mktemp)
 
 if [[ $1 == "" ]]; then
-    SCREEN=0
+    PLAY_MODE=1
 else
-    SCREEN=$1
+    PLAY_MODE=$1
 fi 
 
+
+
 if [[ $2 == "" ]]; then
+    SCREEN=0
+else
+    SCREEN=$2
+fi 
+
+if [[ $3 == "" ]]; then
     SEARCH_EDLS=false
 else
     SEARCH_EDLS=true
-    EDL_SEARCH_STRING="$2"
+    EDL_SEARCH_STRING="$3"
 fi
 
-if [[ $3 == "" ]]; then
+if [[ $4 == "" ]]; then
     DIRECTORY_NAME="$HANDUNI"
 else
-    if [[ -d "$3" ]]; then
-        DIRECTORY_NAME="$3"
+    if [[ -d "$4" ]]; then
+        DIRECTORY_NAME="$4"
     else
-        "$3 provided directory does not exist"
+        "$4 provided directory does not exist"
         exit 1
     fi
 fi
@@ -161,8 +169,20 @@ edl_playlist_1(){
 
 }
 
+case "$PLAY_MODE" in
+        "1")
+        edl_playlist_1
+        ;;
+        "4")
+        edl_playlist_4
+        ;;
+        "6")
+        edl_playlist_6
+        ;;
+        *)
+        message "Invalid play_media code $PLAY_MODE";;
+esac
 
-edl_playlist_1
 echo "running..."
 echo ""
 

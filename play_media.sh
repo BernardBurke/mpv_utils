@@ -54,16 +54,31 @@ play_1_subs() {
 
     echo "using $AUDIO_FILENAME"
 
-if $IS_PLAYLIST; then
-    nohup mpv  --volume=$3 --screen=$4 --fs-screen=$4  --playlist="$1" --shuffle \
-        --fullscreen --no-border --ontop-level=system --ontop \
-        --sub-files-add="$2" --audio-files-add="$AUDIO_FILENAME"  &
-else
-    nohup mpv  --volume=$3 --screen=$4 --fs-screen=$4  "$1" --shuffle \
-        --fullscreen --no-border --ontop-level=system --ontop \
-        --sub-files-add="$2" --audio-files-add="$AUDIO_FILENAME"  &
+    if $IS_PLAYLIST;then
+            mpv_command1="nohup mpv  --volume=$3 --screen=$4 --fs-screen=$4  --playlist="$1" --shuffle  "
+    else
+            mpv_command1="nohup mpv  --volume=$3 --screen=$4 --fs-screen=$4  "$1" --shuffle  "
+    fi
+    
+    # add the rest of the command
+    mpv_command1="${mpv_command1} --fullscreen --no-border --ontop-level=system --ontop  "
+    mpv_command1="${mpv_command1} --sub-files-add=\"$2\" --audio-files-add=\"$AUDIO_FILENAME\"  "
 
-fi  
+    message "mpv_command1 is $mpv_command1"
+    RUNFILE=/tmp/rx_cmd.$$
+    echo "$mpv_command1" > $RUNFILE
+
+    bash $RUNFILE &
+# if $IS_PLAYLIST; then
+#     nohup mpv  --volume=$3 --screen=$4 --fs-screen=$4  --playlist="$1" --shuffle \
+#         --fullscreen --no-border --ontop-level=system --ontop \
+#         --sub-files-add="$2" --audio-files-add="$AUDIO_FILENAME"  &
+# else
+#     nohup mpv  --volume=$3 --screen=$4 --fs-screen=$4  "$1" --shuffle \
+#         --fullscreen --no-border --ontop-level=system --ontop \
+#         --sub-files-add="$2" --audio-files-add="$AUDIO_FILENAME"  &
+
+# fi  
 }
 
 play_4_validate() {
