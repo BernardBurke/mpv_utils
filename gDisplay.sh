@@ -198,12 +198,14 @@ edlblend() {
 }
 
 edlm3u() {
-    message "edlm3u is probably defunct - exiting..."
-    exit 1
-    message  " edlm3u searching for $SEARCH_STRING and shuffling for $HOW_MANY..."
-    find $EDLSRC/ -iname '*.edl' | grep unix | grep -i "$2" | shuf -n $3 > $TMPFILE3
-    make4_videos $TMPFILE3
-    IS_PLAYLIST=true  
+    message "edlm3u is probably defunct - calling edlm3u"
+    message "m3u is probably defunct - callling edlblend..."
+    edlblend
+    # exit 1
+    # message  " edlm3u searching for $SEARCH_STRING and shuffling for $HOW_MANY..."
+    # find $EDLSRC/ -iname '*.edl' | grep unix | grep -i "$2" | shuf -n $3 > $TMPFILE3
+    # make4_videos $TMPFILE3
+    # IS_PLAYLIST=true  
 }
 
 m3uSearch() {
@@ -232,43 +234,46 @@ m3uSearch() {
 }
 
 m3u() {
-    message "m3u is probably defunct - exiting..."
-    exit 1
-    VIDEO1="$(get_file_by_type "m3u")"
-    VIDEO2="$(get_file_by_type "m3u")"
-    VIDEO3="$(get_file_by_type "m3u")"
-    VIDEO4="$(get_file_by_type "m3u")"
-    IS_PLAYLIST=true
+    message "m3u is probably defunct - callling m3uSearch..."
+    m3uSearch
+    # exit 1
+    # VIDEO1="$(get_file_by_type "m3u")"
+    # VIDEO2="$(get_file_by_type "m3u")"
+    # VIDEO3="$(get_file_by_type "m3u")"
+    # VIDEO4="$(get_file_by_type "m3u")"
+    # IS_PLAYLIST=true
 }
 
 edl() {
-    message "edlm3u is probably defunct - exiting..."
-    exit 1
-    TMPFILE4=$(mktemp)
-    TMPFILE5=$(mktemp)
-    SUBJ="$(get_file_by_type "edl")"
-    shuffle_edl "$SUBJ" $HOW_MANY
-    cat $TMPFILE1 > $TMPFILE2
-    VIDEO1="$TMPFILE2"
-    SUBJ="$(get_file_by_type "edl")"
-    shuffle_edl "$SUBJ" $HOW_MANY
-    cat $TMPFILE1 > $TMPFILE3
-    VIDEO2="$TMPFILE3"
-    SUBJ="$(get_file_by_type "edl")"
-    shuffle_edl "$SUBJ" $HOW_MANY
-    cat $TMPFILE1 > $TMPFILE4
-    VIDEO3="$TMPFILE4"
-    SUBJ="$(get_file_by_type "edl")"
-    shuffle_edl "$SUBJ" $HOW_MANY
-    cat $TMPFILE1 > $TMPFILE5
-    VIDEO4="$TMPFILE5"
+    message "edlm3u is probably defunct - calling edlblend..."
+    edlblend
+    # exit 1
+    # TMPFILE4=$(mktemp)
+    # TMPFILE5=$(mktemp)
+    # SUBJ="$(get_file_by_type "edl")"
+    # shuffle_edl "$SUBJ" $HOW_MANY
+    # cat $TMPFILE1 > $TMPFILE2
+    # VIDEO1="$TMPFILE2"
+    # SUBJ="$(get_file_by_type "edl")"
+    # shuffle_edl "$SUBJ" $HOW_MANY
+    # cat $TMPFILE1 > $TMPFILE3
+    # VIDEO2="$TMPFILE3"
+    # SUBJ="$(get_file_by_type "edl")"
+    # shuffle_edl "$SUBJ" $HOW_MANY
+    # cat $TMPFILE1 > $TMPFILE4
+    # VIDEO3="$TMPFILE4"
+    # SUBJ="$(get_file_by_type "edl")"
+    # shuffle_edl "$SUBJ" $HOW_MANY
+    # cat $TMPFILE1 > $TMPFILE5
+    # VIDEO4="$TMPFILE5"
 }
 
 collect_images() {
     if $SHORT_FORM; then
-        find /mnt/d/grls/images2/newmaisey -iname '*.jpg' -o -iname '*.mp4' -o -iname '*.png' -o -iname '*.gif' | shuf -n 1000 > $TMPFILE1
-        find /mnt/d/grls/images2/slices -iname '*.jpg' -o -iname '*.mp4' -o -iname '*.png' -o -iname '*.gif' | shuf -n 1000 >> $TMPFILE1
-        find /mnt/d/grls/images2/ten9a -iname '*.jpg' -o -iname '*.mp4' -o -iname '*.png' -o -iname '*.gif' | shuf -n 1000 >> $TMPFILE1
+        # find /mnt/d/grls/images2/newmaisey -iname '*.jpg' -o -iname '*.mp4' -o -iname '*.png' -o -iname '*.gif' | shuf -n 1000 > $TMPFILE1
+        # find /mnt/d/grls/images2/slices -iname '*.jpg' -o -iname '*.mp4' -o -iname '*.png' -o -iname '*.gif' | shuf -n 1000 >> $TMPFILE1
+        # find /mnt/d/grls/images2/ten9a -iname '*.jpg' -o -iname '*.mp4' -o -iname '*.png' -o -iname '*.gif' | shuf -n 1000 >> $TMPFILE1
+        find /mnt/d/grls/images2/ -iname '*.jpg' -o -iname '*.mp4' -o -iname '*.png' -o -iname '*.gif' | grep -v debz | shuf -n 1000 > $TMPFILE1
     else
         find /mnt/d/grls/images2/FTVGirls -iname '*.jpg' -o -iname '*.mp4' -o -iname '*.png' -o -iname '*.gif' | shuf -n 10 > $TMPFILE1
         find /mnt/d/grls/images2/zippy -iname '*.jpg' -o -iname '*.mp4' -o -iname '*.png' -o -iname '*.gif' | shuf -n 10 >> $TMPFILE1
@@ -295,7 +300,7 @@ case "$SELECT_MODE" in
     recent)
         echo "executing recent only"
         PLAY_MODE="${PLAY_MODE}_m3u"
-        recent
+        recent $HOW_MANY
     ;;
     vtt)
         echo "executing vtt"
