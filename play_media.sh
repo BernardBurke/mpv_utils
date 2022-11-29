@@ -65,7 +65,7 @@ play_1_subs() {
     mpv_command1="${mpv_command1} --sub-files-add=\"$2\" --audio-files-add=\"$AUDIO_FILENAME\"  "
 
     message "mpv_command1 is $mpv_command1"
-    RUNFILE=/tmp/rx_cmd.$$
+    RUNFILE=/tmp/rx_cmd_$4.$$
     echo "$mpv_command1" > $RUNFILE
 
     bash $RUNFILE &
