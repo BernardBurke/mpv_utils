@@ -274,6 +274,7 @@ collect_images() {
         # find /mnt/d/grls/images2/slices -iname '*.jpg' -o -iname '*.mp4' -o -iname '*.png' -o -iname '*.gif' | shuf -n 1000 >> $TMPFILE1
         # find /mnt/d/grls/images2/ten9a -iname '*.jpg' -o -iname '*.mp4' -o -iname '*.png' -o -iname '*.gif' | shuf -n 1000 >> $TMPFILE1
         find /mnt/d/grls/images2/ -iname '*.jpg' -o -iname '*.mp4' -o -iname '*.png' -o -iname '*.gif' | grep -v debz | shuf -n 4000 > $TMPFILE1
+        #cp $USCR/screenshot.m3u 
     else
         find /mnt/d/grls/images2/FTVGirls -iname '*.jpg' -o -iname '*.mp4' -o -iname '*.png' -o -iname '*.gif' | shuf -n 10 > $TMPFILE1
         find /mnt/d/grls/images2/zippy -iname '*.jpg' -o -iname '*.mp4' -o -iname '*.png' -o -iname '*.gif' | shuf -n 10 >> $TMPFILE1
@@ -290,6 +291,21 @@ imago() {
 
 rx_processing() {
         SRT_FILE="$(find $GRLSRC/audio/ -iname '*.srt' | grep -i "$1" | shuf -n 1)"
+}
+
+rx_dispatch() {
+        IS_PLAYLIST=false
+        rx_processing "$SUBS_SEARCH_STRING"
+        VIDEO1="$(find $GRLSRC/ -iname '*.mp4' -o -iname '*.avi' -o -iname '*.mkv' -o -iname '*.webm' | grep -i "$SEARCH_STRING"| shuf -n 1)"
+        VIDEO2="$(find $GRLSRC/ -iname '*.mp4' -o -iname '*.avi' -o -iname '*.mkv' -o -iname '*.webm' | grep -i "$SEARCH_STRING"| shuf -n 1)"
+        VIDEO3="$(find $GRLSRC/ -iname '*.mp4' -o -iname '*.avi' -o -iname '*.mkv' -o -iname '*.webm' | grep -i "$SEARCH_STRING"| shuf -n 1)"
+        VIDEO4="$(find $GRLSRC/ -iname '*.mp4' -o -iname '*.avi' -o -iname '*.mkv' -o -iname '*.webm' | grep -i "$SEARCH_STRING"| shuf -n 1)"
+
+        if [[ ! -f "$SRT_FILE" ]]; then
+            "Cannot file SRT_FILE  from $SEARCH_STRING"
+            exit 1
+        fi
+        PLAY_MODE=${PLAY_MODE}_subs
 }
 
 case "$SELECT_MODE" in
@@ -334,19 +350,21 @@ case "$SELECT_MODE" in
         echo "executing imago"
         imago
     ;;
-    rx)
-        echo "executing rx calling m3uSearch  for now"
-        #m3uSearch
-        #edlm3u
+    rxv)
+        echo "executing rxv calling video"
+        videoOnly
+        rx_dispatch
+    ;;
+    rxe)
+        echo "executing rxe calling edl"
         edlblend
-        IS_PLAYLIST=false
-        rx_processing "$SUBS_SEARCH_STRING"
-        if [[ ! -f "$SRT_FILE" ]]; then
-            "Cannot file SRT_FILE  from $SEARCH_STRING"
-            exit 1
-        fi
-        PLAY_MODE=${PLAY_MODE}_subs
-        ;;
+        rx_dispatch
+    ;;
+    rxm) 
+        echo "executing rxm calling m3u"
+        m3u
+        rx_dispatch
+    ;;
     *)
     echo "invalid SELECT_MODE - exiting"
     exit 1

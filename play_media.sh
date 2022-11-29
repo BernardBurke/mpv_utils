@@ -55,9 +55,9 @@ play_1_subs() {
     echo "using $AUDIO_FILENAME"
 
     if $IS_PLAYLIST;then
-            mpv_command1="nohup mpv  --volume=$3 --screen=$4 --fs-screen=$4  --playlist="$1" --shuffle  "
+            mpv_command1="nohup mpv  --volume=$3 --screen=$4 --fs-screen=$4  --playlist=\"$1\" --shuffle  "
     else
-            mpv_command1="nohup mpv  --volume=$3 --screen=$4 --fs-screen=$4  "$1" --shuffle  "
+            mpv_command1="nohup mpv  --volume=$3 --screen=$4 --fs-screen=$4  \"$1\" --shuffle  "
     fi
     
     # add the rest of the command
