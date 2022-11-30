@@ -296,10 +296,10 @@ rx_processing() {
 rx_dispatch() {
         IS_PLAYLIST=false
         rx_processing "$SUBS_SEARCH_STRING"
-        VIDEO1="$(find $GRLSRC/ -iname '*.mp4' -o -iname '*.avi' -o -iname '*.mkv' -o -iname '*.webm' | grep -i "$SEARCH_STRING"| shuf -n 1)"
-        VIDEO2="$(find $GRLSRC/ -iname '*.mp4' -o -iname '*.avi' -o -iname '*.mkv' -o -iname '*.webm' | grep -i "$SEARCH_STRING"| shuf -n 1)"
-        VIDEO3="$(find $GRLSRC/ -iname '*.mp4' -o -iname '*.avi' -o -iname '*.mkv' -o -iname '*.webm' | grep -i "$SEARCH_STRING"| shuf -n 1)"
-        VIDEO4="$(find $GRLSRC/ -iname '*.mp4' -o -iname '*.avi' -o -iname '*.mkv' -o -iname '*.webm' | grep -i "$SEARCH_STRING"| shuf -n 1)"
+        VIDEO1="$(find $GRLSRC/ -iname '*.mp4' -o -iname '*.avi' -o -iname '*.mkv' -o -iname '*.webm' | grep -i "$SEARCH_STRING" | grep -v images2 | shuf -n 1)"
+        VIDEO2="$(find $GRLSRC/ -iname '*.mp4' -o -iname '*.avi' -o -iname '*.mkv' -o -iname '*.webm' | grep -i "$SEARCH_STRING" | grep -v images2 | shuf -n 1)"
+        VIDEO3="$(find $GRLSRC/ -iname '*.mp4' -o -iname '*.avi' -o -iname '*.mkv' -o -iname '*.webm' | grep -i "$SEARCH_STRING" | grep -v images2 | shuf -n 1)"
+        VIDEO4="$(find $GRLSRC/ -iname '*.mp4' -o -iname '*.avi' -o -iname '*.mkv' -o -iname '*.webm' | grep -i "$SEARCH_STRING" | grep -v images2 | shuf -n 1)"
 
         if [[ ! -f "$SRT_FILE" ]]; then
             "Cannot file SRT_FILE  from $SEARCH_STRING"
@@ -352,7 +352,7 @@ case "$SELECT_MODE" in
     ;;
     rxv)
         echo "executing rxv calling video"
-        videoOnly
+        #videoOnly
         rx_dispatch
     ;;
     rxe)
