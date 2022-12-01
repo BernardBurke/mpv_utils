@@ -12,6 +12,54 @@ message() {
     logmessage "$MESSAGE_TEXT"
 }
 
+get_random_subtitles() {
+    echo "$(find /mnt/d/grls/audio/ \( -iname '*.srt' -o -iname '*.vtt' \) -exec grep -il "$1" {} \; | shuf -n 1)"
+}
+
+get_random_edl_content() {
+   echo "$(find /mnt/d/edlv2  -iname '*.edl' -exec grep -il "$1" "{}" \; | grep -iv windows | shuf -n 1)"
+}
+
+get_random_edl_file() {
+   RESALT="$(find /mnt/d/edlv2  -iname "*$1*.edl"  | grep -iv windows | shuf -n 1)"
+   if [[ "$RESALT" == "" ]]; then
+        #echo  "file not found in get_random_edl_file"
+        exit 1
+    fi 
+    echo "$RESALT"
+}
+
+get_random_video() {
+    echo "$(find /mnt/d/grls -iname '*.mp4' -o -iname '*.avi' -o -iname '*.mkv' -o -iname '*.webm' -o -iname '*.wmv' |   shuf -n 1)"
+}
+
+
+get_length(){
+    if [[ ! -f "$1" ]]; then
+        echo "0"
+        exit 1
+    fi
+    LNGTH=$(ffprobe -v quiet  -of csv=p=0 -show_entries format=duration "$1")
+    LNGTH=${LNGTH%.*}
+    echo "$LNGTH"
+}
+
+function minimum_length (){
+    if [[ "$2" == "" ]]; then
+        MINI=300
+    else
+        MINI=$2
+    fi
+
+    LENGTH="$(get_length "$1")"
+    if (( LENGTH < MINI)) ; then
+            return 1
+        else
+            return 0
+    fi 
+}
+
+
 validate_edl() {
     EDL_FILE="$1"
     ANY_PROBLEMS=false

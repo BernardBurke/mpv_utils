@@ -18,9 +18,10 @@ play_1() {
         echo "$1 does not exist"
         exit 1
     fi
+    export IMGSUBTITLES="$(random_subtitles)"
     nohup mpv  --volume=$2 --screen=$3 --fs-screen=$3  "$VIDEO1" \
         --fullscreen --no-border --ontop-level=system --ontop &
-    
+    export IMGSUBTITLES=
 }
 
 play_1_subs() {
@@ -149,6 +150,9 @@ play_8() {
     fi
     DISPLAY_TIME=5
 
+    if $CUSTOM_SUBTITLES; then
+        export IMGSUBTITLES="$CUSTOM_SUB_FILENAME"
+    fi 
     POSITION_ARRAY="topll toplr toprl toprr botll botlr botrl botrr"
     echo "Don't worry - we're randomising the start times"
     for geo in $POSITION_ARRAY
@@ -189,6 +193,9 @@ play_6() {
             nohup mpv --volume=$4 --screen=$5 "$2" --shuffle --no-border --ontop-level=system --ontop --profile=botmid &
     fi
 
+    if $CUSTOM_SUBTITLES; then
+        export IMGSUBTITLES="$CUSTOM_SUB_FILENAME"
+    fi 
     POSITION_ARRAY="topll toprr botll botrr"
     for geo in $POSITION_ARRAY
     do
@@ -197,7 +204,7 @@ play_6() {
         
         nohup mpv --image-display-duration=$DISPLAY_TIME --volume=10 --screen=$5 --playlist="$3" --shuffle  --no-border --ontop-level=system --ontop --profile=$geo &
     done
-
+    export IMGSUBTITLES=
 }
 
 # read -p "Press enter to continue with $VIDEO1 $VIDEO2 $VIDEO3 $VIDEO4"
