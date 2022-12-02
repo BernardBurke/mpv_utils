@@ -12,6 +12,44 @@ message() {
     logmessage "$MESSAGE_TEXT"
 }
 
+shuffle_edl() {
+
+    if [[ $2 = "" ]]; then
+        SHUFN=100
+    else
+        SHUFN="$2"
+    fi
+    echo "# mpv EDL v0" > $TMPFILE1
+    if [[ -f $1 ]]; then
+        cat "$1" | grep -v "#" | shuf -n $SHUFN >> $TMPFILE1
+    else
+        return 1
+    fi 
+    message "shuffle_edl wrote $TMPFILE1"
+}
+
+get__subtitle_related_media() {
+    if [[ ! -f "$1" ]]; then
+        exit 1
+    fi 
+    MEDIA_ARRAY=".m4a .mp3 .webm .mpv .mkv .avi .wmv"
+    for mtype in $MEDIA_ARRAY
+    do
+            DIRECTORY_NAME="$(dirname "$1")"
+            FNAME="$(basename "$1" .srt)" # ToDo - what about vtt files?
+            FNAME="${FNAME}$mtype"
+            STUBBY="$DIRECTORY_NAME/$FNAME"
+            if [[ -f "$STUBBY" ]]; then
+                echo "$STUBBY"
+                exit 0
+            fi 
+    done
+
+    exit 1 # if we got here there's no media file
+
+
+}
+
 get_random_subtitles() {
     echo "$(find /mnt/d/grls/audio/ \( -iname '*.srt' -o -iname '*.vtt' \) -exec grep -il "$1" {} \; | shuf -n 1)"
 }
