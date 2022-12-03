@@ -102,16 +102,20 @@ edl_playlist_6(){
 
     DISPLAY_TIME=15
     TMPFILE1=$(mktemp)
-    
-    find /mnt/d/grls/images2/newmaisey -iname '*.jpg' -o -iname '*.mp4' -o -iname '*.png' -o -iname '*.gif' | shuf -n 1000 > $TMPFILE1
-    find /mnt/d/grls/images2/slices -iname '*.jpg' -o -iname '*.mp4' -o -iname '*.png' -o -iname '*.gif' | shuf -n 1000 >> $TMPFILE1
-    find /mnt/d/grls/images2/ten9a -iname '*.jpg' -o -iname '*.mp4' -o -iname '*.png' -o -iname '*.gif' | shuf -n 1000 >> $TMPFILE1
 
+    IMAGE_ARRAY="newmaisey slices ten9a darina cheeky gallery-dl handpinned"
+
+    for folder in $IMAGE_ARRAY
+    do 
+          find /mnt/d/grls/images2/$folder -iname '*.jpg' -o -iname '*.mp4' -o -iname '*.png' -o -iname '*.gif' | shuf -n 1000 >> $TMPFILE1
+    done
+
+    
     POSITION_ARRAY="topll toprr botll botrr"
     for geo in $POSITION_ARRAY
     do
         #nohup 
-        sleep $(shuf -i 1-7 -n 1)
+        sleep $(shuf -i 1-3 -n 1)
         command="nohup mpv --image-display-duration=$DISPLAY_TIME --volume=10 --screen=$SCREEN --playlist=$TMPFILE1 --shuffle  --no-border --ontop-level=system --ontop --profile=$geo"
         echo $command
         $command &

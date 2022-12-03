@@ -28,7 +28,7 @@ play_1_subs() {
 #   pass in just the subtitle filename and derive the audio from it
 
     if [[ ! -f "$1" ]]; then 
-        echo "$1 does not exist"
+        echo "play_1_subs called with P1 $1 does not exist"
         exit 1
     fi
     

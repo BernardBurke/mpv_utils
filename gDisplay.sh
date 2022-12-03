@@ -29,21 +29,21 @@ get_file_by_type() {
 
 }
 
-shuffle_edl() {
+# shuffle_edl() {
 
-    if [[ $2 = "" ]]; then
-        SHUFN=100
-    else
-        SHUFN="$2"
-    fi
-    echo "# mpv EDL v0" > $TMPFILE1
-    if [[ -f $1 ]]; then
-        cat "$1" | grep -v "#" | shuf -n $SHUFN >> $TMPFILE1
-    else
-        return 1
-    fi 
-    message "shuffle_edl wrote $TMPFILE1"
-}
+#     if [[ $2 = "" ]]; then
+#         SHUFN=100
+#     else
+#         SHUFN="$2"
+#     fi
+#     echo "# mpv EDL v0" > $TMPFILE1
+#     if [[ -f $1 ]]; then
+#         cat "$1" | grep -v "#" | shuf -n $SHUFN >> $TMPFILE1
+#     else
+#         return 1
+#     fi 
+#     message "shuffle_edl wrote $TMPFILE1"
+# }
 
 source $MPVU/play_media.sh
 
@@ -174,7 +174,9 @@ make4_videos() {
     message "shuffling $HOW_MANY records for VIDEO1"
     shuffle_edl $1 $HOW_MANY
     cp -v $TMPFILE1 $VIDEO1
-    message "shuffling $HOW_MANY records for VIDEO2"
+    # message "$VIDEO1 contents ---"
+    # cat $VIDEO1
+    # message "shuffling $HOW_MANY records for VIDEO2"
     shuffle_edl $1 $HOW_MANY
     cp -v $TMPFILE1 $VIDEO2
     message "shuffling $HOW_MANY records for VIDEO3"
@@ -187,14 +189,21 @@ make4_videos() {
 }
 
 edlblend() {
+    TMPFILE7="$(mktemp)"
     message "edlblend searching for $SEARCH_STRING and shuffling for $HOW_MANY..."
-    find $EDLSRC/ -iname '*.edl' | grep unix | grep -v movies | grep -i "$SEARCH_STRING" > $TMPFILE1
-    message "edlblend wrote to $TMPFILE1"
-    message "edlblend reading $(wc -l $TMPFILE1) records from $TMPFILE1"
+    find $EDLSRC/ -iname '*.edl' | grep unix | grep -v movies | grep -i "$SEARCH_STRING" > $TMPFILE7
+    find $USCR/ -iname '*.edl' | grep -i "$SEARCH_STRING" >> $TMPFILE7
+
+    # message "dumping search results for $SEARCH_STRING"
+    # cat $TMPFILE7
+
+    message "edlblend wrote to $TMPFILE7"
+    message "edlblend reading $(wc -l $TMPFILE7) records from $TMPFILE7"
     while read -r edlname; do
         cat "$edlname" | grep -v "#" >> $TMPFILE2
-    done < $TMPFILE1
+    done < $TMPFILE7
     make4_videos $TMPFILE2
+    message "$VIDEO1 is VIDEO1"
 }
 
 edlm3u() {
@@ -269,17 +278,14 @@ edl() {
 }
 
 collect_images() {
-    if $SHORT_FORM; then
-         find /mnt/d/grls/images2/newmaisey -iname '*.jpg' -o -iname '*.mp4' -o -iname '*.png' -o -iname '*.gif' | shuf -n 1000 > $TMPFILE1
-         find /mnt/d/grls/images2/slices -iname '*.jpg' -o -iname '*.mp4' -o -iname '*.png' -o -iname '*.gif' | shuf -n 1000 >> $TMPFILE1
-         find /mnt/d/grls/images2/ten9a -iname '*.jpg' -o -iname '*.mp4' -o -iname '*.png' -o -iname '*.gif' | shuf -n 1000 >> $TMPFILE1
-        #find /mnt/d/grls/images2/ -iname '*.jpg' -o -iname '*.mp4' -o -iname '*.png' -o -iname '*.gif' | grep -v debz | shuf -n 4000 > $TMPFILE1
-        #cp $USCR/screenshot.m3u 
-    else
-        find /mnt/d/grls/images2/FTVGirls -iname '*.jpg' -o -iname '*.mp4' -o -iname '*.png' -o -iname '*.gif' | shuf -n 10 > $TMPFILE1
-        find /mnt/d/grls/images2/zippy -iname '*.jpg' -o -iname '*.mp4' -o -iname '*.png' -o -iname '*.gif' | shuf -n 10 >> $TMPFILE1
-        find /mnt/d/grls/images2/ -iname '*.jpg' -o -iname '*.mp4' -o -iname '*.png' -o -iname '*.gif' | shuf -n 1000 >> $TMPFILE1
-    fi
+    IMAGE_ARRAY="newmaisey slices ten9a darina cheeky gallery-dl handpinned"
+
+    for folder in $IMAGE_ARRAY
+    do 
+          find /mnt/d/grls/images2/$folder -iname '*.jpg' -o -iname '*.mp4' -o -iname '*.png' -o -iname '*.gif' | shuf -n 1000 >> $TMPFILE1
+    done
+
+
 }
 
 imago() {
@@ -357,8 +363,16 @@ case "$SELECT_MODE" in
     ;;
     rxe)
         echo "executing rxe calling edl"
-        edlblend
-        rx_dispatch
+        edl
+        IS_PLAYLIST=false
+        rx_processing "$SUBS_SEARCH_STRING"
+
+        if [[ ! -f "$SRT_FILE" ]]; then
+            "Cannot file SRT_FILE  from $SEARCH_STRING"
+            exit 1
+        fi
+        PLAY_MODE=${PLAY_MODE}_subs
+
     ;;
     rxm) 
         echo "executing rxm calling m3u"
@@ -394,7 +408,7 @@ case "$PLAY_MODE" in
         "1_m3u")
         play_1_m3u "$VIDEO1" $VOLUME $SCREEN;;
         "1_subs")
-        echo "in play_1_subs call"
+        echo "in play_1_subs call for $VIDEO1 $SRT_FILE"
         play_1_subs "$VIDEO1" "$SRT_FILE" $VOLUME $SCREEN
         ;;
         "4")
