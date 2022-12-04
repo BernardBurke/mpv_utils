@@ -163,7 +163,7 @@ function get_file_class(filename)
         mediaclass = "edl"
     end
 
-    if firstchars == "mkv" or firstchars == "mp4" or firstchars == "avi" or firstchars == "web" then 
+    if firstchars == "mkv" or firstchars == "mp4" or firstchars == "avi" or firstchars == "web" or firstchars == "wmv" then 
         mediaclass = "video"
     end
 

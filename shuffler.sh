@@ -37,7 +37,9 @@ cat $TMPFILE3 | grep -v "#" >> $TMPFILE4
 
 SHUFFLED_OUTPUT="$USCR/shuffled_$(basename "$1" .edl)_$(basename "$2" .edl)_$$.edl"
 
-cat $TMPFILE4 | grep -v "#" > "$SHUFFLED_OUTPUT"
+echo "# mpv EDL v0" > "$SHUFFLED_OUTPUT"
+
+cat $TMPFILE4 | grep -v "#" >> "$SHUFFLED_OUTPUT"
 echo $SHUFFLED_OUTPUT
 
 

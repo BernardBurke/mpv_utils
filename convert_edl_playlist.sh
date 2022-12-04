@@ -12,28 +12,35 @@ else
     PLAY_MODE=$1
 fi 
 
-
-
 if [[ $2 == "" ]]; then
-    SCREEN=0
+    VOLUME=0
 else
-    SCREEN=$2
+    VOLUME=$2
 fi 
 
+
+
+
 if [[ $3 == "" ]]; then
+    SCREEN=0
+else
+    SCREEN=$3
+fi 
+
+if [[ $4 == "" ]]; then
     SEARCH_EDLS=false
 else
     SEARCH_EDLS=true
-    EDL_SEARCH_STRING="$3"
+    EDL_SEARCH_STRING="$4"
 fi
 
-if [[ $4 == "" ]]; then
+if [[ $5 == "" ]]; then
     DIRECTORY_NAME="$HANDUNI"
 else
-    if [[ -d "$4" ]]; then
-        DIRECTORY_NAME="$4"
+    if [[ -d "$5" ]]; then
+        DIRECTORY_NAME="$5"
     else
-        "$4 provided directory does not exist"
+        "$5 provided directory does not exist"
         exit 1
     fi
 fi
@@ -149,7 +156,9 @@ edl_playlist_4(){
 
     done
 
-    read -p "Press Return to continue"
+    if $DEBUG_PAUSE ; then
+        read -p "Press Return to continue"
+    fi
 
     for indx in ${!pfiles[*]} ; do
             cp "${pfiles[$indx]}" /tmp/$indx.sh
@@ -165,8 +174,9 @@ edl_playlist_1(){
     convert_edl_file "$FILE" "$PLAYER_FILE1" $SCREEN "override"
     cat "$PLAYER_FILE1" > /tmp/command_list_edl_playlist.log
 
-
-    read -p "Press Return to continue"
+    if $DEBUG_PAUSE ; then
+        read -p "Press Return to continue"
+    fi
 
     cp $PLAYER_FILE1 /tmp/1.sh
     bash -x "$PLAYER_FILE1" &
