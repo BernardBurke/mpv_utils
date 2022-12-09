@@ -194,8 +194,8 @@ edlblend() {
     find $EDLSRC/ -iname '*.edl' | grep unix | grep -v movies | grep -i "$SEARCH_STRING" > $TMPFILE7
     find $USCR/ -iname '*.edl' | grep -i "$SEARCH_STRING" >> $TMPFILE7
 
-    # message "dumping search results for $SEARCH_STRING"
-    # cat $TMPFILE7
+    message "dumping search results for $SEARCH_STRING"
+    cat $TMPFILE7
 
     message "edlblend wrote to $TMPFILE7"
     message "edlblend reading $(wc -l $TMPFILE7) records from $TMPFILE7"
@@ -207,14 +207,53 @@ edlblend() {
 }
 
 edlm3u() {
-    message "edlm3u is probably defunct - calling edlm3u"
-    message "m3u is probably defunct - callling edlblend..."
-    edlblend
+    #message "edlm3u is probably defunct - calling edlm3u"
+    #message "m3u is probably defunct - callling edlblend..."
     # exit 1
-    # message  " edlm3u searching for $SEARCH_STRING and shuffling for $HOW_MANY..."
-    # find $EDLSRC/ -iname '*.edl' | grep unix | grep -i "$2" | shuf -n $3 > $TMPFILE3
-    # make4_videos $TMPFILE3
-    # IS_PLAYLIST=true  
+    message  " edlm3u searching for $SEARCH_STRING and shuffling for $HOW_MANY..."
+    TMPFILE8=$(mktemp)
+    find $EDLSRC/ -type f -iname '*.m3u' | grep unix | grep -i "$SEARCH_STRING"  > $TMPFILE3
+    find $USCR/ -type f -iname '*.m3u' | grep unix | grep -i "$SEARCH_STRING"  >> $TMPFILE3
+
+    message "Search results in $TMPFILE3"
+    cat $TMPFILE3
+
+    while  read -u 3 file
+    do
+        message "$file is current record"
+        while read -r record
+        do 
+            RTYPE="${record##*.}"
+            if [[ "$RTYPE" == "edl" ]] ; then
+                    #message "processing $record..."
+                    cat "$record" | grep -v "#" >> $TMPFILE8
+            else
+                message "$file is not an edl file - $RTYPE"
+            fi
+        done < "$file"
+    done 3< $TMPFILE3
+        
+    cat $TMPFILE8 | shuf -n $HOW_MANY > $TMPFILE3
+
+    blank4_videos
+    echo "# mpv EDL v0" > $VIDEO1
+    cat $TMPFILE3 | shuf -n $HOW_MANY >> $VIDEO1
+    echo "# mpv EDL v0" > $VIDEO2
+    cat $TMPFILE3 | shuf -n $HOW_MANY >> $VIDEO2
+    echo "# mpv EDL v0" > $VIDEO3
+    cat $TMPFILE3 | shuf -n $HOW_MANY >> $VIDEO3
+    echo "# mpv EDL v0" > $VIDEO4
+    cat $TMPFILE3 | shuf -n $HOW_MANY >> $VIDEO4
+
+    message "Candidate file for make4_videos is $TMPFILE8"
+    # cp -v $TMPFILE8 $VIDEO1
+    # cp -v $TMPFILE8 $VIDEO2
+    # cp -v $TMPFILE8 $VIDEO3
+    # cp -v $TMPFILE8 $VIDEO4
+
+    IS_PLAYLIST=false
+    export SUPPRESS_SUBTITLES=true
+    #PLAY_MODE=1
 }
 
 m3uSearch() {
@@ -334,8 +373,8 @@ case "$SELECT_MODE" in
         edlblend
     ;;
     edlm3u)
-        echo "executing edl m3u"
-        PLAY_MODE="${PLAY_MODE}_m3u"
+        echo "executing edlm3u"
+        PLAY_MODE="${PLAY_MODE}"
         edlm3u
     ;;
     m3uSearch)

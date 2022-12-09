@@ -6,12 +6,18 @@
 source $MPVU/util_inc.sh
 
 random_subtitles() {
+    if $SUPPRESS_SUBTITLES; then
+        echo ""
+        return 0
+    fi 
     if $RANDOM_SUBTITLES; then
         echo "$(find /mnt/d/grls/audio/ -iname '*.txt' | shuf -n 1)"
     else
         echo ""
     fi
 }
+
+
 
 play_1() {
     if [[ ! -f "$1" ]]; then 
