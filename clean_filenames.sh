@@ -14,6 +14,7 @@ fi
 CURRENT_DIR="$PWD"
 
 cd "$WORK_DIR"
+echo "cd \"$WORK_DIR\""
 
 
 for file in *
@@ -31,7 +32,10 @@ for file in *
     TARGET_NAME="$OUTFILENAME.$FILE_EXTENSION"
     if [[ "$BASE_NAME" != "$TARGET_NAME" ]]; then
         echo "mv -v \"$BASE_NAME\" \"$TARGET_NAME\""
+        echo "read -p \"Press return to continue\""
     fi
 done
 
 cd "$CURRENT_DIR"
+
+echo "cd \"$CURRENT_DIR\""
