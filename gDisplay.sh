@@ -282,7 +282,7 @@ m3uSearch() {
 }
 
 m3u() {
-    # message "m3u is probably defunct - callling m3uSearch..."
+    message "m3u is probably defunct - callling m3uSearch..."
     # m3uSearch
     # exit 1
     # VIDEO1="$(get_file_by_type "m3u")"
@@ -290,10 +290,11 @@ m3u() {
     # VIDEO3="$(get_file_by_type "m3u")"
     # VIDEO4="$(get_file_by_type "m3u")"
     # IS_PLAYLIST=true
-    VIDEO="$(find $EDLSRC/ -iname '*.m3u' | grep -i "$SEARCH_STRING" | shuf -n 1 )"
-    if [[ ! -f "$VIDEO" ]]; then 
-        VIDEO="$(find $EDLSRC/ -iname '*.m3u' | grep -i "$SEARCH_STRING" | shuf -n 1 )"
-    fi
+    VIDEO="$(find $EDLSRC/ -iname '*.m3u' | grep -iv windows | grep -i "$SEARCH_STRING" | shuf -n 1 )"
+    message "Located $VIDEO"
+    # if [[ ! -f "$VIDEO" ]]; then 
+    #     VIDEO="$(find $EDLSRC/ -iname '*.m3u' | grep -i "$SEARCH_STRING" | shuf -n 1 )"
+    # fi
 
     if [[ ! -f "$VIDEO" ]]; then 
         message "No m3u file found with search string $SEARCH_STRING"
