@@ -37,7 +37,7 @@ get_media_without_subtitles() {
 
 #get_media_without_subtitles "$AUDEY/catwithclaws"
 #echo $SRC/vosk_me.sh $(get_media_without_subtitles "$AUDEY/emma_patreon")
-get_media_without_subtitles "$AUDEY/catwithclaws" > $TMPFILE3
+get_media_without_subtitles "$AUDEY/newdaddy" > $TMPFILE3
 
 while read -r l2
 do
