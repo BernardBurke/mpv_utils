@@ -110,8 +110,8 @@ fi
 
 
 
-read -p "Press return to exit"
-pkill feh &
-echo "killing mpv..."
-pkill mpv
+# read -p "Press return to exit"
+# pkill feh &
+# echo "killing mpv..."
+# pkill mpv
 
