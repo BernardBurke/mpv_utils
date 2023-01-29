@@ -333,7 +333,7 @@ edl() {
 }
 
 collect_images() {
-    IMAGE_ARRAY="newmaisey slices ten9a darina cheeky gallery-dl handpinned"
+    IMAGE_ARRAY="newmaisey maizCHR ten9a darina cheeky gallery-dl handpinned"
 
     for folder in $IMAGE_ARRAY
     do 
@@ -343,9 +343,15 @@ collect_images() {
 
 }
 
+collect_archives() {
+    find /mnt/d/grls/images2/ -iname '*.rar' -o -iname '*.zip'  | shuf -n 100 >> $TMPFILE1
+}
+
 imago() {
     collect_images
-    VIDEO1=$TMPFILE1
+    collect_archives
+    cat $TMPFILE1 | shuf -n 1000 > $TMPFILE2
+    VIDEO1=$TMPFILE2
     PLAY_MODE=8
     IS_PLAYLIST=true
 }

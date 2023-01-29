@@ -52,7 +52,7 @@ fi
 message "IMGDIR is $IMGDIR"
 
 message "Firing up on $SCREEN at volume $VOLUME with IMGDIR $IMGDIR using EDLNAME $EDLNAME - ONE_SCREEN is $ONE_SCREEN"
-read -p "Press return to execute"
+#read -p "Press return to execute"
 
 save_6() {
 	if [[ "$1" == "" ]]; then
@@ -110,8 +110,10 @@ fi
 
 
 
-# read -p "Press return to exit"
-# pkill feh &
-# echo "killing mpv..."
-# pkill mpv
-
+#read -p "Press return to exit"
+read  -p "Press return or q " -n 1 ANS
+if [[ "$ANS" == "q" ]]; then
+	pkill feh &
+	echo "killing mpv..."
+	pkill mpv
+fi
