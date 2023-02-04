@@ -36,7 +36,7 @@ SELECTING_VIDEO=""
 SELECTED_VIDEO=""
 
 while [[ $SELECTING_VIDEO == "" ]]; do
-    for SELECTED_VIDEO in $HANDUNI/*$SEARCH_MASK*
+    for SELECTED_VIDEO in $HANDUNI/*$SEARCH_MASK* $USCR/*$SEARCH_MASK*  $BCHU/*$SEARCH_MASK* $KEYCUTUNI/*$SEARCH_MASK* 
         do
             read -p "$SELECTED_VIDEO (y/n)" -n 1 SELECTING_VIDEO
             if [[ $SELECTING_VIDEO == "y" ]]; then

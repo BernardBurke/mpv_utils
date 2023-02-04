@@ -90,7 +90,8 @@ if [[ $7 = "" ]]; then
     ADD_SUBS=false
 else
     ADD_SUBS=true
-    SUBS_SEARCH_STRING="$7"
+    SUBS_SEARCH_STRING=""$7""
+    message "SUBS_SEARCH_STRING is $SUBS_SEARCH_STRING"
 fi
 
 IS_PLAYLIST=false
