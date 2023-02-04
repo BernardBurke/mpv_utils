@@ -34,6 +34,15 @@ echo ""
 
 SELECTING_VIDEO=""
 SELECTED_VIDEO=""
+DO_RXV=false
+
+#if the provided video parameter is an actual file, then use it instead of the looking for an edl
+if [[ -f "$SEARCH_MASK" ]];  then
+    echo "$SEARCH_MASK file will be used"
+    DO_RXV=true
+    SELECTING_VIDEO="done"
+    SELECTED_VIDEO="$SEARCH_MASK"
+fi
 
 while [[ $SELECTING_VIDEO == "" ]]; do
     for SELECTED_VIDEO in $HANDUNI/*$SEARCH_MASK* $USCR/*$SEARCH_MASK*  $BCHU/*$SEARCH_MASK* $KEYCUTUNI/*$SEARCH_MASK* 
@@ -79,7 +88,12 @@ done
 
 TMP=$(mktemp)
 
-CMD="$MPVU/gDisplay.sh 1 $VOLUME $SCREEN rxe 100 \"$SELECTED_VIDEO\" \"$SELECTED_SRT\""
+if $DO_RXV ; then
+    CMD="$MPVU/gDisplay.sh 1 $VOLUME $SCREEN rxv 100 \"$SELECTED_VIDEO\" \"$SELECTED_SRT\""
+else
+    CMD="$MPVU/gDisplay.sh 1 $VOLUME $SCREEN rxe 100 \"$SELECTED_VIDEO\" \"$SELECTED_SRT\""
+fi
+
 echo "$CMD" > $TMP
 read -p "$CMD" -n 1 ANS
 bash $TMP
