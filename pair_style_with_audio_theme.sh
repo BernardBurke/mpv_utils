@@ -96,6 +96,7 @@ fi
 
 echo "$CMD" > $TMP
 read -p "$CMD" -n 1 ANS
+echo "Temp file is $TMP"
 bash $TMP
 #$MPVU/gDisplay.sh 1 $VOLUME $SCREEN rxe 100 '$SELECTED_VIDEO'  '$SELECTED_SRT'
 #$CMD

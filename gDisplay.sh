@@ -358,7 +358,8 @@ imago() {
 }
 
 rx_processing() {
-        SRT_FILE="$(find $GRLSRC/audio/ -iname '*.srt' | grep -i "$1" | shuf -n 1)"
+        WITHOUT_BRACKETS="$(echo "$1" | sed "s/\[/\\\[/g" | sed "s/\]/\\\]/g")"
+        SRT_FILE="$(find $GRLSRC/audio/ -iname '*.srt' | grep -i "$WITHOUT_BRACKETS" | shuf -n 1)"
 }
 
 rx_dispatch() {
