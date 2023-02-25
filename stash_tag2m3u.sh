@@ -1,7 +1,7 @@
 #/!/bin/bash
 # 
 TMPFILE1=$(mktemp)
-TEMPLATE=/home/ben/CheatSheets/stash_tag_template.sql 
+TEMPLATE=$MPVU/stash_tag_template.sql 
 
 
 
@@ -27,17 +27,17 @@ fi
 
 case $MODE in
     TAG)
-    TEMPLATE=/home/ben/CheatSheets/stash_tag_template.sql
+    TEMPLATE=$MPVU/stash_tag_template.sql
     cp -v $TEMPLATE $TMPFILE1
     sed -i -e  "s/Solid Gold/$REPLACE_STRING/g" "$TMPFILE1"
     ;;
     NAME)
-    TEMPLATE=/home/ben/CheatSheets/stash_performer_name_template.sql
+    TEMPLATE=$MPVU/stash_performer_name_template.sql
     cp -v $TEMPLATE $TMPFILE1
     sed -i -e  "s/Alex Coal/$REPLACE_STRING/g" "$TMPFILE1"
     ;;
     AGE)
-        TEMPLATE=/home/ben/CheatSheets/stash_performer_age_template.sql
+        TEMPLATE=$MPVU/stash_performer_age_template.sql
     cp -v $TEMPLATE $TMPFILE1
     sed -i -e  "s/1993/$REPLACE_STRING/g" "$TMPFILE1"
     ;;
