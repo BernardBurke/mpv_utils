@@ -1,4 +1,4 @@
-.open /home/ben/Downloads/stash-go.sqlite
+.open /home/ben/.stash/stash-go.sqlite
 select folders.path || '/' || files.basename as path from performers, performers_scenes, scenes, files, scenes_files, folders
 	where performers.name like '%Alex Coal%' AND
 		performers_scenes.performer_id = performers.id AND

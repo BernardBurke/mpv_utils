@@ -1,4 +1,4 @@
-.open /home/ben/Downloads/stash-go.sqlite
+.open /home/ben/.stash/stash-go.sqlite
 select folders.path || '/' || files.basename as path from tags, scenes_tags, scenes, files, scenes_files, folders
 	where tags.name like '%Solid Gold%' AND
 		scenes_tags.tag_id = tags.id AND

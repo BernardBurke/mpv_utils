@@ -67,5 +67,11 @@ cat $TMPFILE1
 export M3U_TAGGED=$HANDUNI/stashgen$$.m3u
 
 sqlite3 < $TMPFILE1 > $M3U_TAGGED
+# sqlite3 < $TMPFILE1
+# exit 0
+
+echo $M3U_TAGGED
 
 nohup mpv --screen=$SCREEN --volume=$VOLUME --playlist=$M3U_TAGGED --shuffle  --fs-screen=$SCREEN --fullscreen &
+
+cat $M3U_TAGGED
