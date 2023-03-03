@@ -41,6 +41,12 @@ case $MODE in
     cp -v $TEMPLATE $TMPFILE1
     sed -i -e  "s/1993/$REPLACE_STRING/g" "$TMPFILE1"
     ;;
+    STUDIO)
+        TEMPLATE=$MPVU/stash_studio_template.sql
+    cp -v $TEMPLATE $TMPFILE1
+    sed -i -e  "s/Mommy/$REPLACE_STRING/g" "$TMPFILE1"
+    ;;
+
     *)
     echo "Invalid MODE"
     exit
@@ -64,14 +70,30 @@ fi
 
 cat $TMPFILE1
 
-export M3U_TAGGED=$HANDUNI/stashgen$$.m3u
+export M3U_TAGGED=$USCR/stashgen$$.m3u
 
 sqlite3 < $TMPFILE1 > $M3U_TAGGED
 # sqlite3 < $TMPFILE1
 # exit 0
 
-echo $M3U_TAGGED
+
 
 nohup mpv --screen=$SCREEN --volume=$VOLUME --playlist=$M3U_TAGGED --shuffle  --fs-screen=$SCREEN --fullscreen &
 
 cat $M3U_TAGGED
+
+echo $M3U_TAGGED
+
+clean_filename() {
+
+    FILE_NAME="$1"
+    #ALPH_NAME="${FILE_NAME//[^[:alnum:]_-]/}" 
+    OUTFILENAME=$(echo $FILE_NAME | sed "s/\[.*$//g" | sed -r "s/\(.*$//g" | sed "s/\./ /g" | sed "s/  / /g")
+    OUTFILENAME=$(echo $FILE_NAME | sed 's/[^a-zA-Z0-9_-]//')
+    OUTFILENAME=$(echo $FILE_NAME | sed 's/[^[:alnum:]\ ]//g' | tr -s " ")
+    echo $OUTFILENAME
+}
+
+H_FILENAME="$(clean_filename "$REPLACE_STRING")"
+
+cp -v $M3U_TAGGED $HANDUNI/$H_FILENAME.m3u
