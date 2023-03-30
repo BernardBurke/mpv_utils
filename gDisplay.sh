@@ -360,7 +360,9 @@ imago() {
 
 rx_processing() {
         WITHOUT_BRACKETS="$(echo "$1" | sed "s/\[/\\\[/g" | sed "s/\]/\\\]/g")"
+        echo "withoutbrackets is ${WITHOUT_BRACKETS}"
         SRT_FILE="$(find $GRLSRC/audio/ -iname '*.srt' | grep -i "$WITHOUT_BRACKETS" | shuf -n 1)"
+        echo "SRT_FILE is ${SRT_FILE}"
 }
 
 rx_dispatch() {
