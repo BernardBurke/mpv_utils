@@ -14,6 +14,9 @@ read -p "Press Return to continue with $HANDUNI"
 #xport TMP_EDL_DIR=$(mktemp -d)
 for i in $HANDUNI/*.edl; do validate_edl "$i"; done
 ls -al $TMP_EDL_DIR/*.edl
+read -p "Press Return to continue with $BCHU"
+for i in $BCHU/*.edl; do validate_edl "$i"; done
+ls -al $TMP_EDL_DIR/*.edl
 read -p "Press Return to continue with $KEYCUTUNI"
 # export TMP_EDL_DIR=$(mktemp -d)
 # for i in $KEYCUTUNI/*.edl; do validate_edl "$i"; done
