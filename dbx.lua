@@ -527,7 +527,7 @@ local function deleteMe()
     local filename = mp.get_property_native("path")
     print("writing "..filename.." to /tmp/deleteMe.sh")
     local delete_handle = io.open('/tmp/deleteMe.sh', "a")    
-    local wrtString = "rm '"..filename.."'\n"
+    local wrtString = "rm -v '"..filename.."'\n"
     print(wrtString)
     delete_handle:write(wrtString)
     delete_handle:close()
