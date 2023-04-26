@@ -192,7 +192,8 @@ make4_videos() {
 edlblend() {
     TMPFILE7="$(mktemp)"
     message "edlblend searching for $SEARCH_STRING and shuffling for $HOW_MANY..."
-    find $EDLSRC/ -iname '*.edl' | grep unix | grep -v movies | grep -i "$SEARCH_STRING" > $TMPFILE7
+    # put movies back infind $EDLSRC/ -iname '*.edl' | grep unix | grep -v movies | grep -i "$SEARCH_STRING" > $TMPFILE7
+    find $EDLSRC/ -iname '*.edl' | grep unix | grep -i "$SEARCH_STRING" > $TMPFILE7
     find $USCR/ -iname '*.edl' | grep -i "$SEARCH_STRING" >> $TMPFILE7
 
     message "dumping search results for $SEARCH_STRING"
@@ -359,7 +360,9 @@ imago() {
 
 rx_processing() {
         WITHOUT_BRACKETS="$(echo "$1" | sed "s/\[/\\\[/g" | sed "s/\]/\\\]/g")"
+        echo "withoutbrackets is ${WITHOUT_BRACKETS}"
         SRT_FILE="$(find $GRLSRC/audio/ -iname '*.srt' | grep -i "$WITHOUT_BRACKETS" | shuf -n 1)"
+        echo "SRT_FILE is ${SRT_FILE}"
 }
 
 rx_dispatch() {
