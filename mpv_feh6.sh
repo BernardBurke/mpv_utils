@@ -86,7 +86,7 @@ run_screen() {
 		nohup mpv --volume=$VOLUME --screen=$1 --profile=topmid $HANDUNI/mpv_feh6$LCOUNT.edl &
 		((LCOUNT++))
 		nohup mpv --volume=$VOLUME --screen=$1 --profile=botmid $HANDUNI/mpv_feh6$LCOUNT.edl &
-		$IMGSRC/fillet_screens.sh 6corners$1 "$3"
+		$IMGSRC/fillet_screens.sh 6corners$1 10  "$IMGDIR"
 }
 
 LOOPCNT=$(($SCREEN + 0))
@@ -103,7 +103,7 @@ else
 		#nohup mpv --volume=$VOLUME --screen=$j --profile=topmid $HANDUNI/mpv_feh6$k.edl &
 		((k++))
 		#nohup mpv --volume=$VOLUME --screen=$j --profile=botmid $HANDUNI/mpv_feh6$k.edl &
-		#$IMGSRC/fill_screens.sh 6corners$j "$IMGDIR"
+		#$IMGSRC/fill_screens.sh 6corners$j 10  "$IMGDIR"
 	done
 
 fi
