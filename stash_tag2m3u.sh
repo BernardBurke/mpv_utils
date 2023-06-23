@@ -96,4 +96,4 @@ clean_filename() {
 
 H_FILENAME="$(clean_filename "$REPLACE_STRING")"
 
-cp -v $M3U_TAGGED $HANDUNI/$H_FILENAME.m3u
+cp -v $M3U_TAGGED "$HANDUNI/$H_FILENAME.m3u"
