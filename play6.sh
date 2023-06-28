@@ -60,6 +60,6 @@ do
     #nohup 
     sleep $(shuf -i 1-7 -n 1)
     
-    nohup mpv --image-display-duration=$DISPLAY_TIME --volume=10 --screen=$5 --playlist="$3" --shuffle  --no-border --ontop-level=system --ontop --profile=$geo &
+    nohup mpv --image-display-duration=$DISPLAY_TIME --volume=10 --screen=$SCREEN --playlist="$3" --shuffle  --no-border --ontop-level=system --ontop --profile=$geo &
 done
 export IMGSUBTITLES=
