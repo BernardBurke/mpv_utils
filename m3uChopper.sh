@@ -59,7 +59,9 @@ while IFS= read -r fname; do
         #echo "$fname $length"
             for ((j=1;j<=$LOOP_COUNT;j++)); do
                     period=$(shuf -i $LOWER-$UPPER -n 1 )
-                    strt=$(rand -M $length -s $RANDOM )
+                    #strt=$(rand -M $length -s $RANDOM )
+                        # replace rand with shuf as rand seems a rare beast 
+                        strt=$(shuf -i 1-$length -n 1 )
                     runtime=$(( $strt + $period ))
                     #echo "Length $length Start $strt Period $period Runtime $runtime fname $fname"
                     #echo "Runtime $runtime"
