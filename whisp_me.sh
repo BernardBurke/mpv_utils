@@ -37,5 +37,5 @@ fi
 
 
 
-whisper --output_format srt  "$1" --output_dir $OUTPUT_DIR
+whisper --output_format srt --language en "$1" --output_dir $OUTPUT_DIR
 
