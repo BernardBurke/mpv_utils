@@ -335,7 +335,8 @@ edl() {
 }
 
 collect_images() {
-    IMAGE_ARRAY="newmaisey maizCHR ten9a darina cheeky gallery-dl handpinned"
+    IMAGE_ARRAY="newmaisey maizCHR gallery-dl handpinned filter senxxu senxxu tmbx tumbling_fillets vfillets"
+    IMAGE_ARRAY="newmaisey newbies newest maizCHR handpinned filter tumbling_fillets vfillets toktmb"
 
     for folder in $IMAGE_ARRAY
     do 
