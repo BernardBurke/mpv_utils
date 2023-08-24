@@ -335,9 +335,13 @@ edl() {
 }
 
 collect_images() {
-    IMAGE_ARRAY="newmaisey maizCHR gallery-dl handpinned filter senxxu senxxu tmbx tumbling_fillets vfillets"
-    IMAGE_ARRAY="newmaisey newbies newest maizCHR handpinned filter tumbling_fillets vfillets toktmb"
-
+    if [[ "$IMAGE_ARRAY" == "" ]]; then
+        IMAGE_ARRAY="newmaisey maizCHR gallery-dl handpinned filter senxxu senxxu tmbx tumbling_fillets vfillets"
+        IMAGE_ARRAY="newmaisey newbies newest maizCHR handpinned filter tumbling_fillets vfillets toktmb"
+    else
+        message="Custom images $IMAGE_ARRAY"
+    fi
+    
     for folder in $IMAGE_ARRAY
     do 
           find /mnt/d/grls/images2/$folder -iname '*.jpg' -o -iname '*.mp4' -o -iname '*.png' -o -iname '*.gif' | shuf -n 1000 >> $TMPFILE1
