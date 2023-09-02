@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # filenames should just contain alphanumerics!
 # source $SRC/common_inc.sh
 # source $SRC/common_inc.sh

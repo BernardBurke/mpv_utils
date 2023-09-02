@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # read an edl and output the unique files as a m3u style playlist
 source $SRC/common_inc.sh
 source $MPVU/util_inc.sh 

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # a more serious version of this converter - written initially to check a windows edl
 source $SRC/common_inc.sh
 

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # read a playlist of paired audio & subtitles
 if [[ ! -f "$HANDUNI/$1_srt.m3u" ]]; then
     echo "No existing audio playlist specified in P1 $1"

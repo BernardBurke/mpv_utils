@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # use whisper transcribe to make subtitles for a single file
 source $SRC/common_inc.sh
 

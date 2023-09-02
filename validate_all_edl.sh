@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # wrapper for validating all EDLs
 source $MPVU/util_inc.sh
 

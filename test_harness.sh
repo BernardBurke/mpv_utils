@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # general purpose fuinction tester
 source $SRC/common_inc.sh
 # source $SRC/common_inc.sh

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # use nohup mpv --image-display-duration=$DISPLAY_TIME config profiles to cycle imaages
 #source $SRC/common_inc.sh
 source $MPVU/get_media.sh

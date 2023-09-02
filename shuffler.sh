@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # read 2 edl files and create a shuffled output file
 TMPFILE1=$(mktemp)
 TMPFILE2=$(mktemp)

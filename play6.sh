@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # the 6 viewport method for video playlists (not just images on the edges)
 #source $SRC/common_inc.sh
 source $SRC/common_inc.sh

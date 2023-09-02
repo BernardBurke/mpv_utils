@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # use FFMpeg to copy out the audio stream from a video file
 source $MPVU/util_inc.sh
 

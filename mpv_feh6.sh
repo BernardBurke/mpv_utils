@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # use feh for images
 # source $SRC/common_inc.sh
 source $MPVU/util_inc.sh 

@@ -1,4 +1,4 @@
-# #!/bin/bash
+# #!/usr/bin/env bash
 # # written to validate EDL files, but no doubt will have other functions.
 source $SRC/common_inc.sh
 source $MPVU/util_inc.sh 
