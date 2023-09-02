@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/bash
 # general purpose functions 
 logmessage() {
     LOG_FILE="/tmp/mpv_utlities.log"
