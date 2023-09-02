@@ -1,8 +1,4 @@
-<<<<<<< HEAD
-#!/usr/bin/bash
-=======
 #!/usr/bin/env bash
->>>>>>> nix
 # general purpose functions 
 logmessage() {
     LOG_FILE="/tmp/mpv_utlities.log"
