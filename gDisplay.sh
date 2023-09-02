@@ -90,7 +90,8 @@ if [[ $7 = "" ]]; then
     ADD_SUBS=false
 else
     ADD_SUBS=true
-    SUBS_SEARCH_STRING="$7"
+    SUBS_SEARCH_STRING=""$7""
+    message "SUBS_SEARCH_STRING is $SUBS_SEARCH_STRING"
 fi
 
 IS_PLAYLIST=false
@@ -191,7 +192,8 @@ make4_videos() {
 edlblend() {
     TMPFILE7="$(mktemp)"
     message "edlblend searching for $SEARCH_STRING and shuffling for $HOW_MANY..."
-    find $EDLSRC/ -iname '*.edl' | grep unix | grep -v movies | grep -i "$SEARCH_STRING" > $TMPFILE7
+    # put movies back infind $EDLSRC/ -iname '*.edl' | grep unix | grep -v movies | grep -i "$SEARCH_STRING" > $TMPFILE7
+    find $EDLSRC/ -iname '*.edl' | grep unix | grep -i "$SEARCH_STRING" > $TMPFILE7
     find $USCR/ -iname '*.edl' | grep -i "$SEARCH_STRING" >> $TMPFILE7
 
     message "dumping search results for $SEARCH_STRING"
@@ -283,13 +285,29 @@ m3uSearch() {
 
 m3u() {
     message "m3u is probably defunct - callling m3uSearch..."
-    m3uSearch
+    # m3uSearch
     # exit 1
     # VIDEO1="$(get_file_by_type "m3u")"
     # VIDEO2="$(get_file_by_type "m3u")"
     # VIDEO3="$(get_file_by_type "m3u")"
     # VIDEO4="$(get_file_by_type "m3u")"
     # IS_PLAYLIST=true
+    VIDEO="$(find $EDLSRC/ -iname '*.m3u' | grep -iv windows | grep -i "$SEARCH_STRING" | shuf -n 1 )"
+    message "Located $VIDEO"
+    # if [[ ! -f "$VIDEO" ]]; then 
+    #     VIDEO="$(find $EDLSRC/ -iname '*.m3u' | grep -i "$SEARCH_STRING" | shuf -n 1 )"
+    # fi
+
+    if [[ ! -f "$VIDEO" ]]; then 
+        message "No m3u file found with search string $SEARCH_STRING"
+        exit 1
+    fi
+    VIDEO1="$VIDEO"
+    VIDEO2="$VIDEO"
+    VIDEO3="$VIDEO"
+    VIDEO4="$VIDEO"
+    IS_PLAYLIST=true
+    
 }
 
 edl() {
@@ -317,8 +335,13 @@ edl() {
 }
 
 collect_images() {
-    IMAGE_ARRAY="newmaisey slices ten9a darina cheeky gallery-dl handpinned"
-
+    if [[ "$IMAGE_ARRAY" == "" ]]; then
+        IMAGE_ARRAY="newmaisey maizCHR gallery-dl handpinned filter senxxu senxxu tmbx tumbling_fillets vfillets"
+        IMAGE_ARRAY="newmaisey newbies newest maizCHR handpinned filter tumbling_fillets vfillets toktmb"
+    else
+        message="Custom images $IMAGE_ARRAY"
+    fi
+    
     for folder in $IMAGE_ARRAY
     do 
           find /mnt/d/grls/images2/$folder -iname '*.jpg' -o -iname '*.mp4' -o -iname '*.png' -o -iname '*.gif' | shuf -n 1000 >> $TMPFILE1
@@ -327,15 +350,24 @@ collect_images() {
 
 }
 
+collect_archives() {
+    find /mnt/d/grls/images2/ -iname '*.rar' -o -iname '*.zip'  | shuf -n 100 >> $TMPFILE1
+}
+
 imago() {
     collect_images
-    VIDEO1=$TMPFILE1
+    collect_archives
+    cat $TMPFILE1 | shuf -n 1000 > $TMPFILE2
+    VIDEO1=$TMPFILE2
     PLAY_MODE=8
     IS_PLAYLIST=true
 }
 
 rx_processing() {
-        SRT_FILE="$(find $GRLSRC/audio/ -iname '*.srt' | grep -i "$1" | shuf -n 1)"
+        WITHOUT_BRACKETS="$(echo "$1" | sed "s/\[/\\\[/g" | sed "s/\]/\\\]/g")"
+        echo "withoutbrackets is ${WITHOUT_BRACKETS}"
+        SRT_FILE="$(find $GRLSRC/audio/ -iname '*.srt' | grep -i "$WITHOUT_BRACKETS" | shuf -n 1)"
+        echo "SRT_FILE is ${SRT_FILE}"
 }
 
 rx_dispatch() {
@@ -416,7 +448,14 @@ case "$SELECT_MODE" in
     rxm) 
         echo "executing rxm calling m3u"
         m3u
-        rx_dispatch
+
+        rx_processing "$SUBS_SEARCH_STRING"
+
+        if [[ ! -f "$SRT_FILE" ]]; then
+            "Cannot file SRT_FILE  from $SEARCH_STRING"
+            exit 1
+        fi
+        PLAY_MODE=${PLAY_MODE}_subs
     ;;
     *)
     echo "invalid SELECT_MODE - exiting"

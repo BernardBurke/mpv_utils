@@ -446,9 +446,11 @@ local function end_cut()
     local str_record= path..","..g_start_second..","..stop_second.."\n"
 
     local SNITCHfilename = "video_SNITCH_"..os.date('%d_%m_%y_%H')..".edl"
-    local SNITCH_file = os.getenv("BCHW").."\\"..SNITCHfilename
+    local SNITCH_file = os.getenv("BCHW").."/"..SNITCHfilename
 
     print("Adding ",str_record)
+
+    print("Writing ",SNITCH_file)
 
     create_edl_if_missing(SNITCH_file)
 
@@ -523,6 +525,18 @@ local function snap_SNITCH()
 
 end
 
+local function deleteMe()
+    local filename = mp.get_property_native("path")
+    print("writing "..filename.." to /tmp/deleteMe.sh")
+    local delete_handle = io.open('/tmp/deleteMe.sh', "a")    
+    local wrtString = "rm -v '"..filename.."'\n"
+    print(wrtString)
+    delete_handle:write(wrtString)
+    delete_handle:close()
+    mp.command("playlist-next")
+
+end
+
 mp.observe_property("filename","string",new_file)
 --mp.observe_property("chapter","number",new_chapter("chapter"))
 mp.observe_property("chapter","number",new_chapter)
@@ -534,4 +548,5 @@ mp.add_key_binding("MBTN_Right", "ditch_or_SNITCH", ditch_or_SNITCH, {repeatable
 mp.add_key_binding("KP1", "start_cut", start_cut, {repeatable=true})
 mp.add_key_binding("KP2", "end_cut", end_cut, {repeatable=true})
 mp.add_key_binding("w", "witch",witch, {repeatable=true})
+mp.add_key_binding("Ctrl+DEL", "deleteMe",deleteMe, {repeatable=true})
 

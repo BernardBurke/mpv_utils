@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # a more serious version of this converter - written initially to check a windows edl
 source $SRC/common_inc.sh
 
@@ -82,6 +82,9 @@ done < "$1"
 OUT1="${HANDUNI}/${FSTUB}_chopped1.edl"
 OUT2="${HANDUNI}/${FSTUB}_chopped2.edl"
 OUT3="${HANDUNI}/${FSTUB}_chopped3.edl"
+OUT4="${HANDUNI}/${FSTUB}_chopped4.edl"
+OUT5="${HANDUNI}/${FSTUB}_chopped5.edl"
+OUT6="${HANDUNI}/${FSTUB}_chopped6.edl"
 
 cat $TMPFILE2 | shuf -n $k  >> $TMPFILE1
 echo "# mpv EDL v0" > "$OUT1"
@@ -90,6 +93,15 @@ echo "# mpv EDL v0" > "$OUT2"
 cat $TMPFILE1 | shuf -n $k >> "$OUT2"
 echo "# mpv EDL v0" > "$OUT3"
 cat $TMPFILE1 | shuf -n $k >> "$OUT3"
+
+cat $TMPFILE2 | shuf -n $k  >> $TMPFILE1
+echo "# mpv EDL v0" > "$OUT4"
+cat $TMPFILE1 | shuf -n $k >> "$OUT4"
+echo "# mpv EDL v0" > "$OUT5"
+cat $TMPFILE1 | shuf -n $k >> "$OUT5"
+echo "# mpv EDL v0" > "$OUT6"
+cat $TMPFILE1 | shuf -n $k >> "$OUT6"
+
 
 ls "$OUT1"
 

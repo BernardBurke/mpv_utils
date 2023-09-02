@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # Need a simple way to test changes
 # source $SRC/common_inc.sh
 source $MPVU/play_media.sh

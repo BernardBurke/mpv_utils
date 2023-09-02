@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 #!/usr/bin/bash
+=======
+#!/usr/bin/env bash
+>>>>>>> nix
 # general purpose functions 
 logmessage() {
     LOG_FILE="/tmp/mpv_utlities.log"
@@ -102,8 +106,8 @@ validate_edl() {
     EDL_FILE="$1"
     ANY_PROBLEMS=false
     EDL_FILE_ONLY="$(basename "$EDL_FILE")"
-    TMP_EDL_DIR=$(mktemp -d)
-    #TMP_EDL_DIR=/tmp
+    #TMP_EDL_DIR=$(mktemp -d)
+    TMP_EDL_DIR=/tmp
     message "$TMP_EDL_DIR is the correction directory"
     TMP_EDL_FILE="$TMP_EDL_DIR/$EDL_FILE_ONLY"
     #read -p "Press Return to continue with $EDL_FILE"
@@ -140,7 +144,7 @@ validate_edl() {
 
     if $ANY_PROBLEMS; then
         message "$EDL_FILE had problems. A corrected version written as $TMP_EDL_FILE"
-        exit 1
+        return 1
     else
         rm -v "$TMP_EDL_FILE"
         echo "no problems in $TMP_EDL_FILE"

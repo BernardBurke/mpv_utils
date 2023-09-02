@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # generic player for 1, 4, 6 (with side images)
 # toDo Add subtitle and audio ala play_rx
 #source $SRC/common_inc.sh

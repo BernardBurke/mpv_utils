@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # read an edl file and create an mpv command that plays as a list
 #source $SRC/common_inc.sh
 # source $SRC/common_inc.sh
