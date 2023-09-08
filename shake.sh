@@ -11,8 +11,11 @@ if [[ ! -f "$1" ]]; then
     exit 1
 fi
 
+export SHUFFLE_RESTORE=Y 
+
 if validate_edl  "$1" ; then
     shuffle_edl "$1" "$2"
 fi 
 
 
+export SHUFFLE_RESTORE=

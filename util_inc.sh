@@ -26,6 +26,9 @@ shuffle_edl() {
         return 1
     fi 
     message "shuffle_edl wrote $TMPFILE1"
+    if [[ SHUFFLE_RESTORE == "Y" ]]; then
+        cp -vi $TMPFILE1 "$1"
+    fi
 }
 
 get__subtitle_related_media() {
