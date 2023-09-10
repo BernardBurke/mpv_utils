@@ -25,8 +25,8 @@ shuffle_edl() {
     else
         return 1
     fi 
-    message "shuffle_edl wrote $TMPFILE1"
-    if [[ SHUFFLE_RESTORE == "Y" ]]; then
+    message "shuffle_edl wrote $TMPFILE1 - and SHUFFLE_RESTORE is $SHUFFLE_RESTORE"
+    if [[ $SHUFFLE_RESTORE == "Y" ]]; then
         cp -vi $TMPFILE1 "$1"
     fi
 }
@@ -114,6 +114,8 @@ validate_edl() {
         echo "${EDL_FILE} does not exist"
         return 1
     fi
+
+    echo "# mpv EDL v0" > "$TMP_EDL_FILE"
 
     SAVED_IFS="$IFS"
 

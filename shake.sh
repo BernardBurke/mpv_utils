@@ -13,7 +13,9 @@ fi
 
 export SHUFFLE_RESTORE=Y 
 
+
 if validate_edl  "$1" ; then
+    echo "Validation succeeded"
     shuffle_edl "$1" "$2"
 fi 
 
