@@ -83,9 +83,12 @@ save_6 "$EDLNAME" mpv_feh6
 
 run_screen() {
 		LCOUNT=$2
-		nohup mpv --volume=$VOLUME --screen=$1 --profile=topmid $HANDUNI/mpv_feh6$LCOUNT.edl &
+		LOG_FILE1="--log-file=/tmp/VIDEO1$SCREEN.log"
+		LOG_FILE2="--log-file=/tmp/VIDEO2$SCREEN.log"
+
+		nohup mpv --volume=$VOLUME --screen=$1 --profile=topmid $HANDUNI/mpv_feh6$LCOUNT.edl  "$LOG_FILE1" &
 		((LCOUNT++))
-		nohup mpv --volume=$VOLUME --screen=$1 --profile=botmid $HANDUNI/mpv_feh6$LCOUNT.edl &
+		nohup mpv --volume=$VOLUME --screen=$1 --profile=botmid $HANDUNI/mpv_feh6$LCOUNT.edl  "$LOG_FILE2" &
 		$IMGSRC/fillet_screens.sh 6corners$1 10  "$IMGDIR"
 }
 
