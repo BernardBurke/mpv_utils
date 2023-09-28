@@ -127,7 +127,6 @@ print()
 print('[music]')
 print('fadeout duration=0')
 print('number=1')
-#print("music_1=/mnt/d/grls/audio/emma_patreon/dad's gift.mp3")
 print(f'music_1={media_pair}')
 print()
     
