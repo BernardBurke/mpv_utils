@@ -33,12 +33,26 @@ diff() {
 
 echo $str
 
+if [[ "$USE_SRT_FILES" == "yes" ]]; then
 
-find $GRLSRC/pure -type f -iname '*.vtt' -exec grep -iH -B 4 "$1" "{}" \;  |  grep vtt\-0 > $TMP1
+	echo "Looking for SRT files"
 
-sed -i -e 's/.vtt-/.mp4,/g' $TMP1
+    find $GRLSRC/ -type f -iname '*.srt' -exec grep -iH -B 4 "$1" "{}" \;  |  grep srt\-0 > $TMP1
 
-sed -i -e  's/-->/,/g' $TMP1
+	sed -i -e 's/.srt-/.mp4,/g' $TMP1
+
+	sed -i -e  's/-->/,/g' $TMP1
+
+else
+
+	find $GRLSRC/pure -type f -iname '*.vtt' -exec grep -iH -B 4 "$1" "{}" \;  |  grep vtt\-0 > $TMP1
+	
+	sed -i -e 's/.vtt-/.mp4,/g' $TMP1
+
+	sed -i -e  's/-->/,/g' $TMP1
+
+fi
+
 
 #cat $TMP1
 
