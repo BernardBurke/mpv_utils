@@ -179,7 +179,11 @@ edl_playlist_1(){
     fi
 
     cp $PLAYER_FILE1 /tmp/1.sh
-    bash -x "$PLAYER_FILE1" &
+    if [[ "$USE_SRT_FILES" == "audio" ]]; then
+        echo "Not launching - run audio from /tmp/1.sh"
+    else
+        bash -x "$PLAYER_FILE1" &
+    fi
 
 }
 
