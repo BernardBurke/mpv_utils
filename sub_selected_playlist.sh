@@ -21,7 +21,8 @@ TMPFILE3=$(mktemp)
 
 find $GRLSRC -type f -iname '*.vtt' -exec grep -iH -B 4 -A 4 "$1" "{}" \; | sort -Ru > $TMPFILE1
 grep ".vtt-00" $TMPFILE1 > $TMPFILE2
-sed -e 's/> /end=/g' -i $TMPFILE2
+#sed -e 's/> /end=/g' -i $TMPFILE2
+sed -e 's/>.*/length=10/g' -i $TMPFILE2
 sed -e 's/.vtt-/.mp4\" --start=/g' -i $TMPFILE2
 sed -e 's/\/mnt/\"\/mnt/g' -i $TMPFILE2
 tr -d '\r' <$TMPFILE2 > $TMPFILE1
