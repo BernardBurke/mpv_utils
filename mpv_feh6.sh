@@ -45,7 +45,7 @@ fi
 if [[ "$5" == "" ]]; then
 	ONE_SCREEN=false
 else
-	ONE_SCREEN=true
+	ONE_SCREEN=$5
 fi
 
 
@@ -94,9 +94,13 @@ run_screen() {
 
 LOOPCNT=$(($SCREEN + 0))
 
-if $ONE_SCREEN; then
+if [[ "$ONE_SCREEN" == "" ]] ; then
 	message "Single screen $SCREEN"
 	run_screen $SCREEN 1 "$IMGDIR"
+elif [[ "$ONE_SCREEN" == "2" ]] ; then
+	message "dual screens"
+	run_screen 0 1 $IMGDIR
+	run_screen 2 1 $IMGDIR
 else
 	message "Loop through screens $SCREEN"
 	k=0
