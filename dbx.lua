@@ -216,6 +216,16 @@ local function get_the_edl_record(full_path,record_number)
     
     end
 
+local function day_journal(record)
+    --local TEMPDIR = os.getenv("TEMP")
+    local DAY_journal_name = "/tmp/edl_day_journal.edl"
+    create_edl_if_missing(DAY_journal_name)
+    local DAY_handle = io.open(DAY_journal_name, "a")
+    DAY_handle:write(record)
+    DAY_handle:close()
+
+end
+
 local function write_that_SNITCH(SNITCHfilename,record,journal_type,path)
 
     local SNITCH_handle = io.open(SNITCHfilename, "a")    
@@ -455,6 +465,9 @@ local function end_cut()
     create_edl_if_missing(SNITCH_file)
 
     write_that_SNITCH(SNITCH_file,str_record,"edl",EDL_SNITCH_JOURNAL,path)
+
+    day_journal(str_record)
+
     print("Ready for next Cut")
     send_OSD("ready for next Cut",2)
 
