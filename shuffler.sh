@@ -14,6 +14,13 @@ if [[ ! -f "$2" ]]; then
     echo "please enter file2"
     exit 1
 fi
+
+if [[ "$3" == "" ]]; then
+    KEEP_OUTPUT="$HANDUNI/keep_output.edl"
+else
+    KEEP_OUTPUT="$3"
+fi
+
 LENGTH1=$(wc -l < "$1")
 LENGTH2=$(wc -l < "$2")
 
@@ -40,7 +47,9 @@ SHUFFLED_OUTPUT="$USCR/shuffled_$(basename "$1" .edl)_$(basename "$2" .edl)_$$.e
 echo "# mpv EDL v0" > "$SHUFFLED_OUTPUT"
 
 cat $TMPFILE4 | grep -v "#" >> "$SHUFFLED_OUTPUT"
-echo $SHUFFLED_OUTPUT
+cat $SHUFFLED_OUTPUT > "$KEEP_OUTPUT"
+echo $SHUFFLED_OUTPUT 
+echo "$(wc -l $KEEP_OUTPUT) records in $KEEP_OUTPUT"
 
 
 
