@@ -27,7 +27,7 @@ shuffle_edl() {
     fi 
     message "shuffle_edl wrote $TMPFILE1 - and SHUFFLE_RESTORE is $SHUFFLE_RESTORE"
     if [[ $SHUFFLE_RESTORE == "Y" ]]; then
-        cp -vi $TMPFILE1 "$1"
+        cp -v $TMPFILE1 "$1"
     fi
 }
 
