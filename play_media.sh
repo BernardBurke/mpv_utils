@@ -11,7 +11,7 @@ random_subtitles() {
         return 0
     fi 
     if $RANDOM_SUBTITLES; then
-        echo "$(find /mnt/d/grls/audio/ -iname '*.txt' | shuf -n 1)"
+        echo "$(find $AUDEY/ -iname '*.txt' | shuf -n 1)"
     else
         echo ""
     fi

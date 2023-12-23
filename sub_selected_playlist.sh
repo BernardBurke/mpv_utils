@@ -45,5 +45,5 @@ read -p "Press return $ROW_COUNT"
 
 cp $TMPFILE3 /tmp/two.sh
 
-bash -x /tmp/two.sh
+nohup bash -x /tmp/two.sh &
 

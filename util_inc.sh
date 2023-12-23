@@ -54,15 +54,15 @@ get__subtitle_related_media() {
 }
 
 get_random_subtitles() {
-    echo "$(find /mnt/d/grls/audio/ \( -iname '*.srt' -o -iname '*.vtt' \) -exec grep -il "$1" {} \; | shuf -n 1)"
+    echo "$(find $AUDEY/ \( -iname '*.srt' -o -iname '*.vtt' \) -exec grep -il "$1" {} \; | shuf -n 1)"
 }
 
 get_random_edl_content() {
-   echo "$(find /mnt/d/edlv2  -iname '*.edl' -exec grep -il "$1" "{}" \; | grep -iv windows | shuf -n 1)"
+   echo "$(find $EDLROOT  -iname '*.edl' -exec grep -il "$1" "{}" \; | grep -iv windows | shuf -n 1)"
 }
 
 get_random_edl_file() {
-   RESALT="$(find /mnt/d/edlv2  -iname "*$1*.edl"  | grep -iv windows | shuf -n 1)"
+   RESALT="$(find $EDLROOT  -iname "*$1*.edl"  | grep -iv windows | shuf -n 1)"
    if [[ "$RESALT" == "" ]]; then
         #echo  "file not found in get_random_edl_file"
         exit 1
@@ -71,7 +71,7 @@ get_random_edl_file() {
 }
 
 get_random_video() {
-    echo "$(find /mnt/d/grls -iname '*.mp4' -o -iname '*.avi' -o -iname '*.mkv' -o -iname '*.webm' -o -iname '*.wmv' |   shuf -n 1)"
+    echo "$(find $GRLSRC -iname '*.mp4' -o -iname '*.avi' -o -iname '*.mkv' -o -iname '*.webm' -o -iname '*.wmv' |   shuf -n 1)"
 }
 
 

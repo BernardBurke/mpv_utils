@@ -25,8 +25,9 @@ echo $FILE_EXTENSION
 
 # needs a case statement (mp4 m4a mp3 mkv)
 SRT_FILENAME=$OUTPUT_DIR/$(basename "$1" $FILE_EXTENSION)srt
-
+VTT_FILENAME=$OUTPUT_DIR/$(basename "$1" $FILE_EXTENSION)vtt
 echo $SRT_FILENAME
+echo $VTT_FILENAME
 
 if [[ "$3" = "" ]]; then
         if [[ -f $SRT_FILENAME ]]; then
@@ -38,4 +39,5 @@ fi
 
 
 whisper --output_format srt --language en "$1" --output_dir $OUTPUT_DIR
+tt convert -i "$SRT_FILENAME" -o "$VTT_FILENAME"
 

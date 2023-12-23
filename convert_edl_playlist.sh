@@ -114,7 +114,7 @@ edl_playlist_6(){
 
     for folder in $IMAGE_ARRAY
     do 
-          find /mnt/d/grls/images2/$folder -iname '*.jpg' -o -iname '*.mp4' -o -iname '*.png' -o -iname '*.gif' | shuf -n 1000 >> $TMPFILE1
+          find $IMGSRC/$folder -iname '*.jpg' -o -iname '*.mp4' -o -iname '*.png' -o -iname '*.gif' | shuf -n 1000 >> $TMPFILE1
     done
 
     

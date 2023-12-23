@@ -13,7 +13,7 @@ get_file_by_type() {
         "video")
         RETFilename="$(find $GRLSRC/ -iname '*.mp4' -o -iname '*.avi' -o -iname '*.mkv' -o -iname '*.webm' | grep -i "$2"| shuf -n 1)";;
         "audio")
-        RETFilename="$(find $GRLSRC/audio -iname '*.mp3' -o -iname '*.m4a' -o -iname '*.wav' |  shuf -n 1)";;
+        RETFilename="$(find $$AUDEY -iname '*.mp3' -o -iname '*.m4a' -o -iname '*.wav' |  shuf -n 1)";;
         "srt")
         RETFilename="$(find $GRLSRC/ -iname '*.srt' | shuf -n 1)";;
         "subtitle")
@@ -344,14 +344,14 @@ collect_images() {
     
     for folder in $IMAGE_ARRAY
     do 
-          find /mnt/d/grls/images2/$folder -iname '*.jpg' -o -iname '*.mp4' -o -iname '*.png' -o -iname '*.gif' | shuf -n 1000 >> $TMPFILE1
+          find $IMGSRC/$folder -iname '*.jpg' -o -iname '*.mp4' -o -iname '*.png' -o -iname '*.gif' | shuf -n 1000 >> $TMPFILE1
     done
 
 
 }
 
 collect_archives() {
-    find /mnt/d/grls/images2/ -iname '*.rar' -o -iname '*.zip'  | shuf -n 100 >> $TMPFILE1
+    find $IMGSRC/ -iname '*.rar' -o -iname '*.zip'  | shuf -n 100 >> $TMPFILE1
 }
 
 imago() {
@@ -366,7 +366,7 @@ imago() {
 rx_processing() {
         WITHOUT_BRACKETS="$(echo "$1" | sed "s/\[/\\\[/g" | sed "s/\]/\\\]/g")"
         echo "withoutbrackets is ${WITHOUT_BRACKETS}"
-        SRT_FILE="$(find $GRLSRC/audio/ -iname '*.srt' | grep -i "$WITHOUT_BRACKETS" | shuf -n 1)"
+        SRT_FILE="$(find $AUDEY/ -iname '*.srt' | grep -i "$WITHOUT_BRACKETS" | shuf -n 1)"
         echo "SRT_FILE is ${SRT_FILE}"
 }
 
@@ -466,10 +466,10 @@ esac
 
 play_6_stub() {
         # I might make imago smarter, but for now, just a find in this case
-        #find /mnt/d/grls/images2/ -iname '*.jpg' -o -iname '*.mp4' -o -iname '*.png' -o -iname '*.gif' | shuf -n 1000 > $TMPFILE1
-        # find /mnt/d/grls/images2/newmaisey -iname '*.jpg' -o -iname '*.mp4' -o -iname '*.png' -o -iname '*.gif' | shuf -n 1000 > $TMPFILE1
-        # find /mnt/d/grls/images2/slices -iname '*.jpg' -o -iname '*.mp4' -o -iname '*.png' -o -iname '*.gif' | shuf -n 1000 >> $TMPFILE1
-        # find /mnt/d/grls/images2/ten9a -iname '*.jpg' -o -iname '*.mp4' -o -iname '*.png' -o -iname '*.gif' | shuf -n 1000 >> $TMPFILE1
+        #find $IMGSRC/ -iname '*.jpg' -o -iname '*.mp4' -o -iname '*.png' -o -iname '*.gif' | shuf -n 1000 > $TMPFILE1
+        # find $IMGSRC/newmaisey -iname '*.jpg' -o -iname '*.mp4' -o -iname '*.png' -o -iname '*.gif' | shuf -n 1000 > $TMPFILE1
+        # find $IMGSRC/slices -iname '*.jpg' -o -iname '*.mp4' -o -iname '*.png' -o -iname '*.gif' | shuf -n 1000 >> $TMPFILE1
+        # find $IMGSRC/ten9a -iname '*.jpg' -o -iname '*.mp4' -o -iname '*.png' -o -iname '*.gif' | shuf -n 1000 >> $TMPFILE1
         collect_images
         #imago
         play_6 "$VIDEO1" "$VIDEO2" $TMPFILE1 $VOLUME $SCREEN
@@ -504,4 +504,4 @@ case "$PLAY_MODE" in
 esac
 
 echo "storing runtime parameters $(basename "$0" .sh)_$SCREEN.sh"
-echo "$MPVU/$(basename $0)" "$1" "$2" "$3" "$4" "$5" "$6" "$7" >> /mnt/d/batch/$(basename "$0" .sh)_$SCREEN.sh
+echo "$MPVU/$(basename $0)" "$1" "$2" "$3" "$4" "$5" "$6" "$7" >> $BATCHSRC/$(basename "$0" .sh)_$SCREEN.sh
