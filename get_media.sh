@@ -16,7 +16,7 @@ get_file_by_type() {
         fi
         RETFilename="$(find $GRLSRC/ \( -iname '*.mp4' -o -iname '*.avi' -o -iname '*.mkv' -o -iname '*.webm' \) -mtime -$AGE | shuf -n 1)";;
         "audio")
-        RETFilename="$(find $GRLSRC/audio -iname '*.mp3' -o -iname '*.m4a' -o -iname '*.wav' |  shuf -n 1)";;
+        RETFilename="$(find $AUDEY -iname '*.mp3' -o -iname '*.m4a' -o -iname '*.wav' |  shuf -n 1)";;
         "srt")
         RETFilename="$(find $GRLSRC/ -iname '*.srt' | shuf -n 1)";;
         "vtt")
