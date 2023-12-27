@@ -100,7 +100,7 @@ if [[ "$ONE_SCREEN" == "" ]] ; then
 elif [[ "$ONE_SCREEN" == "2" ]] ; then
 	message "dual screens"
 	run_screen 0 1 $IMGDIR
-	run_screen 2 1 $IMGDIR
+	run_screen 2 3 $IMGDIR
 else
 	message "Loop through screens $SCREEN"
 	k=0
