@@ -20,7 +20,7 @@ TMPFILE1=$(mktemp)
 TMPFILE2=$(mktemp)
 TMPFILE3=$(mktemp)
 
-find $GRLSRC -type f -iname '*.vtt' -exec grep -iH -B 4 -A 4 "$1" "{}" \; | sort -Ru > $TMPFILE1
+find $GRLSRC -type f -iname '*.vtt' -exec grep -iH -B 12 -A 4 "$1" "{}" \; | sort -Ru > $TMPFILE1
 grep ".vtt-00" $TMPFILE1 > $TMPFILE2
 #sed -e 's/> /end=/g' -i $TMPFILE2
 sed -e 's/>.*/length=10/g' -i $TMPFILE2
