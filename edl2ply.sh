@@ -5,8 +5,24 @@
 # source $SRC/common_inc.sh
 source $MPVU/util_inc.sh 
 TMPFILE1=$(mktemp)
+TMPFILE2=$(mktemp)
 
-#PLAYER_FILE=$(mktemp)
+if [[ $1 == "" ]]; then
+    EDL_FILE=1
+else
+    if [[ -f $1 ]]; then
+        EDL_FILE="$1"
+    else
+        message "$1 does not exit"
+        exit 1
+    fi
+fi 
+
+if [[ $2 == "" ]]; then
+    OUTPUT_FILE=$USCR/edl2ply_$$.txt
+else
+    OUTPUT_FILE=$USCR/$2
+fi 
 
 convert_tdl_file_content() {
     MAX_SIZE=$(getconf ARG_MAX)
@@ -44,25 +60,11 @@ convert_tdl_file_content() {
     message "$1 became $ISIZE in length vs $MAX_SIZE"
 }
 
-if [[ $1 == "" ]]; then
-    EDL_FILE=1
-else
-    if [[ -f $1 ]]; then
-        EDL_FILE="$1"
-    else
-        message "$1 does not exit"
-        exit 1
-    fi
-fi 
 
-if [[ $2 == "" ]]; then
-    OUTPUT_FILE=$USCR/edl2ply_$$.txt
-else
-    OUTPUT_FILE=$USCR/$2
-fi 
-
-cat $EDL_FILE | grep -v "#" > $TMPFILE1
 
 message "Calling convert_edl_file_content"
 
-convert_tdl_file_content "$EDL_FILE" "$TMPFILE1"
+convert_tdl_file_content "$EDL_FILE" "$OUTPUT_FILE"
+
+cat $OUTPUT_FILE | grep -v "#" > $TMPFILE2
+cat $TMPFILE2
