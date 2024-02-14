@@ -24,25 +24,32 @@ else
     OUTPUT_FILE=$USCR/$2
 fi 
 
+if [[ $3 == "" ]]; then
+    AUDIO_FILE=""
+else
+    if [[ -f $3 ]]; then
+        AUDIO_FILE="$3"
+    else
+        message "$3 does not exit"
+        exit 1
+    fi
+    filename=$(basename -- "$AUDIO_FILE")
+    extension="${filename##*.}"
+    filename="${filename%.*}"
+    directoryname=$(dirname -- "$AUDIO_FILE")
+    SUBTITLES=true
+fi
+
+
+SUBTILES_FILE="${directoryname}/${filename}.srt"
+
+message "Adding $3 $SUBTILES_FILE"
+read -p "Press enter to continue "
+
 convert_tdl_file_content() {
     MAX_SIZE=$(getconf ARG_MAX)
     NOMINAL_MAX=$((MAX_SIZE-100))
     ISIZE=0
-
-    if [[ ! -f "$1" ]]; then
-            message "EDL_FILE provided does not exist - $1"    
-            exit 1
-    else
-            message "Processing $EDL_FILE"
-    fi 
-
-    if [[ ! -f "$2" ]]; then
-            message "PLAYER_FILE provided does not exist - $2"    
-            exit 1
-    else
-            PLAYER_FILE="$2"
-            message "Processing $PLAYER_FILE"
-    fi 
 
 
     while IFS=, read -r file start length; do
@@ -54,8 +61,8 @@ convert_tdl_file_content() {
             exit 1
         fi
         echo "$LION"
-        echo "$LION" >> $PLAYER_FILE
-    done < "$EDL_FILE"
+        echo "$LION" >> "$2"
+    done < "$1"
   
     message "$1 became $ISIZE in length vs $MAX_SIZE"
 }
@@ -66,5 +73,41 @@ message "Calling convert_edl_file_content"
 
 convert_tdl_file_content "$EDL_FILE" "$OUTPUT_FILE"
 
+add_audio_subtiles(){
+    if [[ $1 == "" ]]; then
+        message "No audio file"
+    else
+        echo " --audio-files-add=\"$1\" \\" >> $OUTPUT_FILE
+        message "Appended $1"
+
+    fi
+    if [[ $2 == "" ]]; then
+        message "No subtitle file"
+    else
+        echo " --sub-files-add=\"$2\" \\" >> $OUTPUT_FILE
+        message "Appended $2"
+        
+    fi
+
+}
+
 cat $OUTPUT_FILE | grep -v "#" > $TMPFILE2
-cat $TMPFILE2
+echo "mpv --profile=override --volume=60 --screen=1 \\" > $OUTPUT_FILE
+if $SUBTITLES; then
+    message "Adding subtitles"
+    add_audio_subtiles "$AUDIO_FILE" "$SUBTILES_FILE"
+else
+    message "No subtitles"
+    
+fi
+read -p "Press return"
+cat $OUTPUT_FILE 
+#echo " --audio-files-add=\"/home/ben/bikini/audio/Your Wife Directs Your Step-Daughter in Making You Cum.m4a\" \\" >> $OUTPUT_FILE
+#echo  "  --sub-files-add=\"/home/ben/bikini/audio/Your Wife Directs Your Step-Daughter in Making You Cum.srt\" \\" >> $OUTPUT_FILE
+cat $TMPFILE2 >> $OUTPUT_FILE
+echo "Results --->"
+cp $OUTPUT_FILE $TMPFILE1
+
+message "Results in $TMPFILE1"
+
+bash $OUTPUT_FILE
