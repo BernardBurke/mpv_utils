@@ -103,12 +103,11 @@ else
 fi
 read -p "Press return"
 cat $OUTPUT_FILE 
-#echo " --audio-files-add=\"/home/ben/bikini/audio/Your Wife Directs Your Step-Daughter in Making You Cum.m4a\" \\" >> $OUTPUT_FILE
-#echo  "  --sub-files-add=\"/home/ben/bikini/audio/Your Wife Directs Your Step-Daughter in Making You Cum.srt\" \\" >> $OUTPUT_FILE
 cat $TMPFILE2 >> $OUTPUT_FILE
 echo "Results --->"
 cp $OUTPUT_FILE $TMPFILE1
 
 message "Results in $TMPFILE1"
 
+cp $OUTPUT_FILE $BATCHSRC2
 bash $OUTPUT_FILE
