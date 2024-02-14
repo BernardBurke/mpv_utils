@@ -18,19 +18,14 @@ else
     fi
 fi 
 
-if [[ $2 == "" ]]; then
-    OUTPUT_FILE=$USCR/edl2ply_$$.txt
-else
-    OUTPUT_FILE=$USCR/$2
-fi 
 
-if [[ $3 == "" ]]; then
+if [[ $2 == "" ]]; then
     AUDIO_FILE=""
 else
-    if [[ -f $3 ]]; then
-        AUDIO_FILE="$3"
+    if [[ -f $2 ]]; then
+        AUDIO_FILE="$2"
     else
-        message "$3 does not exit"
+        message "$2 does not exit"
         exit 1
     fi
     filename=$(basename -- "$AUDIO_FILE")
@@ -38,13 +33,19 @@ else
     filename="${filename%.*}"
     directoryname=$(dirname -- "$AUDIO_FILE")
     SUBTITLES=true
+    SUBTILES_FILE="${directoryname}/${filename}.srt"
+
+    message "Adding $2 $SUBTILES_FILE"
+
 fi
 
+if [[ $3 == "" ]]; then
+    OUTPUT_FILE=$USCR/edl2ply_$$.txt
+else
+    OUTPUT_FILE=$USCR/$3
+fi 
 
-SUBTILES_FILE="${directoryname}/${filename}.srt"
 
-message "Adding $3 $SUBTILES_FILE"
-read -p "Press enter to continue "
 
 convert_tdl_file_content() {
     MAX_SIZE=$(getconf ARG_MAX)
