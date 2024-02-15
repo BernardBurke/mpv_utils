@@ -93,7 +93,7 @@ add_audio_subtiles(){
 }
 
 cat $OUTPUT_FILE | grep -v "#" > $TMPFILE2
-echo "mpv --profile=override --volume=60 --screen=1 \\" > $OUTPUT_FILE
+echo "mpv --profile=override --volume=60 --screen=2 \\" > $OUTPUT_FILE
 if $SUBTITLES; then
     message "Adding subtitles"
     add_audio_subtiles "$AUDIO_FILE" "$SUBTILES_FILE"
