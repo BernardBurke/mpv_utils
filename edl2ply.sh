@@ -39,13 +39,26 @@ else
 
 fi
 
+OUTPUT_FILE=$USCR/edl2ply_$$.txt
+
+# if [[ $3 == "" ]]; then
+#     OUTPUT_FILE=$USCR/edl2ply_$$.txt
+# else
+#     OUTPUT_FILE=$USCR/$3
+# fi 
+
+
 if [[ $3 == "" ]]; then
-    OUTPUT_FILE=$USCR/edl2ply_$$.txt
+    VOLUME=10
 else
-    OUTPUT_FILE=$USCR/$3
-fi 
+    VOLUME=$3
+fi
 
-
+if [[ $4 == "" ]]; then
+    SCREEN=1
+else
+    SCREEN=$4
+fi
 
 convert_tdl_file_content() {
     MAX_SIZE=$(getconf ARG_MAX)
@@ -93,7 +106,7 @@ add_audio_subtiles(){
 }
 
 cat $OUTPUT_FILE | grep -v "#" > $TMPFILE2
-echo "mpv --profile=override --volume=60 --screen=2 \\" > $OUTPUT_FILE
+echo "mpv --profile=override --volume=$VOLUME --screen=$SCREEN \\" > $OUTPUT_FILE
 if $SUBTITLES; then
     message "Adding subtitles"
     add_audio_subtiles "$AUDIO_FILE" "$SUBTILES_FILE"
