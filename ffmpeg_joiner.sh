@@ -69,13 +69,40 @@ concatenate_input_files() {
     # Output file name
     
     # delete and recreate the $output_dir
-    rm -rfi "$output_dir"
-    mkdir -p "$output_dir"
+    rm -rf "$output_dir"
+    mkdir "$output_dir"
 
     output_file="$output_dir/output.$audio_file_extension"
+    output_edl="$output_dir/output.edl"
+    echo "# mpv EDL v0" > $output_edl
+
     cp -v "$audio_file" $output_dir/abc.$audio_file_extension
     
     read -p "press return to continue"
+
+# this function converts times from the format 00:00:00.000 to seconds
+# Convert time from format 00:00:00.000 to seconds
+convert_time_to_seconds() {
+    time=$1
+    hours=$(echo "$time" | awk -F":" '{print $1}')
+    minutes=$(echo "$time" | awk -F":" '{print $2}')
+    seconds=$(echo "$time" | awk -F":" '{print $3}' | awk -F"." '{print $1}')
+    milliseconds=$(echo "$time" | awk -F"." '{print $2}')
+    
+    total_seconds=$((hours * 3600 + minutes * 60 + seconds))
+    total_seconds_with_milliseconds=$(echo "$total_seconds.$milliseconds" | bc)
+    
+    echo "$total_seconds_with_milliseconds"
+}
+
+# this function subtracts the first second values of the form 0.000 from the 2nd second values
+# of the form 0.000
+subtract_seconds() {
+    start_seconds=$1
+    end_seconds=$2
+    result=$(echo "$end_seconds - $start_seconds" | bc)
+    echo "$result"
+}
 
     # Read the subtitles file line by line
     while IFS= read -r line; do
@@ -87,12 +114,16 @@ concatenate_input_files() {
             # replace commas in the start and end times with a period
             start_time=$(echo "$start_time" | tr ',' '.')
             end_time=$(echo "$end_time" | tr ',' '.')
+            start_seconds=$(convert_time_to_seconds "$start_time")
+            end_seconds=$(convert_time_to_seconds "$end_time")
+            seconds_difference=$(subtract_seconds $start_seconds $end_seconds)
             # Generate the ffmpeg input file name based on the start and end timestamps
             #input_file="$output_dir/input_${start_time}_${end_time}.mp4"
             input_file="$2"
             # Add the input file path and timestamps to the temporary file
             echo "file $input_file" >> $input_file_list
             echo "inpoint $start_time outpoint $end_time" >> $input_file_list
+            echo "${audio_file},${start_seconds},${seconds_difference}" >> $output_edl
         fi
     done < "$subtitles_file"
 
@@ -109,4 +140,4 @@ echo "Calling concatenate_files with $subtitles_file and $audio_file"
 
 concatenate_input_files $TMPFILE1 "abc.$audio_file_extension"
 
-mpv --volume=100 $output_file
+mpv --volume=100 $output_edl
