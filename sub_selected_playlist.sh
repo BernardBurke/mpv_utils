@@ -36,8 +36,14 @@ TMPFILE3=$(mktemp)
 
 #find $GRLSRC -type f -iname '*.vtt' -exec grep -iH -B $BEFORE -A $AFTER "$1" "{}" \; | sort -Ru > $TMPFILE1
 #find $GRLSRC2 -type f -iname '*.vtt' -exec grep -iH -B $BEFORE -A $AFTER "$1" "{}" \; | sort -Ru >> $TMPFILE1
-find $GRLSRC -type f -iname '*.vtt' -exec grep -iH -B $BEFORE  "$1" "{}" \; | sort -Ru > $TMPFILE1
-find $GRLSRC2 -type f -iname '*.vtt' -exec grep -iH -B $BEFORE  "$1" "{}" \; | sort -Ru >> $TMPFILE1
+if [[ -d "$JUST_ONE_DIR" ]]; then
+        echo "JUST_ONE_DIR is set to $JUST_ONE_DIR"
+        find $JUST_ONE_DIR -type f -iname '*.vtt' -exec grep -iH -B $BEFORE  "$1" "{}" \; | sort -Ru > $TMPFILE1
+else
+        find $GRLSRC -type f -iname '*.vtt' -exec grep -iH -B $BEFORE  "$1" "{}" \; | sort -Ru > $TMPFILE1
+        find $GRLSRC2 -type f -iname '*.vtt' -exec grep -iH -B $BEFORE  "$1" "{}" \; | sort -Ru >> $TMPFILE1
+
+fi
 #cat $TMPFILE1
 grep ".vtt-00" $TMPFILE1 > $TMPFILE2
 #sed -e 's/> /end=/g' -i $TMPFILE2
