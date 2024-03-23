@@ -54,9 +54,8 @@ get_audio_file() {
 # the text from the srt file is added to the end of the edl record as a comment seperated by #
 convert_srt_to_edl() {
     local input_file="$1"
-    local output_file="${input_file%.srt}.edl"
     # write the EDL_HEADER_RECORD at the beginning of the edl output file
-    echo "$EDL_HEADER_RECORD" > "$output_file"
+    echo "$EDL_HEADER_RECORD" > "$TMPFILE1"
     # read the input file line by line
     while read -r pss; do
         # skip the first line if it starts with "mpv"
@@ -70,15 +69,20 @@ convert_srt_to_edl() {
             # calculate the length by subtracting start time from end time
             length=$(echo "$end_time" | awk -F: '{ print (($1 * 3600) + ($2 * 60) + $3) - '"$start_seconds"' }')
             # write the edl record to the output file
-            record="$2,$start_seconds,$length #" # $pss" #>> "$output_file"
+            previous_record="$2,$start_seconds,$length" 
         else
-            # write the text from the srt file as a comment
-            #echo "# $pss" #>> "$output_file"
-            record="${record} ${pss}"
+                echo "#${pss}" >> $TMPFILE1
+                echo $previous_record >> $TMPFILE1
         fi
-        echo "$record" >> $TMPFILE1
     done < "$input_file"
 }
+
+
+# if $1 is a directory, use find to get all the .srt files in the directory and subdirectorys
+if [[ -d "$1" ]]; then
+    find "$1" -type f -iname '*.srt' -exec bash $0 {} \;
+    exit 0
+fi
 
 # check if the input file exists
 if [[ ! -f "$1" ]]; then
@@ -93,11 +97,12 @@ audio_file=$(get_audio_file "$audio_file_without_extension")
 
 edl_file="${audio_file_without_extension}.edl"
 
-echo $EDL_HEADER_RECORD > "$edl_file"
+#echo $EDL_HEADER_RECORD > 
 
 
 convert_srt_to_edl "$1" "$audio_file"
 
-cat $TMPFILE1 >> "$edl_file"
+#cat $TMPFILE1 >> "$edl_file"
+cat $TMPFILE1 >> "$USCR/edl_file_raw.edl"
 
-cat "$edl_file"
+#cat "$edl_file"
