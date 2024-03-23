@@ -69,6 +69,9 @@ convert_srt_to_edl() {
             # calculate the length by subtracting start time from end time
             length=$(echo "$end_time" | awk -F: '{ print (($1 * 3600) + ($2 * 60) + $3) - '"$start_seconds"' }')
             # write the edl record to the output file
+            # spice things up by subtracting 2 seconds from the start time and adding 5 seconds to the length
+            start_seconds=$(echo "$start_seconds - 2" | bc)
+            length=$(echo "$length + 5" | bc)
             previous_record="$2,$start_seconds,$length" 
         else
                 echo "#${pss}" >> $TMPFILE1
@@ -88,6 +91,8 @@ fi
 if [[ ! -f "$1" ]]; then
     echo "$1 does not exist"
     exit 1
+else
+    debug_write "processing $1"
 fi
 
 audio_file_without_extension=$(basename "$1" .srt)
@@ -103,6 +108,11 @@ edl_file="${audio_file_without_extension}.edl"
 convert_srt_to_edl "$1" "$audio_file"
 
 #cat $TMPFILE1 >> "$edl_file"
+edl_file="$USCR/edl_file_raw.edl"
+
+if [[ ! -f "$edl_file" ]]; then
+    echo $EDL_HEADER_RECORD > "$edl_file"
+fi
 cat $TMPFILE1 >> "$USCR/edl_file_raw.edl"
 
 #cat "$edl_file"
