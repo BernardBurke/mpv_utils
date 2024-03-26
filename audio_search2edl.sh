@@ -121,8 +121,8 @@ owner_dir=$(basename "$owner_dir")
 echo "$owner_dir is the owner directory"
 #read -p "Press return to continue"
 
-if [[ ! -f "$AUDEY2/${owner_dir}$_raw.edl" ]]; then
-  cp $TMPFILE1 $AUDEY2/${owner_dir}_raw.edl
+if [[ ! -f "$AUDEY2/${owner_dir}_raw.edl" ]]; then
+  cp -v $TMPFILE1 $AUDEY2/${owner_dir}_raw.edl
 else
     cat $TMPFILE1 >> $AUDEY2/${owner_dir}_raw.edl
 fi
