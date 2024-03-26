@@ -108,11 +108,23 @@ edl_file="${audio_file_without_extension}.edl"
 convert_srt_to_edl "$1" "$audio_file"
 
 #cat $TMPFILE1 >> "$edl_file"
-edl_file="$USCR/edl_file_raw.edl"
+edl_file="$AUDEY2/edl_file_raw.edl"
 
 if [[ ! -f "$edl_file" ]]; then
     echo $EDL_HEADER_RECORD > "$edl_file"
 fi
-cat $TMPFILE1 >> "$USCR/edl_file_raw.edl"
+cat $TMPFILE1 >> "$edl_file"
+# get the owner direcory of $1, just one level up, not the full path
+owner_dir=$(dirname "$1")
+# get the string after the last forward slash
+owner_dir=$(basename "$owner_dir")
+echo "$owner_dir is the owner directory"
+#read -p "Press return to continue"
+
+if [[ ! -f "$AUDEY2/${owner_dir}$_raw.edl" ]]; then
+  cp $TMPFILE1 $AUDEY2/${owner_dir}_raw.edl
+else
+    cat $TMPFILE1 >> $AUDEY2/${owner_dir}_raw.edl
+fi
 
 #cat "$edl_file"
