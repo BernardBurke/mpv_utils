@@ -33,6 +33,8 @@ clean_filenames(){
 get_audio_file() {
     local audio_file_path="$1"
     local audio_file=""
+    local video_file_path="$1"
+    local video_file=""
     if [[ -f "$audio_file_path".m4a ]]; then
         audio_file="$audio_file_path".m4a
     elif [[ -f "$audio_file_path".mp3 ]]; then
@@ -43,10 +45,25 @@ get_audio_file() {
         audio_file="$audio_file_path".flac
     elif [[ -f "$audio_file_path".mpga ]]; then
         audio_file="$audio_file_path".mpga
+    elif [[ -f "$video_file_path".mp4 ]]; then
+        video_file="$video_file_path".mp4
+    elif [[ -f "$video_file_path".mkv ]]; then
+        video_file="$video_file_path".mkv
+    elif [[ -f "$video_file_path".webm ]]; then
+        video_file="$video_file_path".webm
+    elif [[ -f "$video_file_path".avi ]]; then
+        video_file="$video_file_path".avi
+    elif [[ -f "$video_file_path".wmv ]]; then
+        video_file="$video_file_path".wmv
     fi
+    if [[ "$video_file" != "" ]]; then
+        audio_file="$video_file"
+    fi
+    
     echo "$audio_file"
 }
 
+    
 # this function reads a .srt subtitle file and creates an MPV edl file that has
 # one record per time range eg: 00:14:11,560 --> 00:14:16,560
 # the start time is converted to seconds and the length is caluculated by subtracting start time from end time
@@ -70,7 +87,7 @@ convert_srt_to_edl() {
             length=$(echo "$end_time" | awk -F: '{ print (($1 * 3600) + ($2 * 60) + $3) - '"$start_seconds"' }')
             # write the edl record to the output file
             # spice things up by subtracting 2 seconds from the start time and adding 5 seconds to the length
-            start_seconds=$(echo "$start_seconds - 2" | bc)
+            start_seconds=$(echo "$start_seconds - 4" | bc)
             length=$(echo "$length + 5" | bc)
             previous_record="$2,$start_seconds,$length" 
         else
@@ -95,8 +112,23 @@ else
     debug_write "processing $1"
 fi
 
-audio_file_without_extension=$(basename "$1" .srt)
+# if the filename in $1 has a .vtt extension and there is no .srt file in the same directory
+# convert the .vtt file to a .srt file
+if [[ "$1" == *.vtt ]]; then
+    srt_file=$(basename "$1" .vtt).srt
+    audio_file_without_extension=$(basename "$1" .vtt)
+    if [[ ! -f "$(dirname "$1")/$srt_file" ]]; then
+        tt convert -i "$1" -o "$(dirname "$1")/$srt_file"
+        audio_file_without_extension=$(basename "$1" .srt)
+    fi
+else
+    audio_file_without_extension=$(basename "$1" .srt)
+fi
+
+# audio_file_without_extension=$(basename "$1" .srt)
 audio_file_without_extension="$(dirname "$1")/$audio_file_without_extension"
+
+echo "audio_file_without_extension: $audio_file_without_extension"
 
 audio_file=$(get_audio_file "$audio_file_without_extension")
 
