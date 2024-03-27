@@ -513,7 +513,7 @@ local function snap_SNITCH()
         local start_second = math.floor(time_pos)
         --start = start_second + start
         local file_name_only = fnam[1] 
-        local CALL_OS = "nohup mpv --screen=0 --fs-screen=0 --volume=10 --start="..start..' "'..file_name_only..' &"'
+        local CALL_OS = "mpv --screen=0 --fs-screen=0 --volume=10 --start="..start..' "'..file_name_only..'"'
         print(CALL_OS)
         print(start_second)
         --strCmd = 'start "" '..CALL_OS
