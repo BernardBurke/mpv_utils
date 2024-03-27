@@ -79,7 +79,9 @@ while read -r file; do
     if [[ $file_type == 0 ]]; then
         echo "Skipping $file "
         continue
-    fi
+    else
+        echo "Processing $file"
+    fi  
     counter=$((counter+1))
     step_count=$((step_count+1))
     total_length=$(get_length "$file")
@@ -129,7 +131,7 @@ for i in {1..6}; do
     
     echo "$EDL_HEADER_RECORD" > "$HANDUNI/$(basename "$1" .m3u)_chopped$i.edl"
 
-    shuf -n 100 "$TMPFILE2" >> "$HANDUNI/$(basename "$1" .m3u)_chopped$i.edl"
+    shuf -n 500 "$TMPFILE2" >> "$HANDUNI/$(basename "$1" .m3u)_chopped$i.edl"
 done
 
 
