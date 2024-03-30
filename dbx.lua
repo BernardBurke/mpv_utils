@@ -2,6 +2,7 @@ local utils = require("mp.utils")
 
 SNITCH_DIR = os.getenv("BCHU")
 USCR = os.getenv("USCR")
+HI = os.getenv("HI")
 
 SNITCH_SEGMENT_LENGTH = 30
 MESSAGE_DISPLAY_TIME_DEFAULT = 15
@@ -538,6 +539,55 @@ local function snap_SNITCH()
 
 end
 
+local function goldKey()
+    print("Gold Key")
+    local record = nil
+    local fileclass = get_file_class(mp.get_property("filename"))
+    local gold_file = HI.."/goldVault.edl"
+    create_edl_if_missing(gold_file)
+
+    print("using gold_file"..gold_file)
+
+    --print("fileclass: "..fileclass)
+
+    if fileclass == "unrecognised" then
+        print("Don't know what do do with "..filename)
+        send_OSD("unrecognised file type: "..path, 2)
+        do return end
+    end
+
+    print("file class: "..fileclass)
+
+    if fileclass == "edl" then
+        local chapter = mp.get_property_native("chapter")
+        local record_number = chapter
+        record = get_the_edl_record(mp.get_property_native("path"),record_number)
+        local fnam = Split(record,",")
+        print("length"..fnam[3])
+        local start_second = fnam[2]
+        local llength = fnam[3]
+        local file_name_only = fnam[1]
+        print("file name"..file_name_only)
+        local time_pos = mp.get_property_number("time-pos")
+        --local start_second = math.floor(time_pos)
+        --start = start_second + start
+        local file_name_only = fnam[1] 
+        record = file_name_only..","..start_second..","..llength.."\n"
+
+    else
+        send_OSD("unrecognised file type:"..fileclass, 2)
+        do return end
+    end
+
+
+    goldHandler = io.open(gold_file,"a")
+    goldHandler:write(record)
+    goldHandler:close()
+    send_OSD("Gold Keyed wrote successfully record"..record,2)
+    mp.command("playlist-next")
+
+end
+
 local function deleteMe()
     local filename = mp.get_property_native("path")
     print("writing "..filename.." to /tmp/deleteMe.sh")
@@ -556,10 +606,11 @@ mp.observe_property("chapter","number",new_chapter)
         
 
 mp.add_key_binding("D", "toggle_SNITCH", toggle_SNITCH, {repeatable=true})
+mp.add_key_binding("g", "goldKey",goldKey, {repeatable=true})
 mp.add_key_binding("KP0", "snap_SNITCH", snap_SNITCH, {repeatable=true})
 mp.add_key_binding("MBTN_Right", "ditch_or_SNITCH", ditch_or_SNITCH, {repeatable=true})
 mp.add_key_binding("KP1", "start_cut", start_cut, {repeatable=true})
 mp.add_key_binding("KP2", "end_cut", end_cut, {repeatable=true})
-mp.add_key_binding("w", "witch",witch, {repeatable=true})
+--mp.add_key_binding("w", "witch",witch, {repeatable=true})
 mp.add_key_binding("Ctrl+DEL", "deleteMe",deleteMe, {repeatable=true})
 

@@ -3,6 +3,7 @@
 EDL_HEADER_RECORD="# mpv EDL v0"
 
 TMPFILE1=$(mktemp)
+TMPFILE2=$(mktemp)
 
 export DEBUG=true
 debug_write() {
@@ -25,6 +26,20 @@ clean_filenames(){
     if [[ "$BASE_NAME" != "$TARGET_NAME" ]]; then
         echo "mv -v \"$BASE_NAME\" \"$TARGET_NAME\""
         echo "read -p \"Press return to continue\""
+    fi
+}
+
+# this function takes a file spec as the single argument and use the 'file -i' command to determine 
+# the file as a video or audio file. If the file is neither audio of video, return a ""
+get_file_type() {
+    local file="$1"
+    local file_type=$(file -i "$file")
+    if [[ "$file_type" == *"audio"* ]]; then
+        echo "audio"
+    elif [[ "$file_type" == *"video"* ]]; then
+        echo "video"
+    else
+        echo ""
     fi
 }
 
@@ -91,8 +106,17 @@ convert_srt_to_edl() {
             length=$(echo "$length + 5" | bc)
             previous_record="$2,$start_seconds,$length" 
         else
-                echo "#${pss}" >> $TMPFILE1
-                echo $previous_record >> $TMPFILE1
+            file_type=$(get_file_type "$2")
+            if [[ $file_type  == "audio" ]] ; then
+                    echo "#${pss}" >> $TMPFILE1
+                    echo $previous_record >> $TMPFILE1
+            elif [[ $file_type  == "video" ]] ; then
+                    echo "#${pss}" >> $TMPFILE2
+                    echo $previous_record >> $TMPFILE2
+            elif [[ $file_type  == "" ]] ; then
+                    echo "File type is NOT audio of video - skipping"
+                    continue
+            fi
         fi
     done < "$input_file"
 }
@@ -152,6 +176,8 @@ owner_dir=$(dirname "$1")
 owner_dir=$(basename "$owner_dir")
 echo "$owner_dir is the owner directory"
 #read -p "Press return to continue"
+
+
 
 if [[ ! -f "$AUDEY2/${owner_dir}_raw.edl" ]]; then
   cp -v $TMPFILE1 $AUDEY2/${owner_dir}_raw.edl
