@@ -24,6 +24,21 @@ if [[ ! -f "$2" ]]; then
     exit 1
 fi
 
+# use $3 $4 for the screen number and volume
+# if they are not set, use the default values
+if [[ -z "$3" ]]; then
+    screen=1
+else
+    screen=$3
+fi
+
+if [[ -z "$4" ]]; then
+    volume=10
+else
+    screen=$4
+fi
+
+
 # create a temp file
 TMPFILE=$(mktemp /tmp/edl.XXXXXXXXXX) || exit 1
 
@@ -47,9 +62,11 @@ while read -r pss; do
 done < "$1"
 
 cat $TMPFILE
-read -p "Press enter to continue"
+#read -p "Press enter to continue"
 
 # play the temp file with mpv
 
-mpv  "$TMPFILE"
+#mpv  --screen=1 --volume=50 "$TMPFILE" --fs-screen=1 --fullscreen
+#nohup mpv  --screen=2 --volume=50 "$TMPFILE" --fs-screen=2 --fullscreen &
+nohup mpv  --screen=$screen --volume=$volume "$TMPFILE" --fs-screen=1 --fullscreen &
 
