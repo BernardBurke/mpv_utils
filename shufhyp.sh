@@ -68,5 +68,5 @@ cat $TMPFILE
 
 #mpv  --screen=1 --volume=50 "$TMPFILE" --fs-screen=1 --fullscreen
 #nohup mpv  --screen=2 --volume=50 "$TMPFILE" --fs-screen=2 --fullscreen &
-nohup mpv  --screen=$screen --volume=$volume "$TMPFILE" --fs-screen=1 --fullscreen &
-
+#nohup mpv  --screen=$screen --volume=$volume "$TMPFILE" --fs-screen=1 --fullscreen &
+mpv  --screen=$screen --volume=$volume "$TMPFILE" --fs-screen=1 --fullscreen 
