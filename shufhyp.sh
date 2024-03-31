@@ -10,10 +10,10 @@ EDL_HEADER_RECORD="# mpv EDL v0"
 source $MPVU/util_inc.sh 
 
 
-if [[ $# -ne 2 ]]; then
-    echo "Usage: $0 <edl1> <edl2>"
-    exit 1
-fi
+# if [[ $# -ne 2 ]]; then
+#     echo "Usage: $0 <edl1> <edl2>"
+#     exit 1
+# fi
 
 # if either input file doesn't exist, exit
 if [[ ! -f "$1" ]]; then
@@ -52,7 +52,7 @@ fi
 if [[ -z "$4" ]]; then
     volume=10
 else
-    screen=$4
+    volume=$4
 fi
 
 
@@ -82,7 +82,7 @@ while read -r pss; do
     fi
 done < "$1"
 
-cat $TMPFILE
+#cat $TMPFILE
 echo $TMPFILE
 
 #read -p "Press enter to continue"
@@ -90,6 +90,6 @@ echo $TMPFILE
 # play the temp file with mpv
 
 #mpv  --screen=1 --volume=50 "$TMPFILE" --fs-screen=1 --fullscreen
-#nohup mpv  --screen=2 --volume=50 "$TMPFILE" --fs-screen=2 --fullscreen &
-#nohup mpv  --screen=$screen --volume=$volume "$TMPFILE" --fs-screen=1 --fullscreen &
-mpv  --screen=$screen --volume=$volume "$TMPFILE" --fs-screen=1 --fullscreen 
+nohup mpv  --screen=$screen --volume=$volume "$TMPFILE" --fs-screen=$screen --fullscreen &
+# nohup mpv  --screen=$screen --volume=$volume "$TMPFILE" --fs-screen=1 --fullscreen &
+# mpv  --screen=$screen --volume=$volume "$TMPFILE" --fs-screen=1 --fullscreen 
