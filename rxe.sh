@@ -27,8 +27,8 @@ else
 fi
 
 # check that the search strings return at least one file
-if [[ $(find $AUDEY -name "*$1*" 2>/dev/null | wc -l) -eq 0 ]]; then
-    echo "No files found in $AUDEY matching $1"
+if [[ $(find $AUDEY $AUDEY2 -name "*$1*" 2>/dev/null | wc -l) -eq 0 ]]; then
+    echo "No files found in $AUDEY and $AUDEY2 matching $1"
     exit 1
 fi
 
@@ -43,9 +43,9 @@ TMPFILE2=$(mktemp)
 
 # present all the matching srt files and have the use choose one (if there is more than one match)
 echo "Choose one of the following srt files:"
-srt_files=$(find $AUDEY -name "*$1*" 2>/dev/null)
+srt_files=$(find $AUDEY $AUDEY2 -name "*$1*" 2>/dev/null)
 if [[ -z "$srt_files" ]]; then
-    echo "No files found in $AUDEY matching $1"
+    echo "No files found in $AUDEY or $AUDEY2 matching $1"
     exit 1
 fi
 srt_file=$(zenity --file-selection --title="Select an SRT file" --filename="$srt_files")
