@@ -26,6 +26,9 @@ EDL_HEADER_RECORD="# mpv EDL v0"
     select_srt_file() {
         TMPFILE1=$(mktemp)
         search_string=$1
+        # find $AUDEY $AUDEY2 -iname '*.srt' -exec grep -iH "$1" "{}" \; > "$TMPFILE1"
+        # more $TMPFILE1
+        # Very weird... if I use the interactive find first, the choice= does  not work!
         oldIFS=$IFS # Save the current value of IFS
         choice="$(find $AUDEY $AUDEY2 -iname '*.srt' -exec grep -il "$1" "{}" \; | zenity --list --column="Files" --title="Select an SRT file" --text="Choose one of the following files" --width=800 --height=600 )"
         if [[ -z "$choice" ]]; then
@@ -45,6 +48,9 @@ EDL_HEADER_RECORD="# mpv EDL v0"
         echo "$choice"
     }
 
+    TMPFILE2=$(mktemp)
+    find $AUDEY $AUDEY2 -iname "*.srt" -exec grep -iH  -B 2 -A 2 "$1" "{}" \; > $TMPFILE2
+    more $TMPFILE2
 
     SRT_FILE="$(select_srt_file "$1")"
 
