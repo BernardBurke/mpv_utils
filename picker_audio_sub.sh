@@ -86,6 +86,15 @@ select_edl_file() {
         echo "$audio_file does not exist"
         exit 1
     fi
+runfile="/tmp/mpv_commands_$$.sh"
+echo "runfile: $runfile"
 
-mpv --sub-file="$SRT_FILE" --fullscreen --fs-screen=$SCREEN \
-    --audio-file="$audio_file" --screen=$SCREEN --volume=$VOLUME "$EDL_FILE"
+# first_half="nohup mpv --sub-file=\"$SRT_FILE\" --fullscreen --fs-screen=$SCREEN --audio-file=\"$audio_file\" --screen=$SCREEN --volume=$VOLUME" "
+# echo $first_half \"$EDL_FILE\"  > $runfile
+
+# cat $runfile
+
+echo mpv --sub-file="\"$SRT_FILE"\" --fullscreen --fs-screen=$SCREEN --audio-file="\"$audio_file"\" --screen=$SCREEN --volume=$VOLUME ""$EDL_FILE""    > $runfile
+
+cat $runfile
+nohup bash $runfile & 
