@@ -70,6 +70,18 @@ select_edl_file() {
 
 
     EDL_FILE="$(select_edl_file "$2")"
+    # shrink the edl file to 500 records
+    TMPFILE2=$(mktemp)
+    cp -v "$EDL_FILE" > "$TMPFILE2"
+    echo $EDL_HEADER_RECORD > $TMPFILE2
+    shuf -n 200 "$EDL_FILE" >> "$TMPFILE2"
+    EDL_FILE=$HI/$(basename "$EDL_FILE" .edl)_shuffled.edl
+    cp $TMPFILE2 $EDL_FILE -v
+    $MPVU/validate.sh $EDL_FILE
+
+    #read -p "press enter to continue"
+
+
 
     # get the audio file name from the srt file name
     audio_file=$(echo $SRT_FILE | sed 's/\.srt$/.mp3/')
@@ -94,7 +106,7 @@ echo "runfile: $runfile"
 
 # cat $runfile
 
-echo mpv --sub-file="\"$SRT_FILE"\" --fullscreen --fs-screen=$SCREEN --audio-file="\"$audio_file"\" --screen=$SCREEN --volume=$VOLUME ""$EDL_FILE""    > $runfile
+echo mpv --sub-file="\"$SRT_FILE"\" --fullscreen --fs-screen=$SCREEN --audio-file="\"$audio_file"\" --screen=$SCREEN --volume=$VOLUME ""$TMPFILE2""    > $runfile
 
 cat $runfile
 nohup bash $runfile & 
