@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-
+echo "this has been replaced by picker_audio_sub.sh
+exit
 source $MPVU/util_inc.sh
 EDL_HEADER_RECORD="# mpv EDL v0"
 # This script searches the contents of all .srts in $AUDEY and $AUDEY2 for a string
