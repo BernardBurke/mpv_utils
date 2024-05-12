@@ -122,5 +122,6 @@ read  -p "Press return or q " -n 1 ANS
 if [[ "$ANS" == "q" ]]; then
 	pkill feh &
 	echo "killing mpv..."
-	pkill mpv
+	pkill -f topmid
+	pkill -f botmid
 fi
