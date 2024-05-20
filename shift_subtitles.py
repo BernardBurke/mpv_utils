@@ -94,8 +94,19 @@ if __name__ == "__main__":
         print("Time offset is greater than the audio duration.")
         sys.exit(1)
 
+# extract the audio sections - destination is in /tmp/ with filename the same as the audio_file
+    audio_output = f"/tmp/{os.path.basename(audio_file)}"
+    input_stream = ffmpeg.input(audio_file)
+    audio_stream = input_stream.audio.filter('atrim', start=args.time_offset).filter('asetpts', 'PTS-STARTPTS')
+    audio_output = ffmpeg.output(audio_stream, audio_output, acodec='copy')
+    ffmpeg.run(audio_output)
+    print(f"Extracted audio file: {audio_output}")
 
 
+    output_srt_file = f"/tmp/{os.path.basename(args.output_file)}"
+    shift_subtitles(args.input_file, output_srt_file, args.time_offset)
+    print(f"Shifted subtitle file: {output_srt_file}")
+    
     # shift_subtitles(args.input_file, args.output_file, args.time_offset)
 # # FFmpeg-Python commands
 #     input_stream = ffmpeg.input(media_file)
