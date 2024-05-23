@@ -21,7 +21,7 @@ def shift_subtitles(input_file, output_file, time_offset_str):
 
     def time_str_to_ms(time_str):
         """Converts a time string to milliseconds."""
-        print(f'time_str: {time_str}')
+        # print(f'time_str: {time_str}')
         time_parts = re.split(r"[:,]", time_str)
         h = int(time_parts[0])
         m = int(time_parts[1])
@@ -56,17 +56,17 @@ def shift_subtitles(input_file, output_file, time_offset_str):
 
 
 
-def convert_to_milliseconds(timestamp):
-    h, m, s_ms = timestamp.split(':')
-    s, ms = s_ms.split(',')
-    return int(h) * 3600000 + int(m) * 60000 + int(s) * 1000 + int(ms)
+# def convert_to_milliseconds(timestamp):
+#     h, m, s_ms = timestamp.split(':')
+#     s, ms = s_ms.split(',')
+#     return int(h) * 3600000 + int(m) * 60000 + int(s) * 1000 + int(ms)
 
-def convert_to_timestamp(milliseconds):
-    ms = int(milliseconds)
-    s, ms = divmod(ms, 1000)
-    m, s = divmod(s, 60)
-    h, m = divmod(m, 60)
-    return f"{h:02d}:{m:02d}:{s:02d},{ms:03d}"
+# def convert_to_timestamp(milliseconds):
+#     ms = int(milliseconds)
+#     s, ms = divmod(ms, 1000)
+#     m, s = divmod(s, 60)
+#     h, m = divmod(m, 60)
+#     return f"{h:02d}:{m:02d}:{s:02d},{ms:03d}"
 
 def convert_timestamp_to_milliseconds(timestamp_str):
     parts = timestamp_str.split(':')
@@ -183,17 +183,3 @@ if __name__ == "__main__":
     shift_subtitles(args.input_file, output_srt_file, args.time_offset)
     print(f"Shifted subtitle file: {output_srt_file}")
     
-    # shift_subtitles(args.input_file, args.output_file, args.time_offset)
-# # FFmpeg-Python commands
-#     input_stream = ffmpeg.input(media_file)
-
-#     audio_stream = input_stream.audio.filter('atrim', start=args.time_offset).filter('asetpts', 'PTS-STARTPTS')
-#     audio_output = ffmpeg.output(audio_stream, args.output_file + "_audio.m4a", acodec='copy')
-
-#     # Subtitle Extraction (FFmpeg-Python method)
-#     subtitle_stream = ffmpeg.input(args.input_file)
-#     subtitle_output = ffmpeg.output(subtitle_stream, args.output_file + "_subtitles.srt", ss=args.time_offset)
-
-#     # Execute FFmpeg
-#     ffmpeg.run(audio_output)
-#     ffmpeg.run(subtitle_output)
