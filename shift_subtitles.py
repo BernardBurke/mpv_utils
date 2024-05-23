@@ -5,20 +5,56 @@ import ffmpeg
 import os
 
 
-def shift_subtitles(input_file, output_file, time_offset_str):
-    time_offset = convert_timestamp_to_milliseconds(time_offset_str)
+import re
 
-    with open(input_file, 'r') as infile, open(output_file, 'w') as outfile:
-        for line in infile:
-            if re.match(r"\d\d:\d\d:\d\d,\d\d\d --> \d\d:\d\d:\d\d,\d\d\d", line):
-                start, end = line.split(" --> ")
-                start_time = convert_to_milliseconds(start)
-                end_time = convert_to_milliseconds(end)
-                shifted_start = convert_to_timestamp(start_time + time_offset)
-                shifted_end = convert_to_timestamp(end_time + time_offset)
-                outfile.write(f"{shifted_start} --> {shifted_end}\n")
+def shift_subtitles(input_file, output_file, time_offset_str):
+    """Shifts subtitles in an SRT file based on a time offset.
+
+    Args:
+        input_file (str): Path to the input SRT file.
+        output_file (str): Path to save the shifted subtitles.
+        time_offset_str (str): Time offset in HH:MM:SS,mmm format.
+
+    Returns:
+        None: Writes the shifted subtitles to the output file.
+    """
+
+    def time_str_to_ms(time_str):
+        """Converts a time string to milliseconds."""
+        print(f'time_str: {time_str}')
+        time_parts = re.split(r"[:,]", time_str)
+        h = int(time_parts[0])
+        m = int(time_parts[1])
+        s = int(time_parts[2])
+        ms = int(time_parts[3]) if len(time_parts) > 3 else 0
+        return h * 3600000 + m * 60000 + s * 1000 + ms
+
+    time_offset_ms = time_str_to_ms(time_offset_str)
+
+    with open(input_file, "r") as f_in, open(output_file, "w") as f_out:
+        for line in f_in:
+            # Check if the line is a time range
+            if "-->" in line:
+                start_time, end_time = line.strip().split(" --> ")
+
+                # Convert time ranges to milliseconds
+                start_ms = time_str_to_ms(start_time)
+                end_ms = time_str_to_ms(end_time)
+
+                # Apply time offset and convert back to string
+                shifted_start = max(0, start_ms - time_offset_ms)  # Ensure non-negative
+                shifted_end = max(0, end_ms - time_offset_ms)
+
+                shifted_start_str = f"{shifted_start // 3600000:02d}:{(shifted_start % 3600000) // 60000:02d}:{(shifted_start % 60000) // 1000:02d},{shifted_start % 1000:03d}"
+                shifted_end_str = f"{shifted_end // 3600000:02d}:{(shifted_end % 3600000) // 60000:02d}:{(shifted_end % 60000) // 1000:02d},{shifted_end % 1000:03d}"
+
+                # Write the shifted time range to the output file
+                f_out.write(f"{shifted_start_str} --> {shifted_end_str}\n")
             else:
-                outfile.write(line)
+                # If not a time range, write the line directly
+                f_out.write(line)
+
+
 
 def convert_to_milliseconds(timestamp):
     h, m, s_ms = timestamp.split(':')
@@ -64,16 +100,52 @@ def get_audio_file(input_file):
             audio_file = None
     return audio_file
 
+import ffmpeg
+
+def extract_audio_segment(input_file, start_time, end_time, output_file):
+    """Extracts a segment of audio from an input file without re-encoding.
+
+    Args:
+        input_file (str): Path to the input audio file.
+        start_time (str): Start time in HH:MM:SS format.
+        end_time (str): End time in HH:MM:SS format.
+        output_file (str): Path to save the extracted segment.
+    """
+
+    try:
+        (
+            ffmpeg
+            .input(input_file, ss=start_time, to=end_time)
+            .output(output_file, c='copy')
+            .run()
+        )
+        print(f"Audio segment successfully extracted to {output_file}")
+    except ffmpeg.Error as e:
+        print(f"Error extracting audio segment: {e.stderr}")
+
+# Example usage is the same
 
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Shift subtitle timings.")
     parser.add_argument("input_file", help="Input subtitle file (.srt or .vtt)")
-    parser.add_argument("output_file", help="Output subtitle file")
+    # parser.add_argument("output_file", help="Output subtitle file")
     parser.add_argument("time_offset", help="Time offset in HH:MM:SS format (e.g., 00:01:30)")
 
     args = parser.parse_args()
+
+    # check that the environment variable PERE exists and is a writeable directory - otherwise exit
+    if 'PERE' not in os.environ:
+        print("PERE environment variable not set.")
+        sys.exit(1)
+    if not os.path.isdir(os.environ['PERE']):
+        print("PERE directory does not exist.")
+        sys.exit(1)
+
+    # create a variable to hold the output directory name = PERE
+    output_directory = os.environ['PERE']
+    
 
     # call get_audio_file function to get the audio file name. If it returns a valid filename,
     # then continue, otherwise print an error and exit
@@ -84,6 +156,7 @@ if __name__ == "__main__":
     # get the length of the audio file in milliseconds
     audio_file_info = ffmpeg.probe(audio_file)
     audio_duration = int(float(audio_file_info['format']['duration']) * 1000)
+    #audio_duration = int(float(audio_file_info['format']['duration']))
     print(f"Audio File: {audio_file}  duration: {audio_duration} ms")
     # Calculate the time difference between the audio duration and the time_offset
     time_offset = convert_timestamp_to_milliseconds(args.time_offset)
@@ -95,15 +168,18 @@ if __name__ == "__main__":
         sys.exit(1)
 
 # extract the audio sections - destination is in /tmp/ with filename the same as the audio_file
-    audio_output = f"/tmp/{os.path.basename(audio_file)}"
-    input_stream = ffmpeg.input(audio_file)
-    audio_stream = input_stream.audio.filter('atrim', start=args.time_offset).filter('asetpts', 'PTS-STARTPTS')
-    audio_output = ffmpeg.output(audio_stream, audio_output, acodec='copy')
-    ffmpeg.run(audio_output)
-    print(f"Extracted audio file: {audio_output}")
+    audio_output = f"{output_directory}/{os.path.basename(audio_file)}"
+    print(f"Extracting audio file: {audio_file} from {args.time_offset} to {audio_output}")
+
+    extract_audio_segment(audio_file, args.time_offset, time_difference, audio_output)
+    # input_stream = ffmpeg.input(audio_file)
+    # audio_stream = input_stream.audio.filter('atrim', start=args.time_offset).filter('asetpts', 'PTS-STARTPTS')
+    # audio_output = ffmpeg.output(audio_stream, audio_output, acodec='copy').overwrite_output()
+    # ffmpeg.run(audio_output)
+    # print(f"Extracted audio file: {audio_output}")
 
 
-    output_srt_file = f"/tmp/{os.path.basename(args.output_file)}"
+    output_srt_file = f"{output_directory}/{os.path.basename(args.input_file)}"
     shift_subtitles(args.input_file, output_srt_file, args.time_offset)
     print(f"Shifted subtitle file: {output_srt_file}")
     
