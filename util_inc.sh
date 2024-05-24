@@ -12,6 +12,14 @@ message() {
     logmessage "$MESSAGE_TEXT"
 }
 
+# function to take an edl file and a total length in seconds.
+# It will produce an edl output file with random entries from the edl file
+# that add up to the total length (or slightly more) of the total length
+# The output file will be in /tmp
+# The output file will be named the same as the input file with a random number appended
+# The output file will be in the same format as the input file
+
+
 shuffle_edl() {
 
     if [[ $2 = "" ]]; then
