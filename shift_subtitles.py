@@ -61,12 +61,12 @@ def shift_subtitles(input_file, output_file, time_offset_str):
 #     s, ms = s_ms.split(',')
 #     return int(h) * 3600000 + int(m) * 60000 + int(s) * 1000 + int(ms)
 
-# def convert_to_timestamp(milliseconds):
-#     ms = int(milliseconds)
-#     s, ms = divmod(ms, 1000)
-#     m, s = divmod(s, 60)
-#     h, m = divmod(m, 60)
-#     return f"{h:02d}:{m:02d}:{s:02d},{ms:03d}"
+def convert_to_timestamp(milliseconds):
+    ms = int(milliseconds)
+    s, ms = divmod(ms, 1000)
+    m, s = divmod(s, 60)
+    h, m = divmod(m, 60)
+    return f"{h:02d}:{m:02d}:{s:02d}.{ms:03d}"
 
 def convert_timestamp_to_milliseconds(timestamp_str):
     parts = timestamp_str.split(':')
@@ -123,7 +123,13 @@ def extract_audio_segment(input_file, start_time, end_time, output_file):
     except ffmpeg.Error as e:
         print(f"Error extracting audio segment: {e.stderr}")
 
+
+
+def format_time_offset(time_offset_str):
+    h, m, s = time_offset_str.split(":")
+    return f"{h}{m}{s}"
 # Example usage is the same
+
 
 
 
@@ -132,6 +138,7 @@ if __name__ == "__main__":
     parser.add_argument("input_file", help="Input subtitle file (.srt or .vtt)")
     # parser.add_argument("output_file", help="Output subtitle file")
     parser.add_argument("time_offset", help="Time offset in HH:MM:SS format (e.g., 00:01:30)")
+    parser.add_argument("-l","--audio_length", type=int, help="Audio length in seconds")
 
     args = parser.parse_args()
 
@@ -160,24 +167,37 @@ if __name__ == "__main__":
     print(f"Audio File: {audio_file}  duration: {audio_duration} ms")
     # Calculate the time difference between the audio duration and the time_offset
     time_offset = convert_timestamp_to_milliseconds(args.time_offset)
-    time_difference = audio_duration - time_offset
-    print(f"Time difference: {time_difference} ms")
-    # if the time difference is negative, print an error and exit
-    if time_difference < 0:
-        print("Time offset is greater than the audio duration.")
-        sys.exit(1)
+    print(f"Time offset: {time_offset} ms")
+    if args.audio_length:
+        time_difference = time_offset + args.audio_length * 1000
+        if time_difference > audio_duration:
+            print("Cut length is greater than the audio duration.")
+            sys.exit(1)
+        else:
+            print(f"Time difference: {time_difference} ms") 
+            #prompt for yes or no to continue
+            time_difference = convert_to_timestamp(time_difference)
+            print(f'Time difference: {time_difference}')
+            input("Press Enter to continue...")
+    else:
+        time_difference = audio_duration - time_offset
+        print(f"Time difference: {time_difference} ms")
+        # if the time difference is negative, print an error and exit
+        if time_difference < 0:
+            print("Time offset is greater than the audio duration.")
+            sys.exit(1)
 
 # extract the audio sections - destination is in /tmp/ with filename the same as the audio_file
     audio_output = f"{output_directory}/{os.path.basename(audio_file)}"
     print(f"Extracting audio file: {audio_file} from {args.time_offset} to {audio_output}")
 
-    extract_audio_segment(audio_file, args.time_offset, time_difference, audio_output)
-    # input_stream = ffmpeg.input(audio_file)
-    # audio_stream = input_stream.audio.filter('atrim', start=args.time_offset).filter('asetpts', 'PTS-STARTPTS')
-    # audio_output = ffmpeg.output(audio_stream, audio_output, acodec='copy').overwrite_output()
-    # ffmpeg.run(audio_output)
-    # print(f"Extracted audio file: {audio_output}")
+    time_offset_formatted = format_time_offset(args.time_offset)
+    cut_length_suffix = f"-cut{args.audio_length}" if args.audio_length else ""
+    audio_output = f"{output_directory}/{os.path.basename(audio_file).rsplit('.', 1)[0]}_{time_offset_formatted}{cut_length_suffix}.{audio_file.rsplit('.', 1)[1]}"  
+    output_srt_file = f"{output_directory}/{os.path.basename(args.input_file).rsplit('.', 1)[0]}_{time_offset_formatted}{cut_length_suffix}.srt" 
 
+
+    extract_audio_segment(audio_file, args.time_offset, time_difference, audio_output)
 
     output_srt_file = f"{output_directory}/{os.path.basename(args.input_file)}"
     shift_subtitles(args.input_file, output_srt_file, args.time_offset)
