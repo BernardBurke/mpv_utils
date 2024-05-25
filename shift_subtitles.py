@@ -194,12 +194,13 @@ if __name__ == "__main__":
     time_offset_formatted = format_time_offset(args.time_offset)
     cut_length_suffix = f"-cut{args.audio_length}" if args.audio_length else ""
     audio_output = f"{output_directory}/{os.path.basename(audio_file).rsplit('.', 1)[0]}_{time_offset_formatted}{cut_length_suffix}.{audio_file.rsplit('.', 1)[1]}"  
-    output_srt_file = f"{output_directory}/{os.path.basename(args.input_file).rsplit('.', 1)[0]}_{time_offset_formatted}{cut_length_suffix}.srt" 
-
+    #output_srt_file = f"{output_directory}/{os.path.basename(args.input_file).rsplit('.', 1)[0]}_{time_offset_formatted}{cut_length_suffix}.srt" 
+    output_srt_file = f"{output_directory}/{os.path.basename(args.input_file).rsplit('.', 1)[0]}_{time_offset_formatted}{cut_length_suffix}.{args.input_file.rsplit('.', 1)[1]}"  
+    print(f"Audio output file: {audio_output} output_srt file: {output_srt_file}")
 
     extract_audio_segment(audio_file, args.time_offset, time_difference, audio_output)
 
-    output_srt_file = f"{output_directory}/{os.path.basename(args.input_file)}"
+    # output_srt_file = f"{output_directory}/{os.path.basename(args.input_file)}"
     shift_subtitles(args.input_file, output_srt_file, args.time_offset)
     print(f"Shifted subtitle file: {output_srt_file}")
     
