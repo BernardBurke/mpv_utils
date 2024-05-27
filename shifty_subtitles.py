@@ -4,6 +4,8 @@ import argparse
 import ffmpeg
 import os
 
+print(f'This is not in use - please use the non shify version')
+sys.exit(1)
 
 def shift_subtitles(input_file, output_file, time_offset_str, cut_length_ms=None):
     """Shifts subtitles in an SRT file based on a time offset, optionally trimming.
