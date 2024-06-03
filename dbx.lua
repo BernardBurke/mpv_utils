@@ -416,16 +416,15 @@ local function new_file(filename)
     print("New file "..filename)
     previous_chapter_time = 0
     write_subtitles(message_display_time)
+    end
 
-end
+    local function valid_for_cutting()
+        local filename = mp.get_property("filename")
+        local fileclass = get_file_class(filename)
 
-local function valid_for_cutting()
-    local filename = mp.get_property("filename")
-    local fileclass = get_file_class(filename)
+        print("validating "..fileclass)
 
-    print("validating "..fileclass)
-
-    if fileclass == "video" then
+        if fileclass == "video" or fileclass == "audio" then
     
         return true
 
