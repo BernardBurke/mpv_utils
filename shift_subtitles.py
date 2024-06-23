@@ -95,6 +95,15 @@ def get_audio_file(input_file):
     for extension in audio_file_extensions:
         audio_file = f"{input_file_without_extension}{extension}"
         if os.path.exists(audio_file):
+            # check in internal type of the audio file and fixup the extension if necessary
+            # the fixup involves copying the audio file to /tmp with a new extension that
+            # matches the internal type
+            audio_type = get_audio_type(audio_file)
+            if extension != f".{audio_type}":
+                new_audio_file = f"{input_file_without_extension}.{audio_type}"
+                print(f"Fixing audio file extension: {audio_file} to {new_audio_file}")
+                os.system(f"cp {audio_file} {new_audio_file}")
+                audio_file = new_audio_file
             break
         else:
             audio_file = None
@@ -130,6 +139,13 @@ def format_time_offset(time_offset_str):
     return f"{h}{m}{s}"
 # Example usage is the same
 
+# this function returns the internal type of the audio file
+# some of the audio files aren't named properly, so we need to check the internal type
+def get_audio_type(audio_file):
+    # get the audio file type
+    audio_file_info = ffmpeg.probe(audio_file)
+    audio_type = audio_file_info['streams'][0]['codec_name']
+    return audio_type
 
 
 
