@@ -91,7 +91,7 @@ def get_audio_file(input_file):
     input_file_directory = os.path.dirname(input_file)
     # for each audio file extension, check if the file exists
     # make a list of audio file types .mp3, m4a, .wav, .flac, .ogg, .opus .webm .mp4, .mkv
-    audio_file_extensions = [".mp3", ".m4a", ".wav", ".flac", ".ogg", ".opus", ".webm", ".mp4", ".mkv"]
+    audio_file_extensions = [".mp3", ".m4a", ".wav", ".flac", ".ogg", ".opus", ".webm", ".mp4", ".mkv", ".aac"]
     for extension in audio_file_extensions:
         audio_file = f"{input_file_without_extension}{extension}"
         if os.path.exists(audio_file):
@@ -102,7 +102,8 @@ def get_audio_file(input_file):
             if extension != f".{audio_type}":
                 new_audio_file = f"{input_file_without_extension}.{audio_type}"
                 print(f"Fixing audio file extension: {audio_file} to {new_audio_file}")
-                os.system(f"cp {audio_file} {new_audio_file}")
+                new_audio_file = f"/tmp/{os.path.basename(new_audio_file)}"
+                os.system(f"cp '{audio_file}' '{new_audio_file}'")
                 audio_file = new_audio_file
             break
         else:
