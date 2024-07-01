@@ -1,1 +1,1 @@
-find $AUDEY \( -iname '*.m4a' -o -iname '*.mp3' -o -iname '*.wav' -o -iname '*.mpga' \) -type f -ctime -12 -exec echo $MPVU/whisp_me.sh "'{}'" \; 
+find $AUDEY \( -iname '*.m4a' -o -iname '*.mp3' -o -iname '*.wav' -o -iname '*.mpga' \) -type f  -exec echo $MPVU/whisp_me.sh "'{}'" \; 
