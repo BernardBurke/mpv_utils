@@ -13,8 +13,9 @@ find "$path" -type f \( -iname "*.mp4" -o -iname "*.mkv" -o -iname "*.avi" -o -i
   # Extract base filename without extension
   base=$(basename "$file" | cut -d. -f1)
 
+  lpath="$(dirname "$file")"
   # Check if a .srt or .vtt file exists with the same base name
-  if [ ! -f "$path/$base.srt" ] && [ ! -f "$path/$base.vtt" ]; then
+  if [ ! -f "$lpath/$base.srt" ] && [ ! -f "$lpath/$base.vtt" ]; then
     echo "$MPVU/whisp_me.sh $file"  # Output the file if no subtitles are found
   fi
 done
