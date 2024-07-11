@@ -5,11 +5,23 @@ if [ $# -eq 0 ]; then
   exit 1
 fi
 
+
+if [[ $2 == "" ]]; then
+  loop_count=1
+else
+  loop_count=$2
+fi
+
 path="$1"
 
 # Find all video and audio files, ignoring case (e.g., .MP4, .mKV, etc.)
+counter=0
 find "$path" -type f \( -iname "*.mp4" -o -iname "*.mkv" -o -iname "*.avi" -o -iname "*.mov" -o -iname "*.webm" -o -iname "*.mp3" -o -iname "*.wav" -o -iname "*.m4a" \) | while read file; do
 
+  counter=$((counter + 1))
+  if [ $counter -gt $loop_count ]; then
+    break
+  fi
   # Extract base filename without extension
   base=$(basename "$file" | cut -d. -f1)
 
