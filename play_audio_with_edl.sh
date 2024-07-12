@@ -113,11 +113,11 @@ cat $runfile
 nohup bash $runfile & 
 
 # copy the runfile to $PAIR, changing the name to use $1 and $2 as the name
-desitination=$(echo $runfile | sed 's/commands/commands_'"$(basename $1)"'_'"$(basename $2)"'/')
-desitination="$(basename $desitination)"
-desitination="${PAIR}/${desitination}"
-echo "desitination: $desitination"
-cp $runfile "$desitination" -v
+# desitination=$(echo $runfile | sed 's/commands/commands_'"$(basename $1)"'_'"$(basename $2)"'/')
+# desitination="$(basename $desitination)"
+# desitination="${PAIR}/${desitination}"
+# echo "desitination: $desitination"
+#cp $runfile "$desitination" -v
 
 
 # we call get_edl_of_total_length to get a new edl file that is a random selection of the edl file
