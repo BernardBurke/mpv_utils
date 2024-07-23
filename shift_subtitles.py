@@ -138,6 +138,34 @@ def get_audio_type(audio_file):
     return audio_type
 
 
+# this function takes the media_file and calls get_audio_type to get the audio type
+# if the type does not match the expected type, then it calls ffmpeg to convert the media file to the expected type
+# and saves in /tmp/ directory
+# and returns the converted media file name
+def check_media_file_type(media_file, expected_type):
+    # get the audio file type
+    audio_type = get_audio_type(media_file)
+    print(f"Audio type: {audio_type} for {expected_type}")
+    # if the audio type is not mp3, then convert the media file to mp3
+    # ToDo - the expected type as a period in it... need to fix this
+    if audio_type != expected_type:
+        # convert the media file to expected type
+        output_media_file = f"/tmp/{os.path.basename(media_file).rsplit('.', 1)[0]}.{audio_type}"
+        print(f"Converting {media_file} to {output_media_file}")
+        try:
+            (
+                ffmpeg
+                .input(media_file)
+                .output(output_media_file, c='copy')
+                .run()
+            )
+            print(f"Media file successfully converted to {output_media_file}")
+        except ffmpeg.Error as e:
+            print(f"Error converting media file: {e.stderr}")
+        return output_media_file
+    else:
+        return media_file
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Shift subtitle timings.")
@@ -181,6 +209,10 @@ if __name__ == "__main__":
     if media_file is None:
         print("Could not find the related media file.")
         sys.exit(1)
+    # get the media file type from the filename
+    media_file_type = os.path.splitext(media_file)[1]
+    # call check_media_file_type to check the media file type and convert if necessary
+    media_file = check_media_file_type(media_file, media_file_type)
     # get the length of the media file in milliseconds
     media_file_info = ffmpeg.probe(media_file)
     media_duration = int(float(media_file_info['format']['duration']) * 1000)
