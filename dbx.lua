@@ -456,7 +456,7 @@ local function end_cut()
     local str_record= path..","..g_start_second..","..stop_second.."\n"
 
     local SNITCHfilename = "video_SNITCH_"..os.date('%d_%m_%y_%H')..".edl"
-    local SNITCH_file = os.getenv("BCHW").."/"..SNITCHfilename
+    local SNITCH_file = os.getenv("BCHU").."/"..SNITCHfilename
 
     print("Adding ",str_record)
 
