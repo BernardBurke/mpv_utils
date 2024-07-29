@@ -7,6 +7,8 @@ import os
 
 import re
 
+
+
 def shift_subtitles(input_file, output_file, time_offset_str):
     """Shifts subtitles in an SRT file based on a time offset.
 
@@ -212,7 +214,9 @@ if __name__ == "__main__":
     # get the media file type from the filename
     media_file_type = os.path.splitext(media_file)[1]
     # call check_media_file_type to check the media file type and convert if necessary
-    media_file = check_media_file_type(media_file, media_file_type)
+    # only call check_media_file_type if the media file type is not video
+    if media_file_type not in ['.mp4', '.mkv']:
+        media_file = check_media_file_type(media_file, media_file_type)
     # get the length of the media file in milliseconds
     media_file_info = ffmpeg.probe(media_file)
     media_duration = int(float(media_file_info['format']['duration']) * 1000)
