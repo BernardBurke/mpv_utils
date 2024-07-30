@@ -81,6 +81,7 @@ def convert_timestamp_to_milliseconds(timestamp_str):
 
 # This function takes the .srt/vtt file and finds the related media file in the same directory
 def get_media_file(input_file):
+    print(f"Input file: {input_file}")
     media_file = None
     # Look for a related media file in the same directory as the input file
     # File types can be media or video (mp3, m4a, wav, flac, ogg, opus, webm, mp4, mkv, avi, etc.)
@@ -235,7 +236,7 @@ if __name__ == "__main__":
             #prompt for yes or no to continue
             time_difference = convert_to_timestamp(time_difference)
             print(f'Time difference: {time_difference}')
-            input("Press Enter to continue...")
+            #input("Press Enter to continue...")
     else:
         time_difference = media_duration - time_offset
         print(f"Time difference: {time_difference} ms")
