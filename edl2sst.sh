@@ -57,22 +57,15 @@ while IFS=, read -r full_path start_second length_seconds; do
   if [ -f "$srt_file" ]; then
     echo "Found $srt_file"
     echo "Record: $full_path, $start_second, $length_seconds"
-    read -p "Process? (y/n/q): " choice </dev/tty
-    case $choice in
-      y)
-        do_sst "$srt_file" "$start_second" "$length_seconds"
-        ;;
-      n)
-        echo "Skipping..."
-        ;;
-      q)
-        echo "Quitting..."
-        exit 0
-        ;;
-      *)
-        echo "Invalid choice. Skipping..."
-        ;;
-    esac
+    #read -p "Process? (or q): " choice </dev/tty
+    read  -p "Press return or q " -n 1 ANS </dev/tty
+  if [[ "$ANS" == "q" ]]; then
+    echo "Quitting..."
+    exit 0
+  fi
+
+  do_sst "$srt_file" "$start_second" "$length_seconds"
+  
   else
     echo "No srt file found for $full_path"
   fi
