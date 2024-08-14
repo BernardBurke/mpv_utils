@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 # read an edl and output the unique files as a m3u style playlist
-source $SRC/common_inc.sh
+# source $SRC/common_inc.sh
+TMPFILE1=$(mktemp) # for find results
+
 source $MPVU/util_inc.sh 
 
 SCRATCH_DIR="$(mktemp -d)"

@@ -3,7 +3,11 @@
 source $MPVU/util_inc.sh
 # #!/usr/bin/env bash
 # # written to validate EDL files, but no doubt will have other functions.
-source $SRC/common_inc.sh
+# getting rid of SRC source $SRC/common_inc.sh
+TMPFILE1=$(mktemp) 
+TMPFILE2=$(mktemp)
+TMPFILE3=$(mktemp)
+
 source $MPVU/util_inc.sh 
 
 if [[ ! -f "$1" ]]; then

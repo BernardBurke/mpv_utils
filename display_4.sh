@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # use nohup mpv --image-display-duration=$DISPLAY_TIME config profiles to cycle imaages
-source $SRC/common_inc.sh
+# source $SRC/common_inc.sh
 
 if [[ ! -d "$3" ]]; then
         if [[ ! -f "$3" ]]; then

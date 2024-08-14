@@ -1,7 +1,11 @@
 #!/usr/bin/env bash
 # use nohup mpv  config profiles to cycle imaages
 #source $SRC/common_inc.sh
-source $SRC/common_inc.sh
+# source $SRC/common_inc.sh
+TMPFILE1=$(mktemp) 
+TMPFILE2=$(mktemp)
+TMPFILE3=$(mktemp)
+
 source $MPVU/util_inc.sh 
 
 SCRATCH_DIR="$(mktemp -d)"

@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
 # use nohup mpv --image-display-duration=$DISPLAY_TIME config profiles to cycle imaages
-source $SRC/common_inc.sh
+# source $SRC/common_inc.sh
+TMPFILE1=$(mktemp) 
+TMPFILE2=$(mktemp)
+TMPFILE3=$(mktemp)
 
 get_file_by_type() {
     case "$1" in
