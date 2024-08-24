@@ -48,6 +48,22 @@ else
 	ONE_SCREEN=$5
 fi
 
+if [[ "$6" != "" ]]; then
+	message "Running in split screen mode"
+	if [[ ! -f "$HANDUNI/$6_chopped6.edl" ]]; then
+		message "But  $HANDUNI/$6_chopped6.edl was not found"
+		exit 1
+	fi
+	if [[ -f $HI/mpv_split6_chopped6.edl ]]; then
+		message "removing stale split6 files"
+		rm -v $HI/mpv_split6_chopped?.edl
+		exit 1
+	fi
+	split_screen=1
+else
+	split_screen=0
+fi
+
 
 message "IMGDIR is $IMGDIR"
 
@@ -79,14 +95,29 @@ save_6() {
 }
 
 
-save_6 "$EDLNAME" mpv_feh6 
+	save_6 "$EDLNAME" mpv_feh6
+
+if [[ $split_screen -eq 1 ]]; then
+	message "Split screen mode - generating split6 files"
+	save_6 "$6" mpv_split6
+	message "Split screen files generated"
+else
+	message "Not in split screen mode"
+fi
+
+
 
 run_screen() {
 		LCOUNT=$2
 		LOG_FILE1="--log-file=/tmp/VIDEO1$SCREEN.log"
 		LOG_FILE2="--log-file=/tmp/VIDEO2$SCREEN.log"
 
-		nohup mpv --volume=$VOLUME --screen=$1 --profile=topmid $HANDUNI/mpv_feh6$LCOUNT.edl  "$LOG_FILE1" &
+		if [[ $split_screen -eq 1 ]]; then
+			message "Split screen mode - using split6 files"
+			nohup mpv --volume=$VOLUME --screen=$1 --profile=topmid $HANDUNI/mpv_split6$LCOUNT.edl  "$LOG_FILE1" &
+		else
+			nohup mpv --volume=$VOLUME --screen=$1 --profile=topmid $HANDUNI/mpv_feh6$LCOUNT.edl  "$LOG_FILE1" &
+		fi
 		((LCOUNT++))
 		nohup mpv --volume=$VOLUME --screen=$1 --profile=botmid $HANDUNI/mpv_feh6$LCOUNT.edl  "$LOG_FILE2" &
 		$IMGSRC/fillet_screens.sh 6corners$1 10  "$IMGDIR"
