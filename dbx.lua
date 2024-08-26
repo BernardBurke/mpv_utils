@@ -415,10 +415,10 @@ end
 local function new_file(filename)
     print("New file "..filename)
     previous_chapter_time = 0
-    write_subtitles(message_display_time)
-    end
+    --write_subtitles(message_display_time)
+end
 
-    local function valid_for_cutting()
+local function valid_for_cutting()
         local filename = mp.get_property("filename")
         local fileclass = get_file_class(filename)
 
@@ -428,11 +428,11 @@ local function new_file(filename)
     
         return true
 
-    else
+        else
             print("Wrong file type for cutting "..fileclass)
             send_OSD("Wrong file type for cutting "..fileclass,2)
             return false
-    end
+        end
 
 end
 
@@ -599,10 +599,13 @@ local function deleteMe()
 
 end
 
+print("dbx.lua loaded - waiting for new file or chapter")
+
 mp.observe_property("filename","string",new_file)
 --mp.observe_property("chapter","number",new_chapter("chapter"))
 mp.observe_property("chapter","number",new_chapter)
-        
+
+print("Setting up key bindings")
 
 mp.add_key_binding("D", "toggle_SNITCH", toggle_SNITCH, {repeatable=true})
 mp.add_key_binding("g", "goldKey",goldKey, {repeatable=true})
