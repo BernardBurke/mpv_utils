@@ -5,6 +5,17 @@ import ffmpeg
 import os
 import re
 
+# Add the directory from the environment variable to the system path
+module_path = os.environ.get('MPVU')
+if module_path and os.path.isdir(module_path):
+    sys.path.append(module_path)
+else:
+    print("MPVU environment variable not set or directory does not exist.")
+    sys.exit(1)
+
+# Now you can import the module
+import media_file_helper
+
 
 
 def shift_subtitles(input_file, output_file, time_offset_str):
@@ -55,12 +66,6 @@ def shift_subtitles(input_file, output_file, time_offset_str):
                 f_out.write(line)
 
 
-
-# def convert_to_milliseconds(timestamp):
-#     h, m, s_ms = timestamp.split(':')
-#     s, ms = s_ms.split(',')
-#     return int(h) * 3600000 + int(m) * 60000 + int(s) * 1000 + int(ms)
-
 def convert_to_timestamp(milliseconds):
     ms = int(milliseconds)
     s, ms = divmod(ms, 1000)
@@ -68,103 +73,13 @@ def convert_to_timestamp(milliseconds):
     h, m = divmod(m, 60)
     return f"{h:02d}:{m:02d}:{s:02d}.{ms:03d}"
 
-def convert_timestamp_to_milliseconds(timestamp_str):
-    parts = timestamp_str.split(':')
-    if len(parts) == 3:  # Format: HH:MM:SS
-        h, m, s = map(int, parts)
-        return h * 3600000 + m * 60000 + s * 1000
-    else:
-        raise ValueError("Invalid timestamp format. Use HH:MM:SS")
-
-
-# This function takes the .srt/vtt file and finds the related media file in the same directory
-def get_media_file(input_file):
-    print(f"Input file: {input_file}")
-    media_file = None
-    # Look for a related media file in the same directory as the input file
-    # File types can be media or video (mp3, m4a, wav, flac, ogg, opus, webm, mp4, mkv, avi, etc.)
-    # For example, if the input file is "subtitle.srt", the media file would be "subtitle.mp3" if the 
-    # mp3 file exists (or m4a if the m4a file exists, etc.)
-    # So, take the input file, remove the extension and try each media file extension
-    # and check if that file exists.
-    # If the media file is found, return the media file name. If not found, return None.
-    input_file_without_extension = os.path.splitext(input_file)[0]
-    input_file_directory = os.path.dirname(input_file)
-    # List of media file extensions
-    media_file_extensions = [".mp3", ".m4a", ".wav", ".flac", ".ogg", ".opus", ".webm", ".mp4", ".mkv", ".avi"]
-    for extension in media_file_extensions:
-        media_file = f"{input_file_without_extension}{extension}"
-        if os.path.exists(media_file):
-            break
-        else:
-            media_file = None
-    return media_file
-
-
-def extract_media_segment(input_file, start_time, end_time, output_file):
-    """Extracts a segment of media (audio or video) from an input file without re-encoding.
-
-    Args:
-        input_file (str): Path to the input media file.
-        start_time (str): Start time in HH:MM:SS format.
-        end_time (str): End time in HH:MM:SS format.
-        output_file (str): Path to save the extracted segment.
-    """
-
-    try:
-        (
-            ffmpeg
-            .input(input_file, ss=start_time, to=end_time)
-            .output(output_file, c='copy')
-            .run()
-        )
-        print(f"Media segment successfully extracted to {output_file}")
-    except ffmpeg.Error as e:
-        print(f"Error extracting media segment: {e.stderr}")
-
 
 
 def format_time_offset(time_offset_str):
     h, m, s = time_offset_str.split(":")
     return f"{h}{m}{s}"
-# Example usage is the same
-
-# this function returns the internal type of the audio file
-# some of the audio files aren't named properly, so we need to check the internal type
-def get_audio_type(audio_file):
-    # get the audio file type
-    audio_file_info = ffmpeg.probe(audio_file)
-    audio_type = audio_file_info['streams'][0]['codec_name']
-    return audio_type
 
 
-# this function takes the media_file and calls get_audio_type to get the audio type
-# if the type does not match the expected type, then it calls ffmpeg to convert the media file to the expected type
-# and saves in /tmp/ directory
-# and returns the converted media file name
-def check_media_file_type(media_file, expected_type):
-    # get the audio file type
-    audio_type = get_audio_type(media_file)
-    print(f"Audio type: {audio_type} for {expected_type}")
-    # if the audio type is not mp3, then convert the media file to mp3
-    # ToDo - the expected type as a period in it... need to fix this
-    if audio_type != expected_type:
-        # convert the media file to expected type
-        output_media_file = f"/tmp/{os.path.basename(media_file).rsplit('.', 1)[0]}.{audio_type}"
-        print(f"Converting {media_file} to {output_media_file}")
-        try:
-            (
-                ffmpeg
-                .input(media_file)
-                .output(output_media_file, c='copy')
-                .run()
-            )
-            print(f"Media file successfully converted to {output_media_file}")
-        except ffmpeg.Error as e:
-            print(f"Error converting media file: {e.stderr}")
-        return output_media_file
-    else:
-        return media_file
 
 
 if __name__ == "__main__":
@@ -205,7 +120,7 @@ if __name__ == "__main__":
         args.input_file = output_srt_file
     # call get_media_file function to get the media file name. If it returns a valid filename,
     # then continue, otherwise print an error and exit
-    media_file = get_media_file(args.input_file)
+    media_file = media_file_helper.get_media_file(args.input_file)
     if media_file is None:
         print("Could not find the related media file.")
         sys.exit(1)
@@ -214,14 +129,14 @@ if __name__ == "__main__":
     # call check_media_file_type to check the media file type and convert if necessary
     # only call check_media_file_type if the media file type is not video
     if media_file_type not in ['.mp4', '.mkv']:
-        media_file = check_media_file_type(media_file, media_file_type)
+        media_file = media_file_helper.check_media_file_type(media_file, media_file_type)
     # get the length of the media file in milliseconds
     media_file_info = ffmpeg.probe(media_file)
     media_duration = int(float(media_file_info['format']['duration']) * 1000)
     #media_duration = int(float(media_file_info['format']['duration']))
     print(f"media File: {media_file}  duration: {media_duration} ms")
     # Calculate the time difference between the media duration and the time_offset
-    time_offset = convert_timestamp_to_milliseconds(args.time_offset)
+    time_offset = media_file_helper.convert_timestamp_to_milliseconds(args.time_offset)
     print(f"Time offset: {time_offset} ms")
     if args.media_length:
         time_difference = time_offset + args.media_length * 1000
@@ -253,7 +168,7 @@ if __name__ == "__main__":
     output_srt_file = f"{output_directory}/{os.path.basename(args.input_file).rsplit('.', 1)[0]}_{time_offset_formatted}{cut_length_suffix}.{args.input_file.rsplit('.', 1)[1]}"  
     print(f"media output file: {media_output} output_srt file: {output_srt_file}")
 
-    extract_media_segment(media_file, args.time_offset, time_difference, media_output)
+    media_file_helper.extract_media_segment(media_file, args.time_offset, time_difference, media_output)
 
     # output_srt_file = f"{output_directory}/{os.path.basename(args.input_file)}"
     shift_subtitles(args.input_file, output_srt_file, args.time_offset)
