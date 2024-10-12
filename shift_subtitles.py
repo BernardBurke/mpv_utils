@@ -93,7 +93,7 @@ def get_media_file(input_file):
     input_file_without_extension = os.path.splitext(input_file)[0]
     input_file_directory = os.path.dirname(input_file)
     # List of media file extensions
-    media_file_extensions = [".mp3", ".m4a", ".wav", ".flac", ".ogg", ".opus", ".webm", ".mp4", ".mkv", ".avi"]
+    media_file_extensions = [".mp3", ".m4a", ".wav", ".flac", ".ogg", ".opus", ".webm", ".mp4", ".mkv", ".avi", ".aac"]
     for extension in media_file_extensions:
         media_file = f"{input_file_without_extension}{extension}"
         if os.path.exists(media_file):
@@ -113,18 +113,47 @@ def extract_media_segment(input_file, start_time, end_time, output_file):
         end_time (str): End time in HH:MM:SS format.
         output_file (str): Path to save the extracted segment.
     """
+    
+    print(f"Extracting media segment from {start_time} to {end_time} to {output_file}")
+    print(f"Input file: {input_file}")
+    print(f"Output file: {output_file} ------------------------------------------------------------------------------------------")
+
+    command = ffmpeg.input(input_file, ss=start_time, to=end_time).output(output_file, c='copy').compile()
+    print(f"Command: {command}")
 
     try:
+        # First attempt: Stream copy
+        print(f"First try Extracting media segment from {start_time} to {end_time} to {output_file}")
         (
             ffmpeg
             .input(input_file, ss=start_time, to=end_time)
             .output(output_file, c='copy')
             .run()
         )
-        print(f"Media segment successfully extracted to {output_file}")
-    except ffmpeg.Error as e:
-        print(f"Error extracting media segment: {e.stderr}")
+        print(f"Segment extracted successfully (stream copy) to {output_file}")
 
+    except ffmpeg.Error as e:
+        print(f"Stream copy failed: {e.stderr.decode()}")
+
+        # Check if the output file is empty
+    if os.stat(output_file).st_size == 0:
+        print("Output file is empty. Re-encoding...")
+
+        try:
+            # Second attempt: Re-encode (example with libvorbis for audio)
+            (
+                ffmpeg
+                .input(input_file, ss=start_time, to=end_time)
+                .output(output_file) # Or another suitable codec
+                .run()
+            )
+            print(f"Segment extracted successfully (re-encoded) to {output_file}")
+
+        except ffmpeg.Error as e:
+            print(f"Re-encoding failed: {e.stderr.decode()}")
+            # Handle the error (e.g., log, delete the empty output file)
+    else:
+        print("Output file is not empty, but there was an error")
 
 
 def format_time_offset(time_offset_str):
