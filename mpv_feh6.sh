@@ -90,7 +90,7 @@ save_6() {
 		((count++))
 		DESTNAME="$DEST$count.edl"
 		cp -v "$i" "$DESTNAME" 
-		$SRC/shake_an_edl.sh "$DESTNAME"
+		$MPVU/shake.sh "$DESTNAME"
 	done
 }
 
