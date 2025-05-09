@@ -1,12 +1,11 @@
 #!/usr/bin/env python3
 
 import sys
-import itertools
+import os
 
 def interleave_files(input_files):
     """
-    Interleaves lines from multiple input files, stopping as soon as any file
-    reaches the end.
+    Interleaves lines from multiple input files.
 
     Args:
         input_files: A list of file paths.
@@ -18,22 +17,49 @@ def interleave_files(input_files):
     try:
         while True:
             lines = []
-            all_files_have_data = True
+            has_data_in_this_round = False
             for f in file_handles:
                 line = f.readline().strip()
                 if line:
                     lines.append(line)
+                    has_data_in_this_round = True
                 else:
-                    all_files_have_data = False
-                    break  # Exit the inner loop as soon as one file is EOF
+                    lines.append(None)
 
-            if not all_files_have_data:
-                break  # Exit the outer loop if any file reached EOF
+            if not has_data_in_this_round:
+                break
 
-            yield from lines  # Yield the lines read in this round
+            for line in lines:
+                if line is not None:
+                    yield line
     finally:
         for f in file_handles:
-            f.close()
+            if not f.closed:
+                f.close()
+
+def process_and_add_header(input_files, output_file_path):
+    """
+    Interleaves the content and adds the EDL header if necessary.
+
+    Args:
+        input_files: A list of input file paths.
+        output_file_path: The path to the output file.
+    """
+    is_edl_mode = all(f.lower().endswith(".edl") for f in input_files)
+
+    if any(f.lower().endswith(".edl") for f in input_files) and not is_edl_mode:
+        print("Error: If any input file is .edl, all input files must be .edl.")
+        sys.exit(1)
+
+    interleaved_lines = list(interleave_files(input_files))
+
+    with open(output_file_path, 'w') as outfile:
+        if is_edl_mode:
+            outfile.write("# mpv EDL v0\n")
+        for line in interleaved_lines:
+            outfile.write(line + '\n')
+
+    print(f"Interleaved content written to: {output_file_path}")
 
 if __name__ == "__main__":
     if len(sys.argv) < 3:
@@ -43,8 +69,4 @@ if __name__ == "__main__":
     output_file_path = sys.argv[1]
     input_file_paths = sys.argv[2:]
 
-    with open(output_file_path, 'w') as outfile:
-        for line in interleave_files(input_file_paths):
-            outfile.write(line + '\n')
-
-    print(f"Interleaved content written to: {output_file_path}")
+    process_and_add_header(input_file_paths, output_file_path)
