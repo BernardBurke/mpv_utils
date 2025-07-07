@@ -8,6 +8,13 @@
 #LME="/path/to/lme/scripts"          # This path should be correctly set (used in your original example's last line)
 
 
+if [[ -f $1 ]]; then
+    DATAFILE="$1" # Use the first argument as the data file path
+else
+    echo "Usage: $0 <path_to_fred.txt>"
+    exit 1
+fi
+
 # --- FUNCTION DEFINITION ---
 # This function is part of the *generating* script (your main script)
 get_afile() {
@@ -37,6 +44,19 @@ get_afile() {
 
 # Start a placeholder for your Fred.txt file
 FRED_TXT_PATH="fred.txt" # Make sure fred.txt exists and has content
+# Make a temp file to deduplicate records if needed
+# (optional, depending on your use case)
+ TEMP_FRED_TXT=$(mktemp)   
+ UNIQUE_FRED_TXT=$(mktemp)
+
+ RESULT_FILE="$(mktemp)" # Temporary file to store results
+
+ while IFS= read -r line; do
+        filename="${line%%:*}"
+        echo "$filename" >> "$TEMP_FRED_TXT"
+done < "$DATAFILE"
+
+sort -uR "$TEMP_FRED_TXT" > "$UNIQUE_FRED_TXT"
 
 # You can omit the 'done <' if you manually provide input later
 while IFS= read -r record; do
@@ -118,4 +138,4 @@ EOF_SCRIPT
     # Add a separator if you want visually distinct script blocks in stdout
     # echo "### END_RECORD_SCRIPT ###"
 
-done < bikini/repere/love.you.dad.data # Correctly quote FRED_TXT_PATH
+done < $UNIQUE_FRED_TXT # Correctly quote FRED_TXT_PATH
