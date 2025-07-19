@@ -2,7 +2,9 @@
 # This script takes one input argument, which is the path to a text file ($PERE_DATA at runtime)
 # check if the file exists and is readable
 if [[ -f "$1" ]]; then
-    DATAFILE="$1" # Use the first argument as the data file path
+    DATAFILE=$(mktemp)
+    cat "$1" | sort -Ru > $DATAFILE 
+    echo "Data file created at: $DATAFILE as randomized unique entries from $1"
 else
     echo "Usage: $0 <path_to_fred.txt>"
     exit 1
@@ -38,29 +40,50 @@ play_a_file() {
         # mpv "$audio_file" &  # Uncomment this line to actually play the audio
     else
         echo "No valid audio file found."
+        exit 1
     fi
+
     if [[ "$DEFAULTING_EDL_FILE" != "" ]]; then
       # prompt for a new edl file but use the default if no input is given
-        read -p "Enter EDL file path (default: $DEFAULTING_EDL_FILE): " edl_file
-        if [[ -z "$edl_file" ]]; then
+        read -p "Enter EDL file path (default: $DEFAULTING_EDL_FILE): " edl_ans < /dev/tty
+        if [[ -z "$edl_ans" ]]; then
             edl_file="$DEFAULTING_EDL_FILE"
+        else
+            edl_file="$edl_ans"
+            edl_file="$(find "$HI" -iname "*$edl_file*.edl" | shuf -n 1)"
+            echo "Switching to EDL file: $edl_file"
+            DEFAULTING_EDL_FILE="$edl_file"
         fi
-        echo "Using default EDL file: $DEFAULTING_EDL_FILE"
+        echo "Default EDL file: $DEFAULTING_EDL_FILE"
     else
         echo "No default EDL file set."
         read -p "Enter EDL file path: " edl_ans < /dev/tty
         if [[ -z "$edl_ans" ]]; then
             echo "No EDL file provided. Exiting."
             exit 1  
-    else
-            edl_file="$(find "$HI" -iname "*$edl_ans*" | shuf -n 1)"
-
-            echo "Using EDL file: $edl_file"
-
-            DEFAULTING_EDL_FILE="$edl_file"
         fi
+        edl_file="$edl_ans"
     fi
-    using "$audio_file" with "$edl_file"
+
+    # cheeck if we have a fill path to the edl file via DEFAULTING_EDL_FILE
+    if [[ -f "$DEFAULTING_EDL_FILE" ]]; then
+        echo "Using default EDL file: $DEFAULTING_EDL_FILE"
+    else
+        edl_file="$(find "$HI" -iname "*$edl_file*.edl" | shuf -n 1)"
+        echo "Using EDL file: $edl_file"
+        echo "saving default EDL file for next run as $DEFAULTING_EDL_FILE"
+        DEFAULTING_EDL_FILE="$edl_file"
+
+    fi
+    
+
+    #echo using "$audio_file" with "$edl_file"
+
+    if [[ -z "$MPVU" ]]; then
+        echo "Error: MPVU variable is not set."
+        exit 1
+    fi
+
     "$MPVU/play_audio_with_edl.sh" "$audio_file" "$edl_file" 1 90
 
     read -p "Press Enter to continue..." xxx < /dev/tty
@@ -84,7 +107,7 @@ while IFS= read -r record; do
     # Get the audio file path using the function
     audio_file=$(get_afile "$parpar")
 
-    echo "Processing record: $audio_file"
+    #echo "Processing record: $audio_file"
     
     # Check if the audio file exists
     if [[ -n "$audio_file" && -f "$audio_file" ]]; then
@@ -92,6 +115,7 @@ while IFS= read -r record; do
         # Here you can add your processing logic for the audio file
     else
         echo "No valid audio file found for: $filename"
+        exit 1
     fi
 
     play_a_file "$audio_file"
