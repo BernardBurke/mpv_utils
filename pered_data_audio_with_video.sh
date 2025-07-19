@@ -39,7 +39,7 @@ play_a_file() {
     else
         echo "No valid audio file found."
     fi
-    if [[ -n "$DEFAULTING_EDL_FILE" ]]; then
+    if [[ "$DEFAULTING_EDL_FILE" != "" ]]; then
       # prompt for a new edl file but use the default if no input is given
         read -p "Enter EDL file path (default: $DEFAULTING_EDL_FILE): " edl_file
         if [[ -z "$edl_file" ]]; then
@@ -48,25 +48,43 @@ play_a_file() {
         echo "Using default EDL file: $DEFAULTING_EDL_FILE"
     else
         echo "No default EDL file set."
-        read -p "Enter EDL file path: " edl_file
-        if [[ -z "$edl_file" ]]; then
+        read -p "Enter EDL file path: " edl_ans < /dev/tty
+        if [[ -z "$edl_ans" ]]; then
             echo "No EDL file provided. Exiting."
             exit 1  
     else
-            edl_file="$(find "$HI" -iname "$edl_file    " | shuf -n 1)"
+            edl_file="$(find "$HI" -iname "*$edl_ans*" | shuf -n 1)"
+
+            echo "Using EDL file: $edl_file"
 
             DEFAULTING_EDL_FILE="$edl_file"
         fi
     fi
+    using "$audio_file" with "$edl_file"
+    "$MPVU/play_audio_with_edl.sh" "$audio_file" "$edl_file" 1 90
+
+    read -p "Press Enter to continue..." xxx < /dev/tty
 }
 
 # the main loop reads $DATAFILE and processes each line with     filename="${record%%:*}"
 while IFS= read -r record; do
     # Remove part after colon, correctly quoted
     filename="${record%%:*}"
+
+    # Extract directory, correctly quoted
+    directory="$(dirname "$filename")"
+
+    # Extract basename, then remove .srt extension, correctly quoted
+    filestub="$(basename "$filename")"
+    filestub="${filestub%.srt}"
+
+    # Rebuild parpar, correctly quoted
+    parpar="${directory}/${filestub}"
     
     # Get the audio file path using the function
-    audio_file=$(get_afile "$filename")
+    audio_file=$(get_afile "$parpar")
+
+    echo "Processing record: $audio_file"
     
     # Check if the audio file exists
     if [[ -n "$audio_file" && -f "$audio_file" ]]; then
@@ -75,5 +93,8 @@ while IFS= read -r record; do
     else
         echo "No valid audio file found for: $filename"
     fi
+
+    play_a_file "$audio_file"
+    
 done < "$DATAFILE"
 
