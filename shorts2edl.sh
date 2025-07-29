@@ -21,12 +21,30 @@ if [[ -f "$1" ]]; then
     echo "Processing file $1"
     OUTPUT_FILE="/tmp/shorts.edl"
     echo "$EDL_HEADER_RECORD" > $OUTPUT_FILE
+
+    TOTAL_LINES=$(grep -cve '^\s*$' "$1")
+    if [[ $TOTAL_LINES -eq 0 ]]; then
+        echo "No files to process."
+        exit 1
+    fi
+
+    COUNT=0
+    NEXT_PERCENT=10
+
     while read -r file; do
+        [[ -z "$file" ]] && continue
+        ((COUNT++))
         if [[ -f "$file" ]]; then
             LENGTH=$(get_length "$file")
             echo "$file, 0, $LENGTH" >> $OUTPUT_FILE
         else
             echo "Skipping invalid file: $file"
+        fi
+
+        PERCENT=$((COUNT * 100 / TOTAL_LINES))
+        if [[ $PERCENT -ge $NEXT_PERCENT ]]; then
+            echo "$PERCENT% complete"
+            NEXT_PERCENT=$((NEXT_PERCENT + 10))
         fi
     done < "$1"
     echo "EDL written to $OUTPUT_FILE"
