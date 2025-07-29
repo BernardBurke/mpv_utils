@@ -15,6 +15,24 @@ if [[ "$1" == "" ]]; then
     exit 1
 fi
 
+# if the first parameter is file, do the same logic as the find below, except wit the contents of the file in $1
+# Check that each record in the file is a valid video file too
+if [[ -f "$1" ]]; then
+    echo "Processing file $1"
+    OUTPUT_FILE="/tmp/shorts.edl"
+    echo "$EDL_HEADER_RECORD" > $OUTPUT_FILE
+    while read -r file; do
+        if [[ -f "$file" ]]; then
+            LENGTH=$(get_length "$file")
+            echo "$file, 0, $LENGTH" >> $OUTPUT_FILE
+        else
+            echo "Skipping invalid file: $file"
+        fi
+    done < "$1"
+    echo "EDL written to $OUTPUT_FILE"
+    exit 0
+fi
+
 # check that the directory exists
 if [[ ! -d "$1" ]]; then
     echo "$1 does not exist"
@@ -38,11 +56,8 @@ fi
 OUTPUT_FILE="$1/shorts.edl"
 echo "$EDL_HEADER_RECORD" > $OUTPUT_FILE
 
-for file in $1/*.mp4 $1/*.avi $1/*.webm $1/*.mkv $1/*.gif; do
-    if [[ -f "$file" ]]; then
-        echo "Processing $file"
-        LENGTH=$(get_length "$file")
-
-        echo "$file, 0, $LENGTH" >> $OUTPUT_FILE
-    fi
+find "$1" -type f \( -iname "*.mp4" -o -iname "*.avi" -o -iname "*.webm" -o -iname "*.mkv" -o -iname "*.gif" \) | while read -r file; do
+    echo "Processing $file"
+    LENGTH=$(get_length "$file")
+    echo "$file, 0, $LENGTH" >> $OUTPUT_FILE
 done
