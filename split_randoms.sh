@@ -58,14 +58,14 @@ python3 "$MPVU/interleave_files.py" "$TEMPFILE" "$EDL1" "$EDL2"
 cp $TEMPFILE $HI/latest_split_randoms1.edl -v
 echo "Interleaved EDL file1 saved from $TEMPFILE"
 
-cp $TEMPFILE $USCR/latest_split_randoms1_$$.edl -v
+cp $TEMPFILE $USCR/split_randoms1_$$.edl -v
 
 
 python3 "$MPVU/interleave_files.py" "$TEMPFILE" "$EDL2" "$EDL1" 
-cp $TEMPFILE $HI/latest_split_randoms2.edl -v
+cp $TEMPFILE $HI/split_randoms2.edl -v
 echo "Interleaved EDL file2 saved from $TEMPFILE"
 
-cp $TEMPFILE $USCR/latest_split_randoms2_$$.edl -v
+cp $TEMPFILE $USCR/split_randoms2_$$.edl -v
 
 # wait for 2 seconds to ensure the user is happy
 
