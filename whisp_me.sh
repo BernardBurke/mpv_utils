@@ -48,7 +48,7 @@ echo "$1 has a length of $LNGTH"
 # whisper --output_format srt --language en "$1" --output_dir $OUTPUT_DIR
 # whisper --output_format srt --language en --model large-v3  "$1" --output_dir $OUTPUT_DIR
 #whisper --output_format srt --language en --model large-v3  --word_timestamps True --max_line_width 80 "$1" --output_dir $OUTPUT_DIR
-whisper --output_format srt --language en   "$1" --output_dir $OUTPUT_DIR
+whisper --output_format srt --language en  --model large-v3  --word_timestamps True --max_line_width 80 "$1" --output_dir $OUTPUT_DIR
 ffmpeg -i "$SRT_FILENAME" "$VTT_FILENAME"
 
 
