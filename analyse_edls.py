@@ -80,7 +80,7 @@ def display_popular_records(conn, output_file=None):
     ''')
 
     for record, count in cursor.fetchall():
-        print(f"{record} #{count}")
+        print(f"{record},title={count}")
     
     # Restore stdout if it was redirected
     if output_file:
