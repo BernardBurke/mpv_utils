@@ -29,7 +29,7 @@ shuffle_edl() {
     fi
     echo "# mpv EDL v0" > $TMPFILE1
     if [[ -f $1 ]]; then
-        cat "$1" | grep -v "#" | shuf -n $SHUFN >> $TMPFILE1
+        cat "$1" | grep -v "^#" | shuf -n $SHUFN >> $TMPFILE1
     else
         return 1
     fi 

@@ -206,7 +206,7 @@ edlblend() {
     message "edlblend wrote to $TMPFILE7"
     message "edlblend reading $(wc -l $TMPFILE7) records from $TMPFILE7"
     while read -r edlname; do
-        cat "$edlname" | grep -v "#" >> $TMPFILE2
+        cat "$edlname" | grep -v "^#" >> $TMPFILE2
     done < $TMPFILE7
     make4_videos $TMPFILE2
     message "$VIDEO1 is VIDEO1"
