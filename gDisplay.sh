@@ -198,7 +198,7 @@ edlblend() {
     message "edlblend searching for $SEARCH_STRING and shuffling for $HOW_MANY..."
     # put movies back infind $EDLSRC/ -iname '*.edl' | grep unix | grep -v movies | grep -i "$SEARCH_STRING" > $TMPFILE7
     find $EDLSRC/ -iname '*.edl' | grep unix | grep -i "$SEARCH_STRING" > $TMPFILE7
-    find $USCR/ -iname '*.edl' | grep -i "$SEARCH_STRING" >> $TMPFILE7
+    #find $USCR/ -iname '*.edl' | grep -i "$SEARCH_STRING" >> $TMPFILE7
 
     message "dumping search results for $SEARCH_STRING"
     cat $TMPFILE7
@@ -208,6 +208,14 @@ edlblend() {
     while read -r edlname; do
         cat "$edlname" | grep -v "^#" >> $TMPFILE2
     done < $TMPFILE7
+    
+    line_count=$(wc -l < "$TMPFILE2")
+    if [[ "$line_count" -eq 0 ]]; then
+        message "No EDL records found with $SEARCH_STRING"
+        exit 1
+    fi
+
+    message "the pre shuffled edl has $(wc -l $TMPFILE2) records"
     make4_videos $TMPFILE2
     message "$VIDEO1 is VIDEO1"
 }

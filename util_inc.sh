@@ -27,6 +27,15 @@ shuffle_edl() {
     else
         SHUFN="$2"
     fi
+    echo "shuffle_edl called with $1 and $SHUFN"
+    if [[ ! -f $1 ]]; then
+        echo "$1 does not exist"
+        exit 1
+    fi
+
+    #message "preshuffle edl file contents are:"
+    #cat "$1"
+
     echo "# mpv EDL v0" > $TMPFILE1
     if [[ -f $1 ]]; then
         cat "$1" | grep -v "^#" | shuf -n $SHUFN >> $TMPFILE1
@@ -34,6 +43,9 @@ shuffle_edl() {
         return 1
     fi 
     message "shuffle_edl wrote $TMPFILE1 - and SHUFFLE_RESTORE is $SHUFFLE_RESTORE"
+    message "Temp file contents are:"
+    cat $TMPFILE1
+
     if [[ $SHUFFLE_RESTORE == "Y" ]]; then
         cp -v $TMPFILE1 "$1"
     fi
