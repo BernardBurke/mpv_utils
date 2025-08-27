@@ -542,7 +542,7 @@ local function goldKey()
     print("Gold Key")
     local record = nil
     local fileclass = get_file_class(mp.get_property("filename"))
-    local gold_file = HI.."/goldVault.edl"
+    local gold_file = HI.."/goldVaultCurrent.edl"
     create_edl_if_missing(gold_file)
 
     print("using gold_file"..gold_file)
