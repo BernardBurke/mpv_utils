@@ -101,13 +101,20 @@ cat $NEW_EDL
 
 read -p "Press enter to continue"
 
-SRT_FILE=$(echo "$1" | sed 's/\(.*\)\..*/\1.srt/')
+SUB_FILE=""
+base_file=$(echo "$1" | sed 's/\(.*\)\..*/\1/')
+if [[ -f "${base_file}.srt" ]]; then
+    SUB_FILE="${base_file}.srt"
+elif [[ -f "${base_file}.vtt" ]]; then
+    SUB_FILE="${base_file}.vtt"
+fi
+
 audio_file="$1"
 
 runfile="/tmp/mpv_commands_$$.sh"
 echo "runfile: $runfile"
 
-echo mpv --sub-file="\"$SRT_FILE"\" --fullscreen --fs-screen=$SCREEN --audio-file="\"$audio_file"\" --screen=$SCREEN --volume=$VOLUME ""$NEW_EDL""    > $runfile
+echo mpv --sub-file="\"$SUB_FILE"\" --fullscreen --fs-screen=$SCREEN --audio-file="\"$audio_file"\" --screen=$SCREEN --volume=$VOLUME ""$NEW_EDL""    > $runfile
 
 cat $runfile
 nohup bash $runfile & 
