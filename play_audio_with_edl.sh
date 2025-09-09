@@ -117,6 +117,7 @@ echo "runfile: $runfile"
 echo mpv --sub-file="\"$SUB_FILE"\" --fullscreen --fs-screen=$SCREEN --audio-file="\"$audio_file"\" --screen=$SCREEN --volume=$VOLUME ""$NEW_EDL""    > $runfile
 
 cat $runfile
+echo "$0" \""$1\"" \""$2\"" "$3" "$4" >> $PAIR/play_audio_with_edl_history.txt
 nohup bash $runfile & 
 
 # copy the runfile to $PAIR, changing the name to use $1 and $2 as the name
