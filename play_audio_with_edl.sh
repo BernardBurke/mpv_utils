@@ -67,12 +67,15 @@ get_edl_of_total_length() {
             continue
         fi
 
+        # Round the length to the nearest integer to handle decimals like 2.1
+        length=$(printf "%.0f" "$length")
+
         echo "file: $file start: $start length: $length"
         EDL_TOTAL_LENGTH=$((EDL_TOTAL_LENGTH + length))
         echo "EDL_TOTAL_LENGTH: $EDL_TOTAL_LENGTH"
 
         # Check if EDL_TOTAL_LENGTH is greater than TOTAL_LENGTH
-        if (( EDL_TOTAL_LENGTH > TOTAL_LENGTH )); then
+        if (( EDL_TOTAL_LENGTH > ${TOTAL_LENGTH%.*} )); then
             echo "EDL_TOTAL_LENGTH $EDL_TOTAL_LENGTH is greater than TOTAL_LENGTH $TOTAL_LENGTH"
             break
         fi
