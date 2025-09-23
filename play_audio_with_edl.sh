@@ -118,7 +118,7 @@ echo mpv --sub-file="\"$SUB_FILE"\" --fullscreen --fs-screen=$SCREEN --audio-fil
 
 cat $runfile
 echo "$0" \""$1\"" \""$2\"" "$3" "$4" >> $PAIR/play_audio_with_edl_history.txt
-nohup bash $runfile & 
+nohup bash $runfile > /dev/null 2>&1 & 
 
 # copy the runfile to $PAIR, changing the name to use $1 and $2 as the name
 # desitination=$(echo $runfile | sed 's/commands/commands_'"$(basename $1)"'_'"$(basename $2)"'/')
