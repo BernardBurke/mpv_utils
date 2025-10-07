@@ -20,7 +20,7 @@ message "VOLUME is $VOLUME"
 if [[ "$3" == "" ]]; then
 	EDLNAME="last_week_chopped"
 else
-	if [[ ! -f "$HANDUNI/$3_chopped1.edl" ]]; then
+	if [[ ! -f "$HANDUNI/$3_chopped.edl" ]]; then # I took off the chopped1 here
 		echo "no edl file found in p1 $3"
 		exit 1
 	fi
@@ -74,7 +74,7 @@ save_6() {
 	if [[ "$1" == "" ]]; then
 		FNAME=$HANDUNI/lastweek_chopped?.edl
 	else
-		FNAME="$HANDUNI/$1_chopped?.edl"
+		FNAME="$HANDUNI/$1_chopped.edl" # removed the ? here
 	fi
 
 	if [[ "$2" == "" ]]; then
@@ -85,11 +85,14 @@ save_6() {
 
 	count=0
 
-	for i in $FNAME 
+	#for i in $FNAME 
+	# lets just do this 6 times instead of looping through files
+	for i in {1..6};
 	do 
 		((count++))
 		DESTNAME="$DEST$count.edl"
-		cp -v "$i" "$DESTNAME" 
+#		cp -v "$i" "$DESTNAME"  # lets just copy the file from FNAME
+		cp -v "$FNAME" "$DESTNAME"  
 		$MPVU/shake.sh "$DESTNAME"
 	done
 }

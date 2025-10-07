@@ -123,16 +123,18 @@ done < "$TMPFILE1"
 echo "Done"
 cat $TMPFILE2 
 
+# removeing the 6 loop below will result in just one edl file being created with 3000 records!
+#echo "writing $HANDUNI/$(basename "$1" .m3u)_chopped$i.edl"
+echo "writing $HANDUNI/$(basename "$1" .m3u)_chopped.edl"
 
-echo "writing $HANDUNI/$(basename "$1" .m3u)_chopped$i.edl"
 
-
-for i in {1..6}; do
+# removing the for loop and changing the shuffle coune to 1000
+#for i in {1..6}; do
     
     echo "$EDL_HEADER_RECORD" > "$HANDUNI/$(basename "$1" .m3u)_chopped$i.edl"
 
-    shuf -n 500 "$TMPFILE2" >> "$HANDUNI/$(basename "$1" .m3u)_chopped$i.edl"
-done
+    shuf -n 1000 "$TMPFILE2" >> "$HANDUNI/$(basename "$1" .m3u)_chopped$i.edl"
+#done
 
 
 

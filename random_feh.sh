@@ -79,11 +79,11 @@ fi
 file1_size=0
 file2_size=0
 while true; do
-    FILE1="$(find "$HI" -iname "*_chopped6.edl" | shuf -n 1)"
+    FILE1="$(find "$HI" -iname "*_chopped.edl" | shuf -n 1)"
     file1_size=$(wc -l < "$FILE1")
     echo "Testing file 1: $FILE1 size: $file1_size lines"
 
-    FILE2="$(find "$HI" -iname "*_chopped6.edl" | shuf -n 1)"
+    FILE2="$(find "$HI" -iname "*_chopped.edl" | shuf -n 1)"
     file2_size=$(wc -l < "$FILE2")
     echo "Testing file 2: $FILE2 size: $file2_size lines"
 
@@ -94,9 +94,9 @@ done
 
 echo "Selected files: $FILE1 and $FILE2 with sizes $file1_size and $file2_size lines respectively."
 # now extract the parts of the base filename left of _chopped6
-base_name1="${FILE1%_chopped6.edl}"
+base_name1="${FILE1%_chopped.edl}"
 base_name1=$(basename "$base_name1")
-base_name2="${FILE2%_chopped6.edl}"
+base_name2="${FILE2%_chopped.edl}"
 base_name2=$(basename "$base_name2")
 echo "Base names: $base_name1 and $base_name2"
 
