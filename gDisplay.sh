@@ -198,8 +198,16 @@ edlblend() {
     message "edlblend searching for $SEARCH_STRING and shuffling for $HOW_MANY..."
     # put movies back infind $EDLSRC/ -iname '*.edl' | grep unix | grep -v movies | grep -i "$SEARCH_STRING" > $TMPFILE7
     find $EDLSRC/ -iname '*.edl' | grep unix | grep -i "$SEARCH_STRING" > $TMPFILE7
+    find $QEO/ -iname '*.edl' | grep unix | grep -i "$SEARCH_STRING" > $TMPFILE7
     #find $USCR/ -iname '*.edl' | grep -i "$SEARCH_STRING" >> $TMPFILE7
 
+    # if there are no results, exit
+    line_count=$(wc -l < "$TMPFILE7")
+    if [[ "$line_count" -eq 0 ]]; then
+        message "No EDL files found with $SEARCH_STRING"
+        exit 1
+    fi
+    
     message "dumping search results for $SEARCH_STRING"
     cat $TMPFILE7
 
