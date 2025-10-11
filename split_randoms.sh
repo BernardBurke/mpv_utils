@@ -22,7 +22,7 @@ echo "Using SCREEN_COUNT: $SCREEN_COUNT"
 
 function find_edl_files() {
     local pattern="$1"
-    find "$HI" -maxdepth 1 -type f -name "*$pattern*.edl" | shuf -n 1
+    find "$HI" "$QEO" -maxdepth 1 -type f -name "*$pattern*.edl" | shuf -n 1
     if [[ $? -ne 0 ]]; then
         echo "Error finding EDL files with pattern: $pattern"
         exit 1
