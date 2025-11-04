@@ -127,7 +127,8 @@ cat $TMPFILE2
 #echo "writing $HANDUNI/$(basename "$1" .m3u)_chopped$i.edl"
 echo "writing $HANDUNI/$(basename "$1" .m3u)_chopped.edl"
 
-
+# reset i to "" to stop chopped6 being created
+i=""
 # removing the for loop and changing the shuffle coune to 1000
 #for i in {1..6}; do
     

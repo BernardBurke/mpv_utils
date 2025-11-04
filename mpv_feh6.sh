@@ -50,8 +50,8 @@ fi
 
 if [[ "$6" != "" ]]; then
 	message "Running in split screen mode"
-	if [[ ! -f "$HANDUNI/$6_chopped6.edl" ]]; then
-		message "But  $HANDUNI/$6_chopped6.edl was not found"
+	if [[ ! -f "$HANDUNI/$6_chopped.edl" ]]; then
+		message "But  $HANDUNI/$6_chopped.edl was not found"
 		exit 1
 	fi
 	if [[ -f $HI/mpv_split6_chopped6.edl ]]; then

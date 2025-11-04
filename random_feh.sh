@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# This script gets 2 files from $HI called name_chopped6.edl using find and shuf -n 1
+# This script gets 2 files from $HI called name_chopped.edl using find and shuf -n 1
 # If a parameter is given, search for files matching *$1*.edl and call gDisplay.sh instead
 
 size_limit=1000
@@ -102,9 +102,17 @@ echo "Base names: $base_name1 and $base_name2"
 
 # Now get two folder names from the root of $IMGSRC
 FOLDER1="$(find "$IMGSRC" -mindepth 1 -maxdepth 1 -type d | shuf -n 1)"
-FOLDER2="$(find "$IMGSRC" -mindepth 1 -maxdepth 1 -type d | shuf -n 1)"
-base_imgdir1=$(basename "$FOLDER1")
-base_imgdir2=$(basename "$FOLDER2")
+FOLDER2="$(find "$I2" -mindepth 1 -maxdepth 1 -type d | shuf -n 1)"
+
+# choose one of the two following lines to get the base folder name
+# use some random number to pick a leg of the following if
+if [[ $((RANDOM % 2)) -eq 0 ]]; then
+    base_imgdir1=$(basename "$FOLDER1")     
+    base_imgdir2=$(basename "$FOLDER2")
+else
+    base_imgdir2=$(basename "$FOLDER1")     
+    base_imgdir1=$(basename "$FOLDER2")
+fi
 
 echo "Selected folders: $base_imgdir1 and $base_imgdir2"
 
@@ -113,6 +121,7 @@ if [[ -f "$FILE1" && -f "$FILE2" && -d "$FOLDER1" && -d "$FOLDER2" ]]; then
     echo "Calling mpv_feh.sh with:"
     echo "Files: $FILE1, $FILE2"
     echo "Folders: $base_imgdir1, $base_imgdir2"
+    echo "image dirs $base_imgdir1 and $base_imgdir2"
     read -p "Press Enter to continue or Ctrl+C to cancel..."
     "$MPVU/mpv_feh6.sh" 0 1 "$base_name1" "$base_imgdir1" 2 "$base_name2"
 else
