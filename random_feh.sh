@@ -101,7 +101,7 @@ base_name2=$(basename "$base_name2")
 echo "Base names: $base_name1 and $base_name2"
 
 # Now get two folder names from the root of $IMGSRC
-FOLDER1="$(find "$IMGSRC" -mindepth 1 -maxdepth 1 -type d | shuf -n 1)"
+FOLDER1="$(find "$I1" -mindepth 1 -maxdepth 1 -type d | shuf -n 1)"
 FOLDER2="$(find "$I2" -mindepth 1 -maxdepth 1 -type d | shuf -n 1)"
 
 # choose one of the two following lines to get the base folder name
@@ -109,9 +109,11 @@ FOLDER2="$(find "$I2" -mindepth 1 -maxdepth 1 -type d | shuf -n 1)"
 if [[ $((RANDOM % 2)) -eq 0 ]]; then
     base_imgdir1=$(basename "$FOLDER1")     
     base_imgdir2=$(basename "$FOLDER2")
+    export IMGSRC="$I1"
 else
     base_imgdir2=$(basename "$FOLDER1")     
     base_imgdir1=$(basename "$FOLDER2")
+    export IMGSRC="$I2"
 fi
 
 echo "Selected folders: $base_imgdir1 and $base_imgdir2"
