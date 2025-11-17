@@ -136,11 +136,14 @@ message "Starting on screen $SCREEN at volume $VOLUME."
 message "Main EDL Partial: '$EDL_PARTIAL_MAIN'"
 message "Image Directory: '$IMGDIR'"
 message "Screen Mode: '$ONE_SCREEN' (Empty=Single, '2'=Dual, Number=Loop)"
+message "Split EDL Partial: '$EDL_PARTIAL_SPLIT'"
 
 message "Cleaning up stale EDL files..."
 
-rm -f "$HANDUNI/mpv_feh6?.edl"
-rm -f "$HANDUNI/mpv_split6?.edl"
+rm -fv "$HANDUNI/mpv_feh6?.edl"
+rm -fv "$HANDUNI/mpv_split6?.edl"
+
+read -r -p "Press **Return** to continue, or **Ctrl-C** to abort: " ANS
 
 # 2. Source File Validation and Preparation
 
