@@ -4,7 +4,7 @@
 # shakes the two resulting files, and launches two MPV instances on two screens 
 # (Screen 0 and Screen 2) using top/bot profiles.
 # 
-# Usage: ./mpv_blender_feh.sh [VOLUME] [EDL_PARTIAL_1] [EDL_PARTIAL_2] [IMG_FOLDER_LIST (optional, e.g., "city country")]
+# Usage: ./mpv_blender_feh.sh [VOLUME] [EDL_PARTIAL_1] [EDL_PARTIAL_2] [FOLDER_1] [FOLDER_2] ...
 
 # --- Configuration & External Sources ---
 
@@ -102,13 +102,15 @@ create_and_shake_blended_edls() {
 }
 
 
-# Function to launch the two mpv instances and fillet_screens on the specified screen.
+# Function to launch the two mpv instances and image_screen_filler on the specified screen.
 # $1: The screen number (0 or 2)
-# $2: The image directory partial name list (e.g., "city country")
+# $2... : The list of image directory paths (e.g., "fred", "wilma", "fred/barney")
 run_mpv_pair() {
     # VOLUME is sourced from the global scope of the main script logic
     local screen_num="$1"
-    local img_folder_list="$2" # This is now the space-separated list of folders
+    
+    # Use shift to remove $1 (screen_num), leaving only the folder paths in $@
+    shift
     
     message "Launching MPV pair on screen $screen_num..."
 
@@ -137,11 +139,15 @@ run_mpv_pair() {
         "$edl_path_bot" < /dev/null &
         
     # --- Run the image script ---
-    # Pass the list of folder names directly to the rewritten fillet_screens.sh
-    if [[ -n "$img_folder_list" ]]; then
-        message "Running image filler script on screen $screen_num with folders: $img_folder_list."
-        # Note: We pass the list as a single quoted argument. fillet_screens.sh will parse it.
-        nohup "$IMGSRC/fillet_screens.sh" "6corners$screen_num" 10 "$img_folder_list" < /dev/null &
+    # The image path arguments are now contained in $@ (all remaining arguments).
+    # We pass them UNQUOTED using "$@", ensuring each path is a separate argument.
+    if [[ "$#" -gt 0 ]]; then
+        message "Running image filler script on screen $screen_num with paths: $@"
+        
+        # CORRECTLY calling image_screen_filler.sh
+        # Call: image_screen_filler.sh [GEOMETRY_PREFIX] [SHUFFLE_TIME] [FOLDER_1] [FOLDER_2] ...
+#        nohup "$MPVU/image_screen_filler.sh" "6corners$screen_num" 10 "$@" < /dev/null &
+        "$MPVU/image_screen_filler.sh" "g6corners$screen_num" 10 "$@"  
     fi
 }
 
@@ -152,7 +158,16 @@ run_mpv_pair() {
 VOLUME=${1:-$DEFAULT_VOLUME}
 EDL_PARTIAL_1=$2 # No default, must be provided
 EDL_PARTIAL_2=$3 # No default, must be provided
-IMGDIR_PARTIAL=${4:-} # The list of image folders (e.g., "city country")
+
+# --- Capture all arguments from $4 onwards into a robust array ---
+# IMG_FOLDER_PATHS is an array containing all image path/folder arguments
+IMG_FOLDER_PATHS=("${@:4}") 
+
+if ((${#IMG_FOLDER_PATHS[@]} > 0)); then
+    message "Image folder list provided: ${IMG_FOLDER_PATHS[*]}"
+fi
+# --- END FIX ---
+
 
 message "--- Blended MPV Launcher (FEH) ---"
 message "Volume: $VOLUME | EDL 1: '$EDL_PARTIAL_1' | EDL 2: '$EDL_PARTIAL_2'"
@@ -179,10 +194,6 @@ elif [[ -z "$EDL_SOURCE_2" ]]; then
     exit 1
 fi
 
-if [[ -n "$IMGDIR_PARTIAL" ]]; then
-    message "Image folder list provided: '$IMGDIR_PARTIAL'. This will be passed to fillet_screens.sh."
-fi
-
 
 # 3. Create the four shaken, blended EDL files
 if ! create_and_shake_blended_edls "$EDL_SOURCE_1" "$EDL_SOURCE_2"; then
@@ -191,8 +202,9 @@ if ! create_and_shake_blended_edls "$EDL_SOURCE_1" "$EDL_SOURCE_2"; then
 fi
 
 # 4. Execution on Screen 0 and Screen 2
-run_mpv_pair "$SCREEN_PRIMARY" "$IMGDIR_PARTIAL"
-run_mpv_pair "$SCREEN_SECONDARY" "$IMGDIR_PARTIAL"
+# We pass the array elements UNQUOTED so they arrive as separate arguments.
+run_mpv_pair "$SCREEN_PRIMARY" "${IMG_FOLDER_PATHS[@]}"
+run_mpv_pair "$SCREEN_SECONDARY" "${IMG_FOLDER_PATHS[@]}"
 
 message "MPV instances launched on screens $SCREEN_PRIMARY and $SCREEN_SECONDARY. Type 'q' to kill them."
 
@@ -202,7 +214,7 @@ read -r -p "Press **Return** to leave processes running, or press **q** and **Re
 
 if [[ "$ANS" == "q" ]]; then
     message "Killing running MPV and image processes..."
-    # Kill using the profile names and feh (if used by fillet_screens.sh)
+    # Kill using the profile names and feh (if used by image_screen_filler.sh)
     pkill feh & 
     pkill -f topmid
     pkill -f botmid
