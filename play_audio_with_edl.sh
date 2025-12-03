@@ -67,6 +67,12 @@ get_edl_of_total_length() {
             continue
         fi
 
+
+        if [[ "$file" == "" ]]; then 
+            continue
+        fi
+
+
         # Round the length to the nearest integer to handle decimals like 2.1
         length=$(printf "%.0f" "$length")
 
