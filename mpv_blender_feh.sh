@@ -174,23 +174,33 @@ message "Volume: $VOLUME | EDL 1: '$EDL_PARTIAL_1' | EDL 2: '$EDL_PARTIAL_2'"
 
 # 2. Source File Validation and Preparation
 
-EDL_SOURCE_1=$(get_edl_source_path "$EDL_PARTIAL_1" "$HANDUNI")
-# Check if EDL_PARTIAL_1 was provided and a file was found
+# Validate and find Primary EDL
 if [[ -z "$EDL_PARTIAL_1" ]]; then
     echo "Error: Primary EDL partial name (\$2) is missing. Please provide a search term."
     exit 1
-elif [[ -z "$EDL_SOURCE_1" ]]; then
-    echo "Error: No primary EDL file found for partial name '$EDL_PARTIAL_1' in $HANDUNI"
+fi
+EDL_SOURCE_1=$(get_edl_source_path "$EDL_PARTIAL_1" "$HANDUNI")
+if [[ -z "$EDL_SOURCE_1" ]]; then
+    message "Primary EDL '$EDL_PARTIAL_1' not in $HANDUNI, trying $QEO..."
+    EDL_SOURCE_1=$(get_edl_source_path "$EDL_PARTIAL_1" "$QEO")
+fi
+if [[ -z "$EDL_SOURCE_1" ]]; then
+    echo "Error: No primary EDL file found for partial name '$EDL_PARTIAL_1' in $HANDUNI or $QEO"
     exit 1
 fi
 
-EDL_SOURCE_2=$(get_edl_source_path "$EDL_PARTIAL_2" "$HANDUNI")
-# Check if EDL_PARTIAL_2 was provided and a file was found
+# Validate and find Secondary EDL
 if [[ -z "$EDL_PARTIAL_2" ]]; then
     echo "Error: Secondary EDL partial name (\$3) is missing. Please provide a search term."
     exit 1
-elif [[ -z "$EDL_SOURCE_2" ]]; then
-    echo "Error: No secondary EDL file found for partial name '$EDL_PARTIAL_2' in $HANDUNI"
+fi
+EDL_SOURCE_2=$(get_edl_source_path "$EDL_PARTIAL_2" "$HANDUNI")
+if [[ -z "$EDL_SOURCE_2" ]]; then
+    message "Secondary EDL '$EDL_PARTIAL_2' not in $HANDUNI, trying $QEO..."
+    EDL_SOURCE_2=$(get_edl_source_path "$EDL_PARTIAL_2" "$QEO")
+fi
+if [[ -z "$EDL_SOURCE_2" ]]; then
+    echo "Error: No secondary EDL file found for partial name '$EDL_PARTIAL_2' in $HANDUNI or $QEO"
     exit 1
 fi
 
