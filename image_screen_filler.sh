@@ -162,7 +162,7 @@ while read -r line; do
     delay=$(shuf -i 1-"$TTIME" -n 1)
     
     # Append the nohup feh command
-    echo "nohup feh -x -B black -r -f $TMPFILE1 -D $delay --scale-down -z -g \"$line\" &" >> "$RUNFEH_SCRIPT"
+    echo "nohup feh -x -B black -r -f $TMPFILE1 --output-dir=$I2/fehd -D $delay --scale-down -z -g \"$line\" &" >> "$RUNFEH_SCRIPT"
 done < "$GEOMETRY_FILE"
 
 # Make the script executable
