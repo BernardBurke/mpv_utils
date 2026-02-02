@@ -98,6 +98,17 @@ get_edl_of_total_length() {
 
 # get the length of the audio file
 LENGTH=$(get_length "$1")
+# if the length is less than 30 seconds, exit with a message unless PLAY_SHORT_AUDIO is set to 1
+if (( $(echo "$LENGTH < 30" | bc -l) )); then
+    if [[ "$PLAY_SHORT_AUDIO" != "1" ]]; then
+        echo "Audio file is less than 30 seconds long, exiting."
+        exit 1
+    else
+        echo "Audio file is less than 30 seconds long, but PLAY_SHORT_AUDIO is set to 1, continuing."
+    fi
+fi     
+
+
 echo "LENGTH: $LENGTH"
 #get_edl_of_total_length "$2" "$LENGTH"
 
