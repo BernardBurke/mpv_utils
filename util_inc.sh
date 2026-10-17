@@ -22,6 +22,15 @@ message() {
 
 shuffle_edl() {
 
+    # Skip shuffling entirely if NO_SHUF is set to a non-empty value
+    if [[ -n "$NO_SHUF" ]]; then
+        echo "NO_SHUF is set, skipping shuffle_edl"
+        sed -i "1i# mpv EDL v0" "$1"
+        echo "Added header to $1"
+        cp -v "$1" "$TMPFILE1"
+        return 0
+    fi
+
     if [[ $2 = "" ]]; then
         SHUFN=100
     else
